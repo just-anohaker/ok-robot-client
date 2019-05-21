@@ -1,0 +1,17 @@
+@import "~antd/dist/antd.css";
+
+.App {
+  text-align: center;
+}
+
+.App-Right {
+  text-align: right;
+}
+
+.App-Left {
+  text-align: left;
+}
+
+.App-Center {
+  text-align: center;
+}
