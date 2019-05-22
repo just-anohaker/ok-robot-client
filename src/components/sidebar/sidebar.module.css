@@ -16,6 +16,7 @@
 .logo h1 {
   display: inline-block;
   margin: 0;
+  padding-left: 8px;
   color: #fff;
   vertical-align: middle;
   font-size: 20px;

@@ -3,7 +3,9 @@ import { Route } from 'react-router-dom';
 import { view as Header } from '../../components/header';
 import { view as Sidebar } from '../../components/sidebar';
 import { view as Overview } from '../overview';
-import { view as Topo } from '../topo';
+import { view as Automatic } from '../automatic';
+import { view as Manual } from '../manual';
+import { view as Accounts } from '../accounts';
 import styles from './home.module.css';
 
 const HomePage = () => {
@@ -25,7 +27,9 @@ const HomePage = () => {
         </div>
         <div className={`${styles.content} ant-layout-content`}>
           <Route path="/home/overview" component={Overview} />
-          <Route path="/home/topo" component={Topo} />
+          <Route path="/home/automatic" component={Automatic} />
+          <Route path="/home/manual" component={Manual} />
+          <Route path="/home/accounts" component={Accounts} />
         </div>
       </div>
     </div>

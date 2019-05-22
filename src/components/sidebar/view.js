@@ -3,10 +3,10 @@ import data from './data';
 import { Link } from 'react-router-dom';
 import { Icon, Menu } from 'antd';
 import styles from './sidebar.module.css';
-import logo from '../../assets/images/logo.svg';
+import logo from '../../assets/images/logo-sm.png';
 const { SubMenu } = Menu;
 
-const Sidebar = ({collapsed}) => {
+const Sidebar = ({ collapsed }) => {
   const [current, setCurrent] = useState('overview');
 
   return (
@@ -14,7 +14,7 @@ const Sidebar = ({collapsed}) => {
       <div className={styles.logo}>
         <a href="/">
           <img src={logo} alt="logo" />
-          <h1>React Easy Start</h1>
+          <h1>ETM & OKEx Robot</h1>
         </a>
       </div>
       <Menu
@@ -31,7 +31,7 @@ const Sidebar = ({collapsed}) => {
             if (item.children instanceof Array) {
               return (
                 <SubMenu key={item.key}
-                         title={<span><Icon type={item.icon} /><span>{item.label}</span></span>}>
+                  title={<span><Icon type={item.icon} /><span>{item.label}</span></span>}>
                   {
                     item.children.map((subItem) => (
                       <Menu.Item key={subItem.key}>

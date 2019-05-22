@@ -1,15 +1,17 @@
-import React,{Component} from 'react';
+import React, { Component } from 'react';
 
-class OverviewComponent extends Component{
-	constructor(...args){
+class OverviewPage extends Component {
+	constructor(...args) {
 		super(...args)
-		this.state={
-			a:1
+		this.state = {
+			a: 1
 		}
 	}
-	render(){
-		return <div></div>
+	render() {
+		return <div>
+			监控
+		</div>
 	}
 }
 
-export default OverviewComponent;
+export default OverviewPage;
