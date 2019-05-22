@@ -7,7 +7,7 @@ import logo from '../../assets/images/logo-sm.png';
 const { SubMenu } = Menu;
 
 const Sidebar = ({ collapsed }) => {
-  const [current, setCurrent] = useState('overview');
+  const [current, setCurrent] = useState('home');
 
   return (
     <div className="ant-layout-sider-children">
