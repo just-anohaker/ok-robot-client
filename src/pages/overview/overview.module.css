@@ -1,0 +1,14 @@
+.head{
+    display: flex;
+    justify-content: space-between ;
+    padding-bottom: 20px;
+    
+}
+
+.overview{
+    width: 70%;
+}
+
+.new{
+    width: calc(30% - 10px);
+}

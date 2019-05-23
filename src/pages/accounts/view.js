@@ -1,45 +1,92 @@
 import React, { PureComponent } from 'react';
 import { Card } from 'antd';
 import { view as TableForm } from '../../components/tableform';
+import okrobot from "okrobot-js"
 
-const AccountsPage = (props) => {
+okrobot.config.hostname = "http://192.168.2.210:1996"
 
-  const tableData = [
-    {
-      id: '1',
-      name: 'John Brow',
-      controller: '张三',
-      api: 'New York No. 1 Lake Park',
-      secret: "laundry hockey oppose void announce stay transfer prefer syrup review lottery great"
-    },
-    {
-      id: '2',
-      name: 'Tom Alpha',
-      controller: '李四',
-      api: 'New York No. 1 Lake Park',
-      secret: "worry net spend unfold desert trust dove waste grain people swap twelve"
-    },
-    {
-      id: '3',
-      name: 'Jim Green',
-      controller: '王五',
-      api: 'New York No. 1 Lake Park',
-      secret: "worry net spend unfold desert trust dove waste grain people swap twelve"
-    },
-    {
-      id: '4',
-      name: 'Jack',
-      controller: '赵六',
-      api: 'New York No. 1 Lake Park',
-      secret: "real rally sketch sorry place parrot typical cart stone mystery age nominee"
+class AccountsPage extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = { tableData: [] };
+
+    this.getTableData();
+  }
+
+  onChange = (data, key, type, cb) => {
+    console.log(data, key, type)
+    let row = data.filter(item => item.key === key)[0];
+
+    if (type === "del") {//删除
+      if (typeof key === "string" && key.indexOf("NEW_TEMP_ID_") === 0) {//取消新建
+        cb();
+      }
+      else {
+        okrobot.user.remove(row.id)
+          .then(() => {
+            cb();
+            console.log("then")
+            this.getTableData();
+          })
+          .catch(err => cb(err));
+      }
     }
-  ];
+    else {
+      if (typeof key === "string" && key.indexOf("NEW_TEMP_ID_") === 0) {//新建
+        okrobot.user.add(row.controller, row.name, row.api, row.secret)
+          .then(() => {
+            cb();
+            console.log("then")
+            this.getTableData();
+          })
+          .catch(err => cb(err));
+      }
+      else {//编辑
+        okrobot.user.update(row.id, {
+          groupName: row.controller, name: row.name, apiKey: row.api, apiSecret: row.secret
+        })
+          .then(() => {
+            cb();
+            console.log("then")
+            this.getTableData();
+          })
+          .catch(err => cb(err));
+      }
+    }
 
-  return (
-    <Card title="账号管理">
-      <TableForm data={tableData} />
-    </Card>
-  );
+  }
+
+
+
+  getTableData() {
+    console.log("getTableData")
+    okrobot.user.getAll().then((res) => {
+      if (res.length > 0) {
+        let tableData = res.map((item, index) => {
+          return {
+            key: index,
+            id: item.id,
+            name: item.name,
+            controller: item.groupName,
+            api: item.apiKey,
+            secret: item.apiSecret,
+          }
+        });
+        this.setState({ tableData })
+      }
+    })
+  }
+
+  render() {
+
+    return (
+      <Card title="账号管理">
+        <TableForm data={this.state.tableData} onChange={this.onChange} />
+      </Card>
+    );
+  }
+
 };
 
 export default AccountsPage;
