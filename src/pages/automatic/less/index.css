@@ -1,0 +1,17 @@
+.automatic .btns .show {
+  display: block!important;
+}
+.automatic .btns .hidden {
+  display: none!important;
+}
+.automatic .btns .edit-btn,
+.automatic .btns .edit {
+  float: right;
+  margin-right: 10px;
+}
+.automatic .btns .edit {
+  display: none;
+}
+.automatic .btns .edit .save {
+  margin-right: 10px;
+}

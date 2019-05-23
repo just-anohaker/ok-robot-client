@@ -1,13 +1,16 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route,Redirect,Switch } from 'react-router-dom';
 import { view as Loading } from './components/loading';
 import { view as Home } from './pages/home';
 
 const App = () => {
   return (
-    <div>
+    <div >
       <Loading />
-      <Route path="/" component={Home} />
+      <Switch>
+        <Route path="/home/:item" component={Home} />
+        <Redirect  to="/home/overview"  />
+      </Switch>
     </div>
   );
 };

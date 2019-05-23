@@ -15,13 +15,11 @@ const middlewares = [thunk];
 if (process.env.NODE_ENV !== 'production') {
   middlewares.push(require('redux-immutable-state-invariant').default());
 }
-
 const storeEnhancers = compose(
   resetEnhancer,
   applyMiddleware(...middlewares),
   (win && win.devToolsExtension) ? win.devToolsExtension() : (f) => f
 );
-
 const initialState = {};
 const store = createStore(reducer, initialState, storeEnhancers);
 store._reducers = originalReducers;
