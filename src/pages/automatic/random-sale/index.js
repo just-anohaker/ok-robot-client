@@ -37,7 +37,7 @@ class RandomSale extends React.Component{
             <Card title="随机买卖" extra={<Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />}  >
             <Form {...formItemLayout} onSubmit={this.handleSubmit}>
               <Form.Item label="交易方式">
-              {getFieldDecorator('value1', {
+              {getFieldDecorator('tradeMethod', {
                 rules: [{ required: true, message: '请选择交易方式！' }],
               })(
                   <Radio.Group  buttonStyle="solid">
@@ -49,7 +49,7 @@ class RandomSale extends React.Component{
               </Form.Item>
               <Form.Item label="交易区间" style={{ marginBottom: 0 }}>
                 <Form.Item style={{ display: 'inline-block' }}>
-                {getFieldDecorator('value2', {
+                {getFieldDecorator('bottom', {
                   rules: [{ required: true, message: '请选择交易区间！' }],
                 })(
                 <Input   addonAfter="USDT" style={{ width: 150 }} />
@@ -57,7 +57,7 @@ class RandomSale extends React.Component{
                 </Form.Item>
                 <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}>~</span>
                 <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
-                {getFieldDecorator('value7', {
+                {getFieldDecorator('top', {
                   rules: [{ required: true, message: '请选择交易区间！' }],
                 })(
                 <Input  addonAfter="USDT" style={{ width: 150}} />
@@ -67,9 +67,8 @@ class RandomSale extends React.Component{
 
               <Form.Item label="交易量参数" style={{ marginBottom: 0 }}>
                 <Form.Item style={{ display: 'inline-block' }}>
-                每
-                {getFieldDecorator('value3', {
-                  rules: [{ required: true, message: '请选择交易量参数！' }],
+                {getFieldDecorator('tradeTime', {
+                  rules: [{ required: true, message: '请选择交易时长！' }],
                 })(
                   <Select style={{ width: 50,marginRight:10,marginLeft:10 }} onChange={this.selectChange}>
                         <Option value="10">10</Option>
@@ -82,7 +81,7 @@ class RandomSale extends React.Component{
                 </Form.Item>
                 <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}>~</span>
                 <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
-                {getFieldDecorator('value4', {
+                {getFieldDecorator('tradeParams', {
                   rules: [{ required: true, message: '请选择交易量参数！' }],
                 })(
                 <Input   addonAfter="USDT" style={{ width: 150}} />
@@ -92,14 +91,14 @@ class RandomSale extends React.Component{
 
 
               <Form.Item label="单笔交易数量">
-              {getFieldDecorator('value5', {
+              {getFieldDecorator('tradeNum', {
                 rules: [{ required: true, message: '请选择单笔交易数量！' }],
               })(
                 <Input placeholder="请输入单笔交易数量"  style={{ width: 200 }}/>
               )}
               </Form.Item>
               <Form.Item label="交易开始条件">
-              {getFieldDecorator('value6', {
+              {getFieldDecorator('condition', {
                 rules: [{ required: true, message: '请选择交易开始条件！' }],
               })(
               <Radio.Group  buttonStyle="solid">
@@ -108,6 +107,48 @@ class RandomSale extends React.Component{
               </Radio.Group>
               )}
               </Form.Item>
+
+              <Form.Item label="交易未成功" style={{ marginBottom: 0 }}>
+              <Form.Item style={{ display: 'inline-block' }}>
+              {getFieldDecorator('failWay', {
+                rules: [{ required: true, message: '请选择交易条件！' }],
+              })(
+                <Radio.Group  buttonStyle="solid">
+                <Radio.Button value="a">实时委托</Radio.Button>
+                <Radio.Button value="b">超出区间</Radio.Button>
+              </Radio.Group>
+              )}
+              </Form.Item>
+              <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}></span>
+              <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
+              挂单超过
+              {getFieldDecorator('failTime', {
+                rules: [{ required: true, message: '请输入挂单时间！' }],
+              })(
+              <Input   style={{ width: 30,marginLeft:10,marginRight:10}} />
+              )}
+              分钟后执行
+              </Form.Item>
+            </Form.Item>
+            <Form.Item label="执行账户">
+            {getFieldDecorator('account', {
+              rules: [{ required: true, message: '请选择交易执行账户!' }],
+            })(
+              <Select
+              showSearch
+              style={{ width: 230 }}
+              placeholder="请选择交易执行账户"
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              <Option value="jack">Jack</Option>
+              <Option value="lucy">Lucy</Option>
+              <Option value="tom">Tom</Option>
+            </Select>
+            )}
+            </Form.Item>
               <Row gutter={24} ><Button style={{float:'right',marginRight:10}}  htmlType="submit"  type="primary">编辑参数</Button></Row>
             </Form>
             </Card>

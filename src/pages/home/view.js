@@ -8,7 +8,8 @@ import { view as Manual } from '../manual';
 import { view as Accounts } from '../accounts';
 import styles from './home.module.css';
 
-const HomePage = () => {
+const HomePage = (props) => {
+  const params = props.match.params.item
   const [collapsed, setCollapsed] = useState(false);
   const sidebarWidth = collapsed ? 80 : 256;
   const sidebarStyle = {
@@ -19,7 +20,7 @@ const HomePage = () => {
   return (
     <div className="ant-layout ant-layout-has-sider">
       <div style={sidebarStyle} className="ant-layout-sider ant-layout-sider-dark">
-        <Sidebar collapsed={collapsed} />
+        <Sidebar collapsed={collapsed} params ={params} />
       </div>
       <div className={`${styles['content-wrapper']} ant-layout`}>
         <div className={`${styles.header} ant-layout-header`}>

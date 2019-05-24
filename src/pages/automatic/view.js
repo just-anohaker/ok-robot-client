@@ -10,9 +10,10 @@ class AutomaticPage extends React.Component{
 
     }
   }
-  // componentDidMount(){
-  //   console.log(this.props.match.path)
-  // }
+  componentDidMount(){
+    console.log(this.props.match.path)
+  }
+
   render(){
     return (
       <div className="automatic">

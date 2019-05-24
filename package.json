@@ -29,7 +29,7 @@
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
-  "homepage":".",
+  "homepage": ".",
   "eslintConfig": {
     "extends": "react-app"
   },

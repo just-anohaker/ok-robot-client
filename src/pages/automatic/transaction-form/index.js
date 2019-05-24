@@ -64,7 +64,7 @@ class TransactionForm extends React.Component{
             <Card title="稳定市价" extra={<Switch checkedChildren="开" unCheckedChildren="关" checked={this.state.tranSwitch} onChange={this.tranSwitchHandle.bind(this)} />}  >
             <Form {...formItemLayout} onSubmit={this.handleSubmit}>
               <Form.Item label="交易方式">
-              {getFieldDecorator('value2', {
+              {getFieldDecorator('tradeMethod', {
                 rules: [{ required: true, message: '请选择交易方式！' }],
               })(
                   <Radio.Group  buttonStyle="solid" >
@@ -93,7 +93,7 @@ class TransactionForm extends React.Component{
                 rules: [{ required: true, message: '请输入单笔交易数量!' }],
               })(
                 <Input placeholder="请输入单笔交易数量" addonAfter={
-                  getFieldDecorator('value10', {
+                  getFieldDecorator('percentage', {
                     rules: [{ required: true, message: '111' }],
                   })(
                     <Select  style={{ width: 80 }}>
@@ -107,7 +107,7 @@ class TransactionForm extends React.Component{
               )}
               </Form.Item>
               <Form.Item label="交易开始条件">
-              {getFieldDecorator('value1', {
+              {getFieldDecorator('condition', {
                 rules: [{ required: true, message: '请选择交易开始条件!' }],
               })(
               <Radio.Group  buttonStyle="solid" >
@@ -117,7 +117,7 @@ class TransactionForm extends React.Component{
               )}
               </Form.Item>
               <Form.Item label="执行账户">
-              {getFieldDecorator('value6', {
+              {getFieldDecorator('account', {
                 rules: [{ required: true, message: '请选择交易执行账户!' }],
               })(
                 <Select

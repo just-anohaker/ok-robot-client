@@ -6,9 +6,8 @@ import styles from './sidebar.module.css';
 import logo from '../../assets/images/logo-sm.png';
 const { SubMenu } = Menu;
 
-const Sidebar = ({ collapsed }) => {
-  const [current, setCurrent] = useState('home');
-
+const Sidebar = ({ collapsed,params }) => {
+  const [current, setCurrent] = useState(params);
   return (
     <div className="ant-layout-sider-children">
       <div className={styles.logo}>
@@ -56,5 +55,7 @@ const Sidebar = ({ collapsed }) => {
     </div>
   );
 };
+
+
 
 export default Sidebar;
