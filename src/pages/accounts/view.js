@@ -1,92 +1,126 @@
 import React, { PureComponent } from 'react';
-import { Card } from 'antd';
+import { connect } from 'react-redux';
+import { Card, message } from 'antd';
 import { view as TableForm } from '../../components/tableform';
-import okrobot from "okrobot-js"
+import okrobot from "okrobot-js";
 
-okrobot.config.hostname = "http://192.168.2.210:1996"
+okrobot.config.hostname = "http://47.111.160.173:1996"
 
 class AccountsPage extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = { tableData: [] };
+    this.state = { tableData: [], loading: false };
 
-    this.getTableData();
   }
 
-  onChange = (data, key, type, cb) => {
-    console.log(data, key, type)
-    let row = data.filter(item => item.key === key)[0];
+  componentWillMount() {
+    this.queryTableData();
+  }
+
+  queryTableData() {
+    this.setState({ loading: true });
+    okrobot.user.getAll()
+      .then((res) => {
+        setTimeout(() => {
+          if (res.length > 0) {
+            let tableData = res.map((item, index) => {
+              return {
+                key: index,
+                id: item.id,
+                name: item.name,
+                controller: item.groupName,
+                api: item.apiKey,
+                secret: item.apiSecret,
+              }
+            });
+            this.setState({ tableData })
+          }
+          this.setState({ loading: false })
+        }, 2000);
+      })
+      .catch(err => {
+        message.error("请求账户数据失败！" + err);
+        this.setState({ loading: false });
+      });
+  }
+
+  addTableData(row, cb) {
+    okrobot.user.add(row.controller, row.name, row.api, row.secret)
+      .then((res) => {
+        let newRow = res;
+        let { tableData } = this.state;
+        tableData.push(newRow);
+
+        this.setState({ tableData })
+        cb();
+      })
+      .catch(err => {
+        cb(err);
+      });
+  }
+
+  editTableData(row, cb) {
+    okrobot.user.update(row.id, {
+      groupName: row.controller, name: row.name, apiKey: row.api, apiSecret: row.secret
+    })
+      .then((res) => {
+        cb();
+      })
+      .catch(err => {
+        cb(err);
+      });
+  }
+
+  removeTableData(row, cb) {
+    okrobot.user.remove(row.id)
+      .then((res) => {
+        cb();
+      })
+      .catch(err => {
+        cb(err);
+      });
+  }
+
+
+  onChange = (type, data, key, cb) => {// 表格更新
+    let row = data.filter(item => item.key === key)[0];//被操作数据行
 
     if (type === "del") {//删除
       if (typeof key === "string" && key.indexOf("NEW_TEMP_ID_") === 0) {//取消新建
         cb();
       }
       else {
-        okrobot.user.remove(row.id)
-          .then(() => {
-            cb();
-            console.log("then")
-            this.getTableData();
-          })
-          .catch(err => cb(err));
+        this.removeTableData(row, cb);
       }
     }
     else {
       if (typeof key === "string" && key.indexOf("NEW_TEMP_ID_") === 0) {//新建
-        okrobot.user.add(row.controller, row.name, row.api, row.secret)
-          .then(() => {
-            cb();
-            console.log("then")
-            this.getTableData();
-          })
-          .catch(err => cb(err));
+        this.addTableData(row, cb);
       }
       else {//编辑
-        okrobot.user.update(row.id, {
-          groupName: row.controller, name: row.name, apiKey: row.api, apiSecret: row.secret
-        })
-          .then(() => {
-            cb();
-            console.log("then")
-            this.getTableData();
-          })
-          .catch(err => cb(err));
+        this.editTableData(row, cb);
       }
     }
-
-  }
-
-
-
-  getTableData() {
-    console.log("getTableData")
-    okrobot.user.getAll().then((res) => {
-      if (res.length > 0) {
-        let tableData = res.map((item, index) => {
-          return {
-            key: index,
-            id: item.id,
-            name: item.name,
-            controller: item.groupName,
-            api: item.apiKey,
-            secret: item.apiSecret,
-          }
-        });
-        this.setState({ tableData })
-      }
-    })
   }
 
   render() {
-
+    const { tableData } = this.state;
     return (
-      <Card title="账号管理">
-        <TableForm data={this.state.tableData} onChange={this.onChange} />
+      <Card title="账号管理"  >
+        <TableForm data={tableData} onChange={this.onChange} />
       </Card>
     );
   }
 
 };
 
-export default AccountsPage;
+const mapStateToProps = (state) => {
+  const loadingData = state.loading;
+
+  return {
+    show: loadingData.show
+  };
+};
+
+export default connect(mapStateToProps)(AccountsPage);

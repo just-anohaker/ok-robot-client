@@ -24,6 +24,7 @@ class TableForm extends PureComponent {
     if (isEqual(nextProps.data, preState.value)) {
       return null;
     }
+
     return {
       data: nextProps.data,
       value: nextProps.data,
@@ -83,50 +84,52 @@ class TableForm extends PureComponent {
   };
 
   remove(key) {
-    this.setState({
-      loading: true,
-    });
+    this.setState({ loading: true });
     const { data } = this.state;
     const { onChange } = this.props;
-    const newData = data.filter(item => item.key !== key);
-    this.setState({ data: newData });
-    onChange(data, key, "del", () => {
-      this.setState({
-        loading: false,
-      });
+    onChange("del", data, key, (err) => {
+      if (err) {
+        message.error('删除信息失败！' + err);
+        this.setState({ loading: false });
+        return;
+      }
+
+      const newData = data.filter(item => item.key !== key);
+      this.setState({ data: newData });
+
+      this.setState({ loading: false });
     });
   }
 
   saveRow(e, key) {
     e.persist();
-    this.setState({
-      loading: true,
-    });
-    setTimeout(() => {
-      if (this.clickedCancel) {
-        this.clickedCancel = false;
-        return;
-      }
-      const target = this.getRowByKey(key) || {};
-      if (!target.name || !target.controller || !target.api || !target.secret) {
-        message.error('请填写完整成员信息。');
-        e.target.focus();
-        this.setState({
-          loading: false,
-        });
+    this.setState({ loading: true });
+
+    if (this.clickedCancel) {
+      this.clickedCancel = false;
+      return;
+    }
+
+    const target = this.getRowByKey(key) || {};
+    if (!target.name || !target.controller || !target.api || !target.secret) {
+      message.error('请填写完整成员信息。');
+      e.target.focus();
+      this.setState({ loading: false });
+      return;
+    }
+
+    const { data } = this.state;
+    const { onChange } = this.props;
+    onChange("save", data, key, (err) => {
+      if (err) {
+        message.error("保存信息失败！" + err);
+        this.setState({ loading: false });
         return;
       }
       delete target.isNew;
       this.toggleEditable(e, key);
-      const { data } = this.state;
-      const { onChange } = this.props;
-      onChange(data, key, "save", () => {
-        this.setState({
-          loading: false,
-        });
-      });
-
-    }, 500);
+      this.setState({ loading: false });
+    });
   }
 
   cancel(e, key) {
