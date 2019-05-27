@@ -18,9 +18,14 @@ if (process.env.NODE_ENV !== 'production') {
 const storeEnhancers = compose(
   resetEnhancer,
   applyMiddleware(...middlewares),
-  (win && win.devToolsExtension) ? win.devToolsExtension() : (f) => f
+  // (win && win.devToolsExtension) ? win.devToolsExtension() : (f) => f
+  (win && win.__REDUX_DEVTOOLS_EXTENSION__) ? win.__REDUX_DEVTOOLS_EXTENSION__() : (f) => f
 );
 const initialState = {};
-const store = createStore(reducer, initialState, storeEnhancers);
+const store = createStore(
+  reducer,
+  initialState,
+  storeEnhancers
+);
 store._reducers = originalReducers;
 export default store;
