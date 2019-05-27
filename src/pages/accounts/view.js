@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
 import { Card, message } from 'antd';
 import { view as TableForm } from '../../components/tableform';
+import { actions as loading } from '../../components/loading';
+import store from "../../Store"
 import okrobot from "okrobot-js";
 
 okrobot.config.hostname = "http://47.111.160.173:1996"
@@ -10,38 +11,35 @@ class AccountsPage extends PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = { tableData: [], loading: false };
+    this.state = { tableData: [] };
 
-  }
-
-  componentWillMount() {
     this.queryTableData();
   }
 
   queryTableData() {
-    this.setState({ loading: true });
+    store.dispatch(loading.showLoading());
+
     okrobot.user.getAll()
       .then((res) => {
-        setTimeout(() => {
-          if (res.length > 0) {
-            let tableData = res.map((item, index) => {
-              return {
-                key: index,
-                id: item.id,
-                name: item.name,
-                controller: item.groupName,
-                api: item.apiKey,
-                secret: item.apiSecret,
-              }
-            });
-            this.setState({ tableData })
-          }
-          this.setState({ loading: false })
-        }, 2000);
+        if (res.length > 0) {
+          let tableData = res.map((item, index) => {
+            return {
+              key: index,
+              id: item.id,
+              name: item.name,
+              controller: item.groupName,
+              api: item.apiKey,
+              secret: item.apiSecret,
+            }
+          });
+          this.setState({ tableData })
+        }
+
+        store.dispatch(loading.hideLoading());
       })
       .catch(err => {
         message.error("请求账户数据失败！" + err);
-        this.setState({ loading: false });
+        store.dispatch(loading.hideLoading());
       });
   }
 
@@ -115,12 +113,5 @@ class AccountsPage extends PureComponent {
 
 };
 
-const mapStateToProps = (state) => {
-  const loadingData = state.loading;
+export default AccountsPage;
 
-  return {
-    show: loadingData.show
-  };
-};
-
-export default connect(mapStateToProps)(AccountsPage);
