@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@antv/data-set": "^0.10.2",
     "antd": "^3.18.2",
     "babel-plugin-import": "^1.11.2",
     "customize-cra": "^0.2.12",
@@ -21,7 +22,8 @@
     "react-scripts": "3.0.1",
     "redux": "^4.0.1",
     "redux-immutable-state-invariant": "^2.1.0",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "viser-react": "^2.4.6"
   },
   "scripts": {
     "start": "react-app-rewired start",

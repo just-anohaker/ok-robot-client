@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Card, message } from 'antd';
 import { view as TableForm } from '../../components/tableform';
 import { actions as loading } from '../../components/loading';
-import store from "../../Store"
+import store from "../../Store";
 import okrobot from "okrobot-js";
 
 okrobot.config.hostname = "http://47.111.160.173:1996"
@@ -12,7 +12,9 @@ class AccountsPage extends PureComponent {
     super(props);
 
     this.state = { tableData: [] };
+  }
 
+  componentWillMount() {
     this.queryTableData();
   }
 

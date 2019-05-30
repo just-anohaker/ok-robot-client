@@ -151,9 +151,8 @@ class TableForm extends PureComponent {
 
     const columns = [
       {
-        title: '账户名称',
+        title: "账户名称",
         dataIndex: 'name',
-        key: 'name',
         width: '15%',
         render: (text, record) => {
           if (record.editable) {
@@ -173,7 +172,6 @@ class TableForm extends PureComponent {
       {
         title: '操作员',
         dataIndex: 'controller',
-        key: 'controller',
         width: '15%',
         render: (text, record) => {
           if (record.editable) {
@@ -192,7 +190,6 @@ class TableForm extends PureComponent {
       {
         title: 'API',
         dataIndex: 'api',
-        key: 'api',
         width: '15%',
         render: (text, record) => {
           if (record.editable) {
@@ -209,10 +206,8 @@ class TableForm extends PureComponent {
         },
       },
       {
-        title: 'Secret',
+        title: "Secret",
         dataIndex: 'secret',
-        key: 'secret',
-        width: '40%',
         render: (text, record) => {
           if (record.editable) {
             return (
@@ -229,7 +224,8 @@ class TableForm extends PureComponent {
       },
       {
         title: '操作',
-        key: 'action',
+        dataIndex: 'action',
+        width: '110px',
         render: (text, record) => {
           const { loading } = this.state;
           if (!!record.editable && loading) {

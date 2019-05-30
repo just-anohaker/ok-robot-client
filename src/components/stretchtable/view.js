@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Resizable } from 'react-resizable';
+import isEqual from 'lodash/isEqual';
 import { Table } from 'antd';
 import './index.css';
 
@@ -22,9 +23,21 @@ class StretchTable extends PureComponent {
     super(props);
 
     this.state = {
-      columns: props.columns
+      columns: props.columns,
+      data: props.data,
+      value: props.data
     };
-    this.data = props.data;
+  }
+
+  static getDerivedStateFromProps(nextProps, preState) {
+    if (isEqual(nextProps.data, preState.value)) {
+      return null;
+    }
+
+    return {
+      data: nextProps.data,
+      value: nextProps.data,
+    };
   }
 
   components = {
@@ -58,7 +71,7 @@ class StretchTable extends PureComponent {
         bordered
         components={this.components}
         columns={columns}
-        dataSource={this.data} />
+        dataSource={this.state.data} />
     )
   }
 }
