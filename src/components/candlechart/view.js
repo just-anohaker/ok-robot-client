@@ -1,5 +1,5 @@
 import { Chart, Tooltip, Legend, Axis, Plugin, Slider, View, Candle, Bar } from 'viser-react';
-import * as React from 'react';
+import React, { PureComponent } from 'react';
 import isEqual from 'lodash/isEqual';
 const DataSet = require('@antv/data-set');
 
@@ -46,7 +46,7 @@ const tooltipOpts = {
         </li>`,
 };
 
-export default class App extends React.Component {
+export default class App extends PureComponent {
     constructor(props) {
         super(props);
 
