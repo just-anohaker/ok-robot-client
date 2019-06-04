@@ -5,7 +5,8 @@ import { actions as loading } from '../../components/loading';
 import store from "../../Store";
 import okrobot from "okrobot-js";
 
-okrobot.config.hostname = "http://47.111.160.173:1996"
+okrobot.config.hostname = "http://192.168.2.97:1996"
+// okrobot.config.hostname = "http://47.111.160.173:1996"
 
 class AccountsPage extends PureComponent {
   constructor(props) {
@@ -30,8 +31,9 @@ class AccountsPage extends PureComponent {
               id: item.id,
               name: item.name,
               controller: item.groupName,
-              api: item.apiKey,
-              secret: item.apiSecret,
+              api: item.httpKey,
+              secret: item.httpSecret,
+              passphrase: item.passphrase
             }
           });
           this.setState({ tableData })
@@ -46,7 +48,7 @@ class AccountsPage extends PureComponent {
   }
 
   addTableData(row, cb) {
-    okrobot.user.add(row.controller, row.name, row.api, row.secret)
+    okrobot.user.add(row.controller, row.name, row.api, row.secret, row.passphrase)
       .then((res) => {
         let newRow = res;
         let { tableData } = this.state;
@@ -62,7 +64,7 @@ class AccountsPage extends PureComponent {
 
   editTableData(row, cb) {
     okrobot.user.update(row.id, {
-      groupName: row.controller, name: row.name, apiKey: row.api, apiSecret: row.secret
+      groupName: row.controller, name: row.name, httpKey: row.api, httpSecret: row.secret, passphrase: row.passphrase
     })
       .then((res) => {
         cb();

@@ -223,6 +223,23 @@ class TableForm extends PureComponent {
         },
       },
       {
+        title: "Passphrase",
+        dataIndex: 'passphrase',
+        render: (text, record) => {
+          if (record.editable) {
+            return (
+              <Input
+                value={text}
+                onChange={e => this.handleFieldChange(e, 'passphrase', record.key)}
+                onKeyPress={e => this.handleKeyPress(e, record.key)}
+                placeholder="Passphrase"
+              />
+            );
+          }
+          return text;
+        },
+      },
+      {
         title: '操作',
         dataIndex: 'action',
         width: '110px',
