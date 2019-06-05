@@ -1,8 +1,11 @@
 import React, { PureComponent, Fragment } from 'react';
 // import styles from './batch.module.css';
-import { Card, Form, Input, Button, Radio, Select, Row, Col } from 'antd';
+import okrobot from "okrobot-js";
+import { Card, Form, Input, Button, Radio, Select, Row, Col, message } from 'antd';
 const { Option } = Select;
 
+// okrobot.config.hostname = "http://47.111.160.173:1996"
+okrobot.config.hostname = "http://192.168.2.214:1996"
 
 
 class BatchCard extends PureComponent {
@@ -13,20 +16,37 @@ class BatchCard extends PureComponent {
     };
   }
 
-  handleFormPair = () => {
-
-  }
-
-  handleFormTransaction = () => {
-
-  }
-
   handleFormDelegate = e => {
     console.log(e)
     this.setState({ delegate: e });
   };
 
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+      }
+      console.log(values)
+
+      okrobot.batch_order.limitOrder(values, {
+        httpkey: 'a97895ea-96b3-4645-b7b2-3cb9c02de0f2',
+        httpsecret: 'A463C43A23214D470D712311D88D3CEB',
+        passphrase: '88888888'
+      })
+        .then(() => {
+
+        })
+        .catch(err => {
+          message.error("现价交易失败失败！" + err);
+        });
+    });
+  };
+
+
   getDelegatePanel(type) {
+    const { getFieldDecorator } = this.props.form;
+
     if (type === "iceberg") {
       return (
         <Fragment >
@@ -49,10 +69,19 @@ class BatchCard extends PureComponent {
       return (
         <Fragment>
           <Form.Item label="价格(USDT)" >
-            <Input placeholder="请输入执行账户" />
+
+            {getFieldDecorator('price', {
+              rules: [{ required: true, message: '请选择交易对!' }],
+            })(
+              <Input placeholder="请输入执行账户" />
+            )}
           </Form.Item>
           <Form.Item label="总量(ETM)">
-            <Input placeholder="请输入执行账户" />
+            {getFieldDecorator('size', {
+              rules: [{ required: true, message: '请选择交易对!' }],
+            })(
+              <Input placeholder="请输入执行账户" />
+            )}
           </Form.Item>
         </Fragment>
       )
@@ -70,15 +99,6 @@ class BatchCard extends PureComponent {
       return (<div></div>)
     }
   }
-
-  handleSubmit = e => {
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-      }
-    });
-  };
 
   render() {
 
@@ -111,8 +131,6 @@ class BatchCard extends PureComponent {
                 })(
                   <Select
                     placeholder="请选择交易对"
-                    style={{ width: 230 }}
-                  // onChange={this.handleFormPair}
                   >
                     <Option value="ETM">ETM</Option>
                     <Option value="USDT">USDT</Option>
@@ -123,9 +141,9 @@ class BatchCard extends PureComponent {
                 {getFieldDecorator('tranType', {
                   rules: [{ required: true, message: '请选择交易对!' }],
                 })(
-                  <Radio.Group onChange={this.handleFormTransaction}>
-                    <Radio.Button value="buy">买入</Radio.Button>
-                    <Radio.Button value="sell">卖出</Radio.Button>
+                  <Radio.Group >
+                    <Radio.Button value="1">买入</Radio.Button>
+                    <Radio.Button value="2">卖出</Radio.Button>
                   </Radio.Group>
                 )}
               </Form.Item>
@@ -136,14 +154,13 @@ class BatchCard extends PureComponent {
                   <Select
                     placeholder="请选择委托类型"
                     onChange={this.handleFormDelegate}
-                    style={{ width: 230 }}
+                  // style={{ width: 230 }}
                   >
                     <Option value="limit">限价交易</Option>
                     <Option value="market">市价交易</Option>
                     <Option value="iceberg">冰山委托</Option>
                   </Select>
                 )}
-                {/* {this.getDelegatePanel(this.state.delegate)} */}
               </Form.Item>
               {this.getDelegatePanel(this.state.delegate)}
               <Form.Item label="可买ETM" >
@@ -160,7 +177,7 @@ class BatchCard extends PureComponent {
                 )}
               </Form.Item>
               <Form.Item {...formTailLayout}>
-                <Button type="primary">Submit</Button>
+                <Button type="primary" htmlType="submit">Submit</Button>
               </Form.Item>
             </Form>
           </Card>
