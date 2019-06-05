@@ -6,15 +6,15 @@
     "url": "/home/overview"
   },
   {
-    "icon": "interation",
-    "key": "transction",
-    "label": "自动交易",
-    "url": "/home/transction"
+    "icon": "bars",
+    "key": "batch",
+    "label": "批量交易",
+    "url": "/home/batch"
   },
   {
     "icon": "tool",
     "key": "manual",
-    "label": "手动交易",
+    "label": "挂单撤单",
     "url": "/home/manual"
   },
   {

@@ -153,7 +153,7 @@ class TableForm extends PureComponent {
       {
         title: "账户名称",
         dataIndex: 'name',
-        width: '15%',
+        width: '200',
         render: (text, record) => {
           if (record.editable) {
             return (
@@ -172,7 +172,7 @@ class TableForm extends PureComponent {
       {
         title: '操作员',
         dataIndex: 'controller',
-        width: '15%',
+        width: '200',
         render: (text, record) => {
           if (record.editable) {
             return (
@@ -190,7 +190,7 @@ class TableForm extends PureComponent {
       {
         title: 'API',
         dataIndex: 'api',
-        width: '15%',
+        width: '400',
         render: (text, record) => {
           if (record.editable) {
             return (

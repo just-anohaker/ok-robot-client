@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import { view as Header } from '../../components/header';
 import { view as Sidebar } from '../../components/sidebar';
 import { view as Overview } from '../overview';
+import { view as Batch } from '../batch';
 // import { view as Automatic } from '../automatic';
 import { view as Manual } from '../manual';
 import { view as Accounts } from '../accounts';
@@ -20,7 +21,7 @@ const HomePage = (props) => {
   return (
     <div className="ant-layout ant-layout-has-sider">
       <div style={sidebarStyle} className="ant-layout-sider ant-layout-sider-dark">
-        <Sidebar collapsed={collapsed} params ={params} />
+        <Sidebar collapsed={collapsed} params={params} />
       </div>
       <div className={`${styles['content-wrapper']} ant-layout`}>
         <div className={`${styles.header} ant-layout-header`}>
@@ -28,7 +29,8 @@ const HomePage = (props) => {
         </div>
         <div className={`${styles.content} ant-layout-content`}>
           <Route path="/home/overview" component={Overview} />
-          {/*<Route path="/home/automatic" component={Automatic} />*/}
+          <Route path="/home/batch" component={Batch} />
+          {/* <Route path="/home/automatic" component={Automatic} /> */}
           <Route path="/home/manual" component={Manual} />
           <Route path="/home/transaction" component={Manual} />
           <Route path="/home/accounts" component={Accounts} />

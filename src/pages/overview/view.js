@@ -370,20 +370,20 @@ class OverviewPage extends PureComponent {
 
   getData() {
     store.dispatch(loading.showLoading());
-    setTimeout(() => {
-      this.setState({
-        chartData,
-        newData,
-        trData,
-        isUp: false,
-        dealprice: 56,
-        gain: 19,
-        max: 2300,
-        min: 1000,
-        count: 1000
-      });
-      store.dispatch(loading.hideLoading());
-    }, 2000);
+    // setTimeout(() => {
+    this.setState({
+      chartData,
+      newData,
+      trData,
+      isUp: false,
+      dealprice: 56,
+      gain: 19,
+      max: 2300,
+      min: 1000,
+      count: 1000
+    });
+    store.dispatch(loading.hideLoading());
+    // }, 500);
 
     // setInterval(() => {
     //   let _chartData = this.state.chartData;
