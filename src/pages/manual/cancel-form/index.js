@@ -1,7 +1,7 @@
 import React from 'react';
-import { Row, Col, Card, Radio, Form, Input, Select, notification } from 'antd';
-import EditBtn from '../../../components/editbtn'
-import SwitchConfirm from '../../../components/switch-confirm'
+import { Row, Col, Card, Radio, Form, Input, Select, notification, Button } from 'antd';
+import DetailBill from '../../../components/detail-bill'
+
 import okrobot from "okrobot-js";
 
 const Option = Select.Option;
@@ -20,15 +20,40 @@ class CancelFrom extends React.Component {
   constructor(...args) {
     super(...args)
     this.state = {
-      tranSwitch:false
+      tranType: 'ETM',
+      accounts: []
     }
   }
 
-  componentDidMount(){}
+  componentDidMount() {
+    let account = [{
+      name: 'Jack',
+      httpKey: 'wew',
+      httpSecret: 'wew',
+      passphrase: 'wer'
+    }, {
+      name: 'Lucy',
+      httpKey: '1',
+      httpSecret: '2',
+      passphrase: 'we3r'
+    }, {
+      name: 'Tom',
+      httpKey: 'wew',
+      httpSecret: 'wew',
+      passphrase: 'wer'
+    }, {
+      name: 'Petter',
+      httpKey: '123',
+      httpSecret: '123',
+      passphrase: '123'
+    },
+    ]
+    this.setState({ accounts: account })
+  }
 
-  async init(params) {
+  async cancel(params) {
     console.log(params)
-    const result = await okrobot.auto_maker.init(params)
+    const result = await okrobot.batch_order.cancel(params)
     console.log(result)
     notification.open({
       message: 'Notification Title',
@@ -37,83 +62,87 @@ class CancelFrom extends React.Component {
     });
   }
 
-  async start() {
-    console.log('start')
-    const result = await okrobot.auto_maker.start()
-    console.log(result)
-  }
-  async stop() {
-    console.log('stop')
-    const result = await okrobot.auto_maker.stop()
-    console.log(result)
-  }
-  async isRunning() {
-    const result = await okrobot.auto_maker.isRunning()
-    console.log(result)
-  }
-  async getOptionsAndAccount() {
-    const result = await okrobot.auto_maker.getOptionsAndAccount()
-    console.log(result)
-    this.props.form.setFieldsValue({
-      tradeMethod: '1',
-      top: '1',
-      bottom: '1',
-      transactionNum: '22'
-    });
+  handleTranTypeChange(value) {
+    this.setState({ tranType: value })
   }
 
   handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-          console.log('Received values of form: ', values);
-          let options = {
-            type: Number(values.tradeMethod),
-            topPrice: Number(values.top),
-            bottomPrice: Number(values.bottom),
-            intervalTime: 1,
-            startVolume: 1,
-            endVolume: 1,
-            tradeType: 0,
-            tradeLimit: 1000
-          };
-          let account = {
-            name: '1',
-            httpKey: 'wew',
-            httpSecret: 'wew',
-            passphrase: 'wer'
+        console.log('Received values of form: ', values);
+        let options = {
+          type: Number(values.tradeMethod),
+          topPrice: Number(values.top),
+          bottomPrice: Number(values.bottom)
+        };
+        let account = {}
+        let accountData = this.state.accounts;
+        for (let i = 0; i < accountData.length; i++) {
+          if (accountData[i]['name'] === values.account) {
+            account = {
+              name: values.account,
+              httpKey: accountData[i].httpKey,
+              httpSecret: accountData[i].httpSecret,
+              passphrase: accountData[i].passphrase
+            }
+            break;
           }
-          this.init({ options, account })
+        }
+        this.cancel({ options, account })
       }
     });
   }
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const tranSwitch = this.state.tranSwitch
+    let tranType = this.state.tranType
+    let accounts = this.state.accounts
     return (
       <div className="random-sale">
         {/*批量撤单*/}
         <Row gutter={24}>
-          <Col xl={18} lg={24} md={24} sm={24} xs={24} style={{ marginBottom: 24 }}>
-            <Card title="批量撤单" extra={<SwitchConfirm tranSwitch={tranSwitch} start={this.start.bind(this)} stop={this.stop.bind(this)} />}  >
+          <Col xl={12} lg={24} md={24} sm={24} xs={24} style={{ marginBottom: 24 }}>
+            <Card title="批量撤单" >
               <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+
+                <Form.Item label="交易对">
+                  {getFieldDecorator('tranType', {
+                    rules: [{ required: true, message: '请选择交易对!' }],
+                  })(
+                    <Select
+                      showSearch
+                      style={{ width: 230 }}
+                      placeholder="请选择交易对!"
+                      optionFilterProp="children"
+                      onChange={this.handleTranTypeChange.bind(this)}
+                      filterOption={(input, option) =>
+                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      <Option value="ETM">ETM</Option>
+                      <Option value="USDT">USDT</Option>
+                    </Select>
+                  )}
+                </Form.Item>
+
                 <Form.Item label="交易方式">
                   {getFieldDecorator('tradeMethod', {
                     rules: [{ required: true, message: '请选择交易方式！' }],
                   })(
                     <Radio.Group buttonStyle="solid">
-                    <Radio.Button value="0">买入</Radio.Button>
-                    <Radio.Button value="1">卖出</Radio.Button>
+                      <Radio.Button value="0">买入</Radio.Button>
+                      <Radio.Button value="1">卖出</Radio.Button>
                     </Radio.Group>
                   )}
                 </Form.Item>
-                <Form.Item label="交易区间" style={{ marginBottom: 0 }}>
+
+                <Form.Item className="require" label="价格范围" style={{ marginBottom: 0 }}>
                   <Form.Item style={{ display: 'inline-block' }}>
                     {getFieldDecorator('bottom', {
-                      rules: [{ required: true, message: '请选择交易区间！' }],
+                      rules: [{ required: true, message: '请选择价格范围！' }],
                     })(
-                      <Input addonAfter="USDT" style={{ width: 150 }} />
+                      <Input addonAfter={tranType} type="number" style={{ width: 150 }} />
                     )}
                   </Form.Item>
                   <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}>~</span>
@@ -121,88 +150,11 @@ class CancelFrom extends React.Component {
                     {getFieldDecorator('top', {
                       rules: [{ required: true, message: '请选择交易区间！' }],
                     })(
-                      <Input addonAfter="USDT" style={{ width: 150 }} />
+                      <Input addonAfter={tranType} type="number" style={{ width: 150 }} />
                     )}
                   </Form.Item>
                 </Form.Item>
 
-                <Form.Item label="交易量参数" style={{ marginBottom: 0 }}>
-                  <Form.Item style={{ display: 'inline-block' }}>
-                    {getFieldDecorator('tradeTime', {
-                      rules: [{ required: true, message: '请选择交易时长！' }],
-                    })(
-                      <Select style={{ width: 50, marginRight: 10, marginLeft: 10 }} onChange={this.selectChange}>
-                        <Option value="10">10</Option>
-                        <Option value="15">15</Option>
-                        <Option value="30">30</Option>
-                        <Option value="60">60</Option>
-                      </Select>
-                    )}
-                    分钟交易量小于
-                </Form.Item>
-                  <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}>~</span>
-                  <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
-                    {getFieldDecorator('tradeParams', {
-                      rules: [{ required: true, message: '请选择交易量参数！' }],
-                    })(
-                      <Input addonAfter="USDT" style={{ width: 150 }} />
-                    )}
-                  </Form.Item>
-                </Form.Item>
-
-
-                <Form.Item label="单笔交易数量">
-                  {getFieldDecorator('transactionNum', {
-                    rules: [{ required: true, message: '请输入单笔交易数量!' }],
-                  })(
-                    <Input placeholder="请输入单笔交易数量" addonAfter={
-                      getFieldDecorator('percentage', {
-                        rules: [{ required: true, message: '111' }],
-                      })(
-                        <Select style={{ width: 80 }}>
-                          <Option value="5">5%</Option>
-                          <Option value="10">10%</Option>
-                          <Option value="15">15%</Option>
-                          <Option value="20">20%</Option>
-                        </Select>
-                      )
-                    } style={{ width: 230 }} />
-                  )}
-                </Form.Item>
-
-                <Form.Item label="交易开始条件">
-                  {getFieldDecorator('condition', {
-                    rules: [{ required: true, message: '请选择交易开始条件！' }],
-                  })(
-                    <Radio.Group buttonStyle="solid">
-                      <Radio.Button value="a">实时委托</Radio.Button>
-                      <Radio.Button value="b">超出区间</Radio.Button>
-                    </Radio.Group>
-                  )}
-                </Form.Item>
-
-                <Form.Item label="交易未成功" style={{ marginBottom: 0 }}>
-                  <Form.Item style={{ display: 'inline-block' }}>
-                    {getFieldDecorator('failWay', {
-                      rules: [{ required: true, message: '请选择交易条件！' }],
-                    })(
-                      <Radio.Group buttonStyle="solid">
-                        <Radio.Button value="a">实时委托</Radio.Button>
-                        <Radio.Button value="b">超出区间</Radio.Button>
-                      </Radio.Group>
-                    )}
-                  </Form.Item>
-                  <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}></span>
-                  <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
-                    挂单超过
-              {getFieldDecorator('failTime', {
-                      rules: [{ required: true, message: '请输入挂单时间！' }],
-                    })(
-                      <Input style={{ width: 30, marginLeft: 10, marginRight: 10 }} />
-                    )}
-                    分钟后执行
-              </Form.Item>
-                </Form.Item>
                 <Form.Item label="执行账户">
                   {getFieldDecorator('account', {
                     rules: [{ required: true, message: '请选择交易执行账户!' }],
@@ -216,17 +168,18 @@ class CancelFrom extends React.Component {
                         option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                       }
                     >
-                      <Option value="jack">Jack</Option>
-                      <Option value="lucy">Lucy</Option>
-                      <Option value="tom">Tom</Option>
+                      {accounts.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)}
                     </Select>
                   )}
                 </Form.Item>
-                <EditBtn></EditBtn>
+                <Row gutter={24} className="btns" >
+                  <Button type="primary" htmlType="submit" className="submit">开始撤单</Button>
+                </Row>
               </Form>
             </Card>
           </Col>
-          <Col xl={6} lg={24} md={24} sm={24} xs={24}>
+          <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+            <DetailBill title="卖单情况"></DetailBill>
           </Col>
         </Row>
       </div>

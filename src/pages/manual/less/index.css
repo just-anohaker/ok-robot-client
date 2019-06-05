@@ -7,6 +7,10 @@
   line-height: 1;
   content: '*';
 }
+.manual .btns .submit {
+  float: right;
+  margin-right: 10px;
+}
 .manual .btns .show {
   display: block !important;
 }
