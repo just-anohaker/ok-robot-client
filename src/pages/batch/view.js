@@ -1,11 +1,11 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 // import styles from './batch.module.css';
 import { Card, Form, Input, Button, Radio, Select, Row, Col } from 'antd';
 const { Option } = Select;
 
 
 
-class BatchPage extends PureComponent {
+class BatchCard extends PureComponent {
   constructor(...args) {
     super(...args);
     this.state = {
@@ -27,47 +27,43 @@ class BatchPage extends PureComponent {
   };
 
   getDelegatePanel(type) {
-    const formItemLayout = {
-      labelCol: { span: 6 },
-      wrapperCol: { span: 8 },
-    };
     if (type === "iceberg") {
       return (
-        <Form  {...formItemLayout}>
-          <Form.Item label="委托总量" >
+        <Fragment >
+          <Form.Item label="委托总量">
             <Input placeholder="请输入执行账户" />
           </Form.Item>
           <Form.Item label="委托深度" >
             <Input placeholder="请输入执行账户" />
           </Form.Item>
-          <Form.Item label="单笔数量（ETM）">
+          <Form.Item label="数量(ETM)">
             <Input placeholder="请输入执行账户" />
           </Form.Item>
-          <Form.Item label="最高买入价（USDT）" >
+          <Form.Item label="最高价(USDT)" >
             <Input placeholder="请输入执行账户" />
           </Form.Item>
-        </Form>
+        </Fragment>
       )
     }
     else if (type === "limit") {
       return (
-        <Form {...formItemLayout}>
-          <Form.Item label="价格（USDT）" >
+        <Fragment>
+          <Form.Item label="价格(USDT)" >
             <Input placeholder="请输入执行账户" />
           </Form.Item>
-          <Form.Item label="总量（ETM）">
+          <Form.Item label="总量(ETM)">
             <Input placeholder="请输入执行账户" />
           </Form.Item>
-        </Form>
+        </Fragment>
       )
     }
     else if (type === "market") {
       return (
-        <Form {...formItemLayout}>
+        <div >
           <Form.Item label="金额" >
             <Input placeholder="请输入执行账户" />
           </Form.Item>
-        </Form>
+        </div>
       )
     }
     else {
@@ -75,9 +71,19 @@ class BatchPage extends PureComponent {
     }
   }
 
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+      }
+    });
+  };
+
   render() {
 
-    // const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator } = this.props.form;
+
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -90,7 +96,7 @@ class BatchPage extends PureComponent {
     };
     const formTailLayout = {
       labelCol: { span: 2 },
-      wrapperCol: { span: 4, offset: 2 },
+      wrapperCol: { span: 4, offset: 4 },
     };
 
 
@@ -98,47 +104,45 @@ class BatchPage extends PureComponent {
       <Row gutter={24}>
         <Col xl={12} lg={24} md={24} sm={24} xs={24} >
           <Card title="批量交易" >
-            <Form {...formItemLayout}>
+            <Form {...formItemLayout} onSubmit={this.handleSubmit}>
               <Form.Item label="交易对">
-                <Select
-                  placeholder="请选择交易对"
-                  style={{ width: 230 }}
-                  onChange={this.handleFormPair}
-                >
-                  <Option value="ETM">ETM</Option>
-                  <Option value="USDT">USDT</Option>
-                </Select>
-              </Form.Item>
-              {/* <Form.Item label="交易对">
-                {getFieldDecorator('tranType', {
+                {getFieldDecorator('tranPair', {
                   rules: [{ required: true, message: '请选择交易对!' }],
                 })(
                   <Select
                     placeholder="请选择交易对"
                     style={{ width: 230 }}
-                    onChange={this.handleFormPair}
+                  // onChange={this.handleFormPair}
                   >
                     <Option value="ETM">ETM</Option>
                     <Option value="USDT">USDT</Option>
                   </Select>
                 )}
-              </Form.Item> */}
+              </Form.Item>
               <Form.Item label="交易类型" >
-                <Radio.Group defaultValue="buy" onChange={this.handleFormTransaction}>
-                  <Radio.Button value="buy">买入</Radio.Button>
-                  <Radio.Button value="sell">卖出</Radio.Button>
-                </Radio.Group>
+                {getFieldDecorator('tranType', {
+                  rules: [{ required: true, message: '请选择交易对!' }],
+                })(
+                  <Radio.Group onChange={this.handleFormTransaction}>
+                    <Radio.Button value="buy">买入</Radio.Button>
+                    <Radio.Button value="sell">卖出</Radio.Button>
+                  </Radio.Group>
+                )}
               </Form.Item>
               <Form.Item label="委托类型">
-                <Select
-                  placeholder="请选择委托类型"
-                  onChange={this.handleFormDelegate}
-                  style={{ width: 230 }}
-                >
-                  <Option value="limit">限价交易</Option>
-                  <Option value="market">市价交易</Option>
-                  <Option value="iceberg">冰山委托</Option>
-                </Select>
+                {getFieldDecorator('delegate', {
+                  rules: [{ required: true }],
+                })(
+                  <Select
+                    placeholder="请选择委托类型"
+                    onChange={this.handleFormDelegate}
+                    style={{ width: 230 }}
+                  >
+                    <Option value="limit">限价交易</Option>
+                    <Option value="market">市价交易</Option>
+                    <Option value="iceberg">冰山委托</Option>
+                  </Select>
+                )}
                 {/* {this.getDelegatePanel(this.state.delegate)} */}
               </Form.Item>
               {this.getDelegatePanel(this.state.delegate)}
@@ -149,7 +153,11 @@ class BatchPage extends PureComponent {
 
               </Form.Item>
               <Form.Item label="执行账户" >
-                <Input placeholder="请输入执行账户" />
+                {getFieldDecorator('account', {
+                  rules: [{ required: true, message: '请输入执行账户!' }],
+                })(
+                  <Input />
+                )}
               </Form.Item>
               <Form.Item {...formTailLayout}>
                 <Button type="primary">Submit</Button>
@@ -162,4 +170,5 @@ class BatchPage extends PureComponent {
   }
 }
 
+const BatchPage = Form.create({ name: 'batchcard' })(BatchCard);
 export default BatchPage;
