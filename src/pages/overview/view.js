@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { view as StretchTable } from '../../components/stretchtable';
 import { view as CandleChart } from '../../components/candlechart';
 import { actions as loading } from '../../components/loading';
@@ -354,7 +354,13 @@ class OverviewPage extends PureComponent {
     this.state = {
       chartData: [],
       newData: [],
-      trData: []
+      trData: [],
+      isUp: true,
+      dealprice: 0,
+      gain: 0,
+      max: 0,
+      min: 0,
+      count: 0
     };
   }
 
@@ -368,7 +374,13 @@ class OverviewPage extends PureComponent {
       this.setState({
         chartData,
         newData,
-        trData
+        trData,
+        isUp: false,
+        dealprice: 56,
+        gain: 19,
+        max: 2300,
+        min: 1000,
+        count: 1000
       });
       store.dispatch(loading.hideLoading());
     }, 2000);
@@ -392,6 +404,36 @@ class OverviewPage extends PureComponent {
 
   }
 
+  getIsUpTitle(isUp, dealprice, gain) {
+    if (isUp) {
+      return (
+        <Fragment>
+          <div className={styles.titleItem}>
+            <p>最新成交价</p>
+            <p className={styles.titleValue1}> {dealprice.toLocaleString()} USDT ↑</p>
+          </div>
+          <div className={styles.titleItem}>
+            <p>涨跌幅</p>
+            <p className={styles.titleValue1}> + {gain} % </p>
+          </div>
+        </Fragment>
+      )
+    } else {
+      return (
+        <Fragment>
+          <div className={styles.titleItem}>
+            <p>最新成交价</p>
+            <p className={styles.titleValue2}> {dealprice.toLocaleString()} USDT ↓</p>
+          </div>
+          <div className={styles.titleItem}>
+            <p>涨跌幅</p>
+            <p className={styles.titleValue2}> - {gain} % </p>
+          </div>
+        </Fragment>
+      )
+    }
+  }
+
   render() {
 
     const propsNewTable = {
@@ -403,6 +445,7 @@ class OverviewPage extends PureComponent {
       start: "2015-04-07",
       end: "2015-07-28"
     }
+    let { isUp, dealprice, gain, max, min, count } = this.state;
 
     return (
       <div>
@@ -410,25 +453,18 @@ class OverviewPage extends PureComponent {
           <Card title="ETM/USTD 概览" className={styles.chart}>
             <div className={styles.chartTitle}>
               <div className={styles.titleContent}>
-                <div className={styles.titleItem}>
-                  <p>最新成交价</p>
-                  <p className={styles.titleValue1}> 56 USDT ↑</p>
-                </div>
-                <div className={styles.titleItem}>
-                  <p>涨跌幅</p>
-                  <p className={styles.titleValue1}> +19% </p>
-                </div>
+                {this.getIsUpTitle(isUp, dealprice, gain)}
                 <div className={styles.titleItem}>
                   <p>24小时最高</p>
-                  <p className={styles.titleValue2}> 2,223 USDT</p>
+                  <p className={styles.titleValue3}> {max.toLocaleString()} USDT</p>
                 </div>
                 <div className={styles.titleItem}>
                   <p>24小时最低</p>
-                  <p className={styles.titleValue2}> 2,223 USDT</p>
+                  <p className={styles.titleValue3}> {min.toLocaleString()} USDT</p>
                 </div>
                 <div className={styles.titleItem}>
                   <p>24小时成交量</p>
-                  <p className={styles.titleValue2}> 2,223 USDT</p>
+                  <p className={styles.titleValue3}> {count.toLocaleString()} USDT</p>
                 </div>
               </div>
             </div>
@@ -443,7 +479,7 @@ class OverviewPage extends PureComponent {
         <Card title="交易记录">
           <StretchTable data={this.state.trData} columns={trColumns} />
         </Card>
-      </div>
+      </div >
     )
   }
 }

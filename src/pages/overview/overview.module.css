@@ -26,20 +26,23 @@
 }
 
 .titleValue1{
+    font-weight:bold;
     font-size: 18px;
-    color:green;
+    color:#f04864;
 }
 
 .titleValue2{
+    font-weight:bold;
+    font-size: 18px;
+    color:#2fc25b;
+}
+
+.titleValue3{
+    font-weight:bold;
     font-size: 18px;
     color:block;
 }
 
-.chartCandle{
-    /* background-color: rgb(18, 29, 50); */
-}
-
 .new{
-    width: calc(30% - 10px);
-    /* width: calc(100% - 1140px); */
+    width: calc(30% - 20px);
 }
