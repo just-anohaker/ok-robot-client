@@ -179,7 +179,7 @@ class BatchFrom extends React.Component {
 
                 <Form.Item label="交易对">
                   {getFieldDecorator('tranType', {
-                    initialValue: 'USDT',
+                    initialValue: 'ZIL/USDT',
                     rules: [{ required: true, message: '请选择交易对!' }],
                   })(
                     <Select
@@ -193,7 +193,6 @@ class BatchFrom extends React.Component {
                       }
                     >
                       <Option value="ZIL/USDT">ZIL/USDT</Option>
-                      <Option value="USDT">USDT</Option>
                     </Select>
                   )}
                 </Form.Item>
