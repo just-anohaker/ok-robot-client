@@ -1,8 +1,8 @@
 .automatic .btns .show {
-  display: block!important;
+  display: block !important;
 }
 .automatic .btns .hidden {
-  display: none!important;
+  display: none !important;
 }
 .automatic .btns .edit-btn,
 .automatic .btns .edit {

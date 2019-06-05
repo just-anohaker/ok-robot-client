@@ -1,24 +1,21 @@
 import React from 'react';
 import TransactionForm from './transaction-form'
-import RandomSale from './random-sale'
+import RandomSale from './random-form'
 import './less/index.less'
 
-class AutomaticPage extends React.Component{
-  constructor(){
+class AutomaticPage extends React.Component {
+  constructor() {
     super()
-    this.state={
+    this.state = {
 
     }
   }
-  componentDidMount(){
-    console.log(this.props.match.path)
-  }
 
-  render(){
+  render() {
     return (
       <div className="automatic">
-        <TransactionForm/>
-        <RandomSale/>
+        <TransactionForm />
+        <RandomSale />
       </div>
     )
   }

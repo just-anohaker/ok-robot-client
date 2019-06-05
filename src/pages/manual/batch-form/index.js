@@ -1,7 +1,6 @@
 import React from 'react';
-import { Row, Col, Card, Radio, Form, Input, Select, notification } from 'antd';
-import EditBtn from '../../../components/editbtn'
-import SwitchConfirm from '../../../components/switch-confirm'
+import { Row, Col, Card, Radio, Form, Input, Select, notification, Button } from 'antd';
+import Detailtable from '../../../components/detailtable'
 import okrobot from "okrobot-js";
 
 const Option = Select.Option;
@@ -16,12 +15,10 @@ const formItemLayout = {
   },
 };
 
-class TransactionForm extends React.Component {
+class BatchFrom extends React.Component {
   constructor(...args) {
     super(...args)
-    this.state = {
-      tranSwitch:false
-    }
+    this.state = {}
   }
 
   componentDidMount(){}
@@ -39,12 +36,12 @@ class TransactionForm extends React.Component {
 
   async start() {
     console.log('start')
-    const result = await okrobot.auto_maker.start()
+    const result = await okrobot.batch_order.start()
     console.log(result)
   }
   async stop() {
     console.log('stop')
-    const result = await okrobot.auto_maker.stop()
+    const result = await okrobot.batch_order.cancel()
     console.log(result)
   }
   async isRunning() {
@@ -90,42 +87,75 @@ class TransactionForm extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const tranSwitch = this.state.tranSwitch
     return (
       <div className="random-sale">
-        {/*深度补充*/}
+        {/*批量挂单*/}
         <Row gutter={24}>
-          <Col xl={18} lg={24} md={24} sm={24} xs={24} style={{ marginBottom: 24 }}>
-            <Card title="深度补充" extra={<SwitchConfirm tranSwitch={tranSwitch} start={this.start.bind(this)} stop={this.stop.bind(this)} />}  >
+          <Col xl={12} lg={24} md={24} sm={24} xs={24} style={{ marginBottom: 24 }}>
+            <Card title="批量挂单" >
               <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+
+              <Form.Item label="交易对">
+              {getFieldDecorator('account', {
+                rules: [{ required: true, message: '请选择交易对!' }],
+              })(
+                <Select
+                  showSearch
+                  style={{ width: 230 }}
+                  placeholder="请选择交易执行账户"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  <Option value="jack">Jack</Option>
+                  <Option value="lucy">Lucy</Option>
+                  <Option value="tom">Tom</Option>
+                </Select>
+              )}
+            </Form.Item>
                 <Form.Item label="交易方式">
                   {getFieldDecorator('tradeMethod', {
                     rules: [{ required: true, message: '请选择交易方式！' }],
                   })(
                     <Radio.Group buttonStyle="solid">
-                      <Radio.Button value="0">同时买卖</Radio.Button>
-                      <Radio.Button value="1">只挂买单</Radio.Button>
-                      <Radio.Button value="2">只挂卖单</Radio.Button>
+                    <Radio.Button value="0">买入</Radio.Button>
+                    <Radio.Button value="1">卖出</Radio.Button>
                     </Radio.Group>
                   )}
                 </Form.Item>
 
-                <Form.Item label="触发数量">
+                <Form.Item label="价格递增">
                   {getFieldDecorator('transactionNum', {
-                    rules: [{ required: true, message: '请输入触发数量!' }],
+                    rules: [{ required: true, message: '请输入价格递增数量!' }],
                   })(
-                    <Input placeholder="请输入单笔交易数量" style={{ width: 230 }} />
+                    <Input placeholder="请输入价格递增数量" addonAfter="%"  style={{ width: 230 }} />
                   )}
                 </Form.Item>
 
-                <Form.Item label="交易开始条件">
-                  {getFieldDecorator('condition', {
-                    rules: [{ required: true, message: '请选择交易开始条件！' }],
+
+                <Form.Item className="require" label="起始数量" style={{ marginBottom: 0 }}>
+                  <Form.Item style={{ display: 'inline-block' }}>
+                    {getFieldDecorator('bottom', {
+                      rules: [{ required: true, message: '请选择起始数量！' }],
+                    })(
+                      <Input addonAfter="USDT" style={{ width: 150 }} />
+                    )}
+                  </Form.Item>
+                  <span style={{ display: 'inline-block', width: '50px', textAlign: 'center' }}>增量</span>
+                  <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
+                    {getFieldDecorator('top', {
+                      rules: [{ required: true, message: '请选择交易区间！' }],
+                    })(
+                      <Input addonAfter="%" style={{ width: 150 }} />
+                    )}
+                  </Form.Item>
+                </Form.Item>
+
+                <Form.Item label="成本">
+                  {getFieldDecorator('transactionNum', {
                   })(
-                    <Radio.Group >
-                    <Radio value={1}>是</Radio>
-                    <Radio value={2}>否</Radio>
-                  </Radio.Group>
+                    <Input  disabled  style={{ width: 230 }} />
                   )}
                 </Form.Item>
 
@@ -148,13 +178,14 @@ class TransactionForm extends React.Component {
                     </Select>
                   )}
                 </Form.Item>
-                <EditBtn></EditBtn>
+                <Row gutter={24} className="btns" >
+                  <Button type="primary" htmlType="submit" className="aaa">开始挂单</Button>
+                </Row>
               </Form>
             </Card>
           </Col>
-          <Col xl={6} lg={24} md={24} sm={24} xs={24}>
-          <Card title=""  style={{'height':393}} >
-          </Card>
+          <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+            <Detailtable></Detailtable>
           </Col>
         </Row>
       </div>
@@ -163,5 +194,5 @@ class TransactionForm extends React.Component {
 }
 
 
-const Transaction = Form.create({ name: 'transaction' })(TransactionForm);
-export default Transaction
+const Batch = Form.create({ name: 'batch' })(BatchFrom);
+export default Batch

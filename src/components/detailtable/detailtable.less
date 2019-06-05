@@ -1,0 +1,41 @@
+.detail{
+  max-height: 487px;
+  overflow-y: scroll;
+
+  .detail-title, .detail-content, .buy, .sell{
+    display: flex;
+    justify-content:space-between;
+  }
+  .detail-title{
+    margin-bottom: 6px;
+    color: #aeaeae;
+  }
+  .buy, .sell{
+    width:50%;
+    line-height: 26px;
+    font-size: 12px;
+    .bold{
+      min-width: 30px;
+      color: #484848;
+    }
+    .right{
+      text-align: right;
+    }
+    .count-content{
+      position: relative;
+      width: 100%;
+      .count{
+        position: absolute;
+        right: 3px;
+        top: -1px;
+        color: #d18882;
+      }
+      .count-right{
+        color: #83be95;
+        left: 3px;
+      }
+    }
+
+  }
+
+}

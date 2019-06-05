@@ -7,9 +7,9 @@
   },
   {
     "icon": "interation",
-    "key": "automatic",
+    "key": "transction",
     "label": "自动交易",
-    "url": "/home/automatic"
+    "url": "/home/transction"
   },
   {
     "icon": "tool",

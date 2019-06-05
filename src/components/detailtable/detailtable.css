@@ -1,0 +1,47 @@
+.detail {
+  max-height: 487px;
+  overflow-y: scroll;
+}
+.detail .detail-title,
+.detail .detail-content,
+.detail .buy,
+.detail .sell {
+  display: flex;
+  justify-content: space-between;
+}
+.detail .detail-title {
+  margin-bottom: 6px;
+  color: #aeaeae;
+}
+.detail .buy,
+.detail .sell {
+  width: 50%;
+  line-height: 26px;
+  font-size: 12px;
+}
+.detail .buy .bold,
+.detail .sell .bold {
+  min-width: 30px;
+  color: #484848;
+}
+.detail .buy .right,
+.detail .sell .right {
+  text-align: right;
+}
+.detail .buy .count-content,
+.detail .sell .count-content {
+  position: relative;
+  width: 100%;
+}
+.detail .buy .count-content .count,
+.detail .sell .count-content .count {
+  position: absolute;
+  right: 3px;
+  top: -1px;
+  color: #d18882;
+}
+.detail .buy .count-content .count-right,
+.detail .sell .count-content .count-right {
+  color: #83be95;
+  left: 3px;
+}

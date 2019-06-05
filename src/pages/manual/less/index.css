@@ -1,0 +1,26 @@
+.manual .require label::before {
+  display: inline-block;
+  margin-right: 4px;
+  color: #f5222d;
+  font-size: 14px;
+  font-family: SimSun, sans-serif;
+  line-height: 1;
+  content: '*';
+}
+.manual .btns .show {
+  display: block !important;
+}
+.manual .btns .hidden {
+  display: none !important;
+}
+.manual .btns .edit-btn,
+.manual .btns .edit {
+  float: right;
+  margin-right: 10px;
+}
+.manual .btns .edit {
+  display: none;
+}
+.manual .btns .edit .save {
+  margin-right: 10px;
+}
