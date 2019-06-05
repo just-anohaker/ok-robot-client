@@ -11,14 +11,21 @@ okrobot.config.hostname = "http://192.168.2.214:1996"
 class BatchCard extends PureComponent {
   constructor(...args) {
     super(...args);
+
     this.state = {
-      delegate: 'none',
+      delegate: "none",
+      type: "none"
     };
   }
 
   handleFormDelegate = e => {
-    console.log(e)
+    // console.log("handleFormDelegate", e)
     this.setState({ delegate: e });
+  };
+
+  handleFormType = e => {
+    // console.log("handleFormType", e.target.value)
+    this.setState({ type: e.target.value });
   };
 
   handleSubmit = e => {
@@ -29,25 +36,42 @@ class BatchCard extends PureComponent {
       }
       console.log(values)
 
-      okrobot.batch_order.limitOrder(values, {
-        httpkey: 'a97895ea-96b3-4645-b7b2-3cb9c02de0f2',
-        httpsecret: 'A463C43A23214D470D712311D88D3CEB',
-        passphrase: '88888888'
-      })
-        .then(() => {
-
+      if (values.delegate === "limit") {
+        okrobot.batch_order.limitOrder(values, {
+          httpkey: 'a97895ea-96b3-4645-b7b2-3cb9c02de0f2',
+          httpsecret: 'A463C43A23214D470D712311D88D3CEB',
+          passphrase: '88888888'
         })
-        .catch(err => {
-          message.error("现价交易失败失败！" + err);
-        });
+          .then(() => {
+
+          })
+          .catch(err => {
+            message.error("现价交易失败失败！" + err);
+          });
+      }
+      else if (values.delegate === "market") {
+        okrobot.batch_order.marketOrder(values, {
+          httpkey: 'a97895ea-96b3-4645-b7b2-3cb9c02de0f2',
+          httpsecret: 'A463C43A23214D470D712311D88D3CEB',
+          passphrase: '88888888'
+        })
+          .then(() => {
+
+          })
+          .catch(err => {
+            message.error("市价交易失败失败！" + err);
+          });
+      }
+
     });
   };
 
 
-  getDelegatePanel(type) {
+  getDelegatePanel() {
     const { getFieldDecorator } = this.props.form;
+    let { delegate, type } = this.state;
 
-    if (type === "iceberg") {
+    if (delegate === "iceberg") {
       return (
         <Fragment >
           <Form.Item label="委托总量">
@@ -65,7 +89,7 @@ class BatchCard extends PureComponent {
         </Fragment>
       )
     }
-    else if (type === "limit") {
+    else if (delegate === "limit") {
       return (
         <Fragment>
           <Form.Item label="价格(USDT)" >
@@ -86,17 +110,39 @@ class BatchCard extends PureComponent {
         </Fragment>
       )
     }
-    else if (type === "market") {
-      return (
-        <div >
-          <Form.Item label="金额" >
-            <Input placeholder="请输入执行账户" />
-          </Form.Item>
-        </div>
-      )
+    else if (delegate === "market") {
+      if (type === "1") {
+        return (
+          <Fragment >
+            <Form.Item label="金额" >
+              {getFieldDecorator('notional', {
+                rules: [{ required: true, message: '请输入金额!' }],
+              })(
+                <Input />
+              )}
+            </Form.Item>
+          </Fragment>
+        )
+      }
+      else if (type === "2") {
+        return (
+          <Fragment >
+            <Form.Item label="数量" >
+              {getFieldDecorator('size', {
+                rules: [{ required: true, message: '请输入数量!' }],
+              })(
+                <Input />
+              )}
+            </Form.Item>
+          </Fragment>
+        )
+      }
+      else {
+        return (<Fragment></Fragment>)
+      }
     }
     else {
-      return (<div></div>)
+      return (<Fragment></Fragment>)
     }
   }
 
@@ -138,10 +184,10 @@ class BatchCard extends PureComponent {
                 )}
               </Form.Item>
               <Form.Item label="交易类型" >
-                {getFieldDecorator('tranType', {
+                {getFieldDecorator('type', {
                   rules: [{ required: true, message: '请选择交易对!' }],
                 })(
-                  <Radio.Group >
+                  <Radio.Group onChange={this.handleFormType}>
                     <Radio.Button value="1">买入</Radio.Button>
                     <Radio.Button value="2">卖出</Radio.Button>
                   </Radio.Group>
@@ -162,7 +208,7 @@ class BatchCard extends PureComponent {
                   </Select>
                 )}
               </Form.Item>
-              {this.getDelegatePanel(this.state.delegate)}
+              {this.getDelegatePanel()}
               <Form.Item label="可买ETM" >
 
               </Form.Item>
