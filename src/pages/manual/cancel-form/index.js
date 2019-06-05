@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, Radio, Form, Input, Select, notification, Button } from 'antd';
+import { Row, Col, Card, Form, Input, Select, notification, Button } from 'antd';
 import DetailBill from '../../../components/detail-bill'
 
 import okrobot from "okrobot-js";
@@ -20,7 +20,7 @@ class CancelFrom extends React.Component {
   constructor(...args) {
     super(...args)
     this.state = {
-      tranType: 'ETM',
+      tranType: 'ZIL/USDT',
       accounts: []
     }
   }
@@ -28,32 +28,15 @@ class CancelFrom extends React.Component {
   componentDidMount() {
     let account = [{
       name: 'Jack',
-      httpKey: 'wew',
-      httpSecret: 'wew',
-      passphrase: 'wer'
-    }, {
-      name: 'Lucy',
-      httpKey: '1',
-      httpSecret: '2',
-      passphrase: 'we3r'
-    }, {
-      name: 'Tom',
-      httpKey: 'wew',
-      httpSecret: 'wew',
-      passphrase: 'wer'
-    }, {
-      name: 'Petter',
-      httpKey: '123',
-      httpSecret: '123',
-      passphrase: '123'
-    },
-    ]
+      httpkey: 'a97895ea-96b3-4645-b7b2-3cb9c02de0f2',
+      httpsecret: 'A463C43A23214D470D712311D88D3CEB',
+      passphrase: '88888888'
+    }]
     this.setState({ accounts: account })
   }
 
   async cancel(params) {
-    console.log(params)
-    const result = await okrobot.batch_order.cancel(params)
+    const result = await okrobot.batch_order.cancel(params.options,params.account)
     console.log(result)
     notification.open({
       message: 'Notification Title',
@@ -72,9 +55,8 @@ class CancelFrom extends React.Component {
       if (!err) {
         console.log('Received values of form: ', values);
         let options = {
-          type: Number(values.tradeMethod),
           topPrice: Number(values.top),
-          bottomPrice: Number(values.bottom)
+          startPrice: Number(values.bottom)
         };
         let account = {}
         let accountData = this.state.accounts;
@@ -82,8 +64,8 @@ class CancelFrom extends React.Component {
           if (accountData[i]['name'] === values.account) {
             account = {
               name: values.account,
-              httpKey: accountData[i].httpKey,
-              httpSecret: accountData[i].httpSecret,
+              httpkey: accountData[i].httpkey,
+              httpsecret: accountData[i].httpsecret,
               passphrase: accountData[i].passphrase
             }
             break;
@@ -108,6 +90,7 @@ class CancelFrom extends React.Component {
 
                 <Form.Item label="交易对">
                   {getFieldDecorator('tranType', {
+                    initialValue: 'USDT',
                     rules: [{ required: true, message: '请选择交易对!' }],
                   })(
                     <Select
@@ -120,26 +103,28 @@ class CancelFrom extends React.Component {
                         option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                       }
                     >
-                      <Option value="ETM">ETM</Option>
+                      <Option value="ZIL/USDT">ZIL/USDT</Option>
                       <Option value="USDT">USDT</Option>
                     </Select>
                   )}
                 </Form.Item>
 
-                <Form.Item label="交易方式">
+               {/* <Form.Item label="交易方式">
                   {getFieldDecorator('tradeMethod', {
+                    initialValue:'1',
                     rules: [{ required: true, message: '请选择交易方式！' }],
                   })(
                     <Radio.Group buttonStyle="solid">
-                      <Radio.Button value="0">买入</Radio.Button>
-                      <Radio.Button value="1">卖出</Radio.Button>
+                      <Radio.Button value="1">买入</Radio.Button>
+                      <Radio.Button value="2">卖出</Radio.Button>
                     </Radio.Group>
                   )}
                 </Form.Item>
-
+                  */}
                 <Form.Item className="require" label="价格范围" style={{ marginBottom: 0 }}>
                   <Form.Item style={{ display: 'inline-block' }}>
                     {getFieldDecorator('bottom', {
+                      initialValue:'0.01',
                       rules: [{ required: true, message: '请选择价格范围！' }],
                     })(
                       <Input addonAfter={tranType} type="number" style={{ width: 150 }} />
@@ -148,6 +133,7 @@ class CancelFrom extends React.Component {
                   <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}>~</span>
                   <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
                     {getFieldDecorator('top', {
+                      initialValue:'0.02',
                       rules: [{ required: true, message: '请选择交易区间！' }],
                     })(
                       <Input addonAfter={tranType} type="number" style={{ width: 150 }} />
