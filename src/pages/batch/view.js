@@ -18,13 +18,13 @@ class BatchCard extends PureComponent {
     };
   }
 
-  componentDidMount() {
-    let accounts = get("allAccouts");
-    if (!(accounts instanceof Array)) {
-      accounts = [];
-    }
-    this.setState({ accounts })
-  }
+  // componentDidMount() {
+  //   let accounts = get("allAccouts");
+  //   if (!(accounts instanceof Array)) {
+  //     accounts = [];
+  //   }
+  //   this.setState({ accounts })
+  // }
 
   handleFormDelegate = e => {
     this.setState({ delegate: e });
@@ -41,11 +41,17 @@ class BatchCard extends PureComponent {
         console.log('Received values of form: ', values);
       }
 
+      let accounts = get("allAccouts");
+      if (!(accounts instanceof Array)) {
+        accounts = [];
+      }
+      let account = accounts.filter(a => `${a.name}-${a.groupName}` === values.account)[0];
+      // let account = this.state.accounts.filter(a => `${a.name}-${a.groupName}` === values.account)[0];
+
       if (values.delegate === "limit") {
         store.dispatch(loading.showLoading());
 
-        let account = this.state.accounts.filter(a => `${a.name}-${a.groupName}` === values.account);
-        okrobot.batch_order.limitOrder(values, account[0])
+        okrobot.batch_order.limitOrder(values, account)
           .then(() => {
             store.dispatch(loading.hideLoading());
           })
@@ -60,8 +66,7 @@ class BatchCard extends PureComponent {
       else if (values.delegate === "market") {
         store.dispatch(loading.showLoading());
 
-        let account = this.state.accounts.filter(a => `${a.name}-${a.groupName}` === values.account);
-        okrobot.batch_order.marketOrder(values, account[0])
+        okrobot.batch_order.marketOrder(values, account)
           .then(() => {
             store.dispatch(loading.hideLoading());
           })
@@ -190,14 +195,14 @@ class BatchCard extends PureComponent {
       wrapperCol: { span: 4, offset: 4 },
     };
 
-    const { accounts } = this.state
+    // const { accounts } = this.state
 
     return (
       <Row gutter={24}>
         <Col xl={12} lg={24} md={24} sm={24} xs={24} >
           <Card title="批量交易" >
             <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-              <Form.Item label="交易对">
+              {/* <Form.Item label="交易对">
                 {getFieldDecorator('tranPair', {
                   rules: [{ required: true, message: '请选择交易对!' }],
                 })(
@@ -209,7 +214,7 @@ class BatchCard extends PureComponent {
                     <Option value="USDT">USDT</Option>
                   </Select>
                 )}
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item label="交易类型" >
                 {getFieldDecorator('type', {
                   rules: [{ required: true, message: '请选择交易对!' }],
@@ -238,13 +243,13 @@ class BatchCard extends PureComponent {
               {this.getDelegatePanel()}
 
               <Form.Item label="可买">
-                <Input  disabled addonAfter="ETM" style={{ width: 230 }} />
+                <Input disabled addonAfter="ETM" style={{ width: 230 }} />
               </Form.Item>
               <Form.Item label="余额">
-                <Input  disabled addonAfter="USDT" style={{ width: 230 }} />
+                <Input disabled addonAfter="USDT" style={{ width: 230 }} />
               </Form.Item>
 
-              <Form.Item label="执行账户" >
+              {/* <Form.Item label="执行账户" >
                 {getFieldDecorator('account', {
                   rules: [{ required: true, message: '请输入执行账户!' }],
                 })(
@@ -260,7 +265,7 @@ class BatchCard extends PureComponent {
 
                   </Select>
                 )}
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item {...formTailLayout}>
                 <Button type="primary" htmlType="submit">提交</Button>
               </Form.Item>
@@ -269,7 +274,7 @@ class BatchCard extends PureComponent {
         </Col>
         <Col xl={12} lg={24} md={24} sm={24} xs={24}>
           <DetailBill title="交易情况" data={this.state.data}></DetailBill>
-      </Col>
+        </Col>
       </Row>
     );
   }
