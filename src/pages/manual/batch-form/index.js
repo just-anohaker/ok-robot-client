@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Card, Radio, Form, Input, notification, Button } from 'antd';
 // import DetailBill from '../../../components/detail-bill';
-import { get } from "../../../util/localstorage.js";
+// import { get } from "../../../util/localstorage.js";
 import okrobot from "okrobot-js";
 
 const formItemLayout = {
@@ -28,113 +28,11 @@ class BatchFrom extends React.Component {
     }
   }
 
-  componentDidMount() {
-    let account = get("allAccouts") || [];
-    this.setState({ accounts: account });
+  // componentDidMount() {
+  //   let account = get("allAccouts") || [];
+  //   this.setState({ accounts: account });
 
-    let o_account = {
-      httpkey: 'a97895ea-96b3-4645-b7b2-3cb9c02de0f2',
-      httpsecret: 'A463C43A23214D470D712311D88D3CEB',
-      passphrase: '88888888'
-    };
-
-    okrobot.batch_order.startDepInfo(o_account)
-      .then((res) => {
-        console.log("startDepInfo-then", res);
-      })
-      .catch(err => {
-        console.log("startDepInfo-catch", err);
-      })
-
-    okrobot.eventbus.on("depth", (name, data) => {
-      console.log("startDepInfo-depthevent", name, data);
-      let asks = data.asks;
-      console.log(asks)
-      let dataSource = asks.map((v, i) => {
-        let mine = 0, price = v[0], sum = v[1], other = 0;
-        if (v.length === 4) {
-          mine = v[3];
-
-        }
-        other = sum - mine;
-        return {
-          key: i,
-          price,
-          sum,
-          mine,
-          other
-        }
-      })
-      this.setState({ data: dataSource });
-    });
-
-    // const dataSource = [
-    //   {
-    //     key: '1',
-    //     price: '123',
-    //     sum: 32,
-    //     mine: '004',
-    //     other: '001'
-    //   },
-    //   {
-    //     key: '2',
-    //     price: '121',
-    //     sum: 42,
-    //     mine: '004',
-    //     other: '001'
-    //   },
-    //   {
-    //     key: '3',
-    //     price: '153',
-    //     sum: 32,
-    //     mine: '004',
-    //     other: '001'
-    //   },
-    //   {
-    //     key: '4',
-    //     price: '4534',
-    //     sum: 42,
-    //     mine: '004',
-    //     other: '001'
-    //   },
-    //   {
-    //     key: '5',
-    //     price: '2342',
-    //     sum: 32,
-    //     mine: '004',
-    //     other: '001'
-    //   },
-    //   {
-    //     key: '6',
-    //     price: '123',
-    //     sum: 42,
-    //     mine: '004',
-    //     other: '001'
-    //   },
-    //   {
-    //     key: '7',
-    //     price: '123',
-    //     sum: 32,
-    //     mine: '004',
-    //     other: '001'
-    //   },
-    //   {
-    //     key: '8',
-    //     price: '43534',
-    //     sum: 42,
-    //     mine: '004',
-    //     other: '001'
-    //   },
-    //   {
-    //     key: '9',
-    //     price: '43534',
-    //     sum: 42,
-    //     mine: '004',
-    //     other: '001'
-    //   }
-    // ];
-    // this.setState({ data: dataSource, accounts: account })
-  }
+  // }
 
   async generate({ options, account }) {
     try {

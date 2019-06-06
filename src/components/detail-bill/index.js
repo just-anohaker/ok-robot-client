@@ -34,7 +34,7 @@ class DetailBill extends React.Component {
     let title = this.props.title
     let dataSource = this.props.data
     return (
-      <Card title={title} style={{ maxHeight: '550px', overflowY: 'scroll' }}>
+      <Card title={title} style={{ maxHeight: '458px', overflowY: 'scroll' }}>
         <Table dataSource={dataSource} columns={columns} pagination={false} />
       </Card>
     )

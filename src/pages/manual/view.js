@@ -4,8 +4,9 @@ import Cancel from './cancel-form';
 import { Row, Col } from 'antd';
 import DetailBill from '../../components/detail-bill';
 import './less/index.less';
-import { get } from "../../util/localstorage.js";
+// import { get } from "../../util/localstorage.js";
 import okrobot from "okrobot-js";
+import { connect } from 'react-redux';
 
 class ManualPage extends React.Component {
   constructor(...args) {
@@ -18,15 +19,15 @@ class ManualPage extends React.Component {
 
 
   componentDidMount() {
-    let account = get("allAccouts") || [];
-    this.setState({ accounts: account });
+    // let account = get("allAccouts") || [];
+    // this.setState({ accounts: account });
 
-    let o_account = {
-      httpkey: 'a97895ea-96b3-4645-b7b2-3cb9c02de0f2',
-      httpsecret: 'A463C43A23214D470D712311D88D3CEB',
-      passphrase: '88888888'
-    };
-
+    // let o_account = {
+    //   httpkey: 'a97895ea-96b3-4645-b7b2-3cb9c02de0f2',
+    //   httpsecret: 'A463C43A23214D470D712311D88D3CEB',
+    //   passphrase: '88888888'
+    // };
+    let o_account = this.props.account
     okrobot.batch_order.startDepInfo(o_account)
       .then((res) => {
         console.log("startDepInfo-then", res);
@@ -36,11 +37,11 @@ class ManualPage extends React.Component {
       })
 
     okrobot.eventbus.on("depth", (name, data) => {
-      console.log("startDepInfo-depthevent", name, data);
+      // console.log("startDepInfo-depthevent", name, data);
       let { asks, bids } = data;
-      console.log("aaaa", asks)
+      // console.log("aaaa", asks)
       asks.reverse();
-      console.log("cccc", asks)
+      // console.log("cccc", asks)
       let dataAsks = asks.map((v, i) => {
         let mine = 0, price = v[0], sum = v[1], other = 0;
         if (v.length === 4) {
@@ -56,7 +57,7 @@ class ManualPage extends React.Component {
           other
         }
       });
-      console.log("bbbb", dataAsks)
+      // console.log("bbbb", dataAsks)
 
       let dataBids = bids.map((v, i) => {
         let mine = 0, price = v[0], sum = v[1], other = 0;
@@ -103,4 +104,13 @@ class ManualPage extends React.Component {
 }
 
 
-export default ManualPage;
+const mapStateToProps = (state) => {
+  console.log(state)
+  const infoingData = state.infoing;
+
+  return {
+    account: infoingData.account
+  };
+};
+
+export default connect(mapStateToProps)(ManualPage);
