@@ -36,29 +36,36 @@ class AccountsPage extends PureComponent {
   }
 
   queryTableData() {
-    store.dispatch(loading.showLoading());
+    let accounts = get("allAccouts");
+    if (!accounts instanceof Array) {
+      accounts = [];
+    }
+    let tableData = this.transferData(accounts);
+    this.setState({ tableData });
 
-    okrobot.user.getAll()
-      .then((res) => {
-        if (res.length > 0) {
-          let tableData = this.transferData(res);
-          this.setState({ tableData });
+    // store.dispatch(loading.showLoading());
+    // okrobot.user.getAll()
+    //   .then((res) => {
+    //     if (res.length > 0) {
+    //       let tableData = this.transferData(res);
+    //       this.setState({ tableData });
 
-          put("allAccouts", res);
-        }
+    //       put("allAccouts", res);
+    //     }
 
-        store.dispatch(loading.hideLoading());
-      })
-      .catch(err => {
-        notification["error"]({
-          message: "请求数据错误",
-          description: "" + err
-        });
-        store.dispatch(loading.hideLoading());
-      });
+    //     store.dispatch(loading.hideLoading());
+    //   })
+    //   .catch(err => {
+    //     notification["error"]({
+    //       message: "请求数据错误",
+    //       description: "" + err
+    //     });
+    //     store.dispatch(loading.hideLoading());
+    //   });
   }
 
   addTableData(row, cb) {
+    store.dispatch(loading.showLoading());
     okrobot.user.add(row.controller, row.name, row.api, row.secret, row.passphrase)
       .then((res) => {
         console.log("updata accounts", res)
@@ -69,8 +76,9 @@ class AccountsPage extends PureComponent {
 
         let newAccounts = get("allAccouts");
         newAccounts.push(res);
-        put("allAccouts", newAccounts)
+        put("allAccouts", newAccounts);
 
+        store.dispatch(loading.hideLoading());
         cb();
       })
       .catch(err => {
@@ -78,11 +86,14 @@ class AccountsPage extends PureComponent {
           message: "添加数据错误",
           description: "" + err
         });
+
+        store.dispatch(loading.hideLoading());
         cb(err);
       });
   }
 
   editTableData(row, cb) {
+    store.dispatch(loading.showLoading());
     okrobot.user.update(row.id, {
       groupName: row.controller, name: row.name, httpKey: row.api, httpSecret: row.secret, passphrase: row.passphrase
     })
@@ -98,6 +109,7 @@ class AccountsPage extends PureComponent {
         // console.log("edit accounts", newAccounts)
         put("allAccouts", newAccounts);
 
+        store.dispatch(loading.hideLoading());
         cb();
       })
       .catch(err => {
@@ -105,11 +117,14 @@ class AccountsPage extends PureComponent {
           message: "编辑数据错误",
           description: "" + err
         });
+
+        store.dispatch(loading.hideLoading());
         cb(err);
       });
   }
 
   removeTableData(row, cb) {
+    store.dispatch(loading.showLoading());
     okrobot.user.remove(row.id)
       .then((res) => {
         let newAccounts = get("allAccouts");
@@ -120,6 +135,7 @@ class AccountsPage extends PureComponent {
         // console.log("remove accounts", newAccounts)
         put("allAccouts", newAccounts);
 
+        store.dispatch(loading.hideLoading());
         cb();
       })
       .catch(err => {
@@ -127,6 +143,8 @@ class AccountsPage extends PureComponent {
           message: "删除数据错误",
           description: "" + err
         });
+
+        store.dispatch(loading.hideLoading());
         cb(err);
       });
   }
