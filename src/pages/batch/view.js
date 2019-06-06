@@ -3,7 +3,7 @@ import { actions as loading } from '../../components/loading';
 import { connect } from 'react-redux';
 import store from "../../Store";
 import okrobot from "okrobot-js";
-import DetailBill from '../../components/detail-bill';
+import DetailBill from '../../components/detail-bill/detail';
 import { Card, Form, Input, Button, Radio, Select, Row, Col, notification } from 'antd';
 const { Option } = Select;
 
