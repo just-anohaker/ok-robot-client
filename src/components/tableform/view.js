@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { PureComponent, Fragment } from 'react';
-import { Table, Button, Input, message, Popconfirm, Divider } from 'antd';
+import { Table, Button, Input, notification, Popconfirm, Divider } from 'antd';
 import isEqual from 'lodash/isEqual';
 import styles from './tableform.module.css';
 
@@ -21,11 +21,9 @@ class TableForm extends PureComponent {
   }
 
   static getDerivedStateFromProps(nextProps, preState) {
-    // console.log("getDerivedStateFromProps", nextProps, preState)
     if (isEqual(nextProps.data, preState.value)) {
       return null;
     }
-    // console.log("ssssssssssssss")
     return {
       data: nextProps.data.slice(),
       value: nextProps.data.slice(),
@@ -92,7 +90,11 @@ class TableForm extends PureComponent {
     // console.log("remove", data, key)
     onChange("del", data, key, (err) => {
       if (err) {
-        message.error('删除信息失败！' + err);
+        // message.error('删除信息失败！' + err);
+        notification.error({
+          message: "删除信息失败！",
+          description: ""+ err
+        });
         this.setState({ loading: false });
         return;
       }
@@ -116,7 +118,11 @@ class TableForm extends PureComponent {
     const target = this.getRowByKey(key) || {};
     // console.log(target)
     if (!target.name || !target.controller || !target.httpkey || !target.httpsecret || !target.passphrase) {
-      message.error('请填写完整成员信息。');
+      // message.error('请填写完整成员信息。');
+      notification.error({
+          message: "添加数据失败",
+          description: "请填写完整成员信息。"
+        });
       e.target.focus();
       this.setState({ loading: false });
       return;
@@ -126,7 +132,11 @@ class TableForm extends PureComponent {
     const { onChange } = this.props;
     onChange("save", data, key, (err) => {
       if (err) {
-        message.error("保存信息失败！" + err);
+        // message.error("保存信息失败！" + err);
+        notification.error({
+          message: "保存数据失败！",
+          description: ""+ err
+        });
         this.setState({ loading: false });
         return;
       }

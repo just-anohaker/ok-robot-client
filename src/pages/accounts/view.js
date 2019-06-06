@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Card, notification } from 'antd';
+import { Card } from 'antd';
 import { view as TableForm } from '../../components/tableform';
 import { actions as loading } from '../../components/loading';
 import store from "../../Store";
@@ -40,26 +40,6 @@ class AccountsPage extends PureComponent {
     console.log(accounts)
     let tableData = this.transferData(accounts);
     this.setState({ tableData });
-
-    // store.dispatch(loading.showLoading());
-    // okrobot.user.getAll()
-    //   .then((res) => {
-    //     if (res.length > 0) {
-    //       let tableData = this.transferData(res);
-    //       this.setState({ tableData });
-
-    //       put("allAccouts", res);
-    //     }
-
-    //     store.dispatch(loading.hideLoading());
-    //   })
-    //   .catch(err => {
-    //     notification["error"]({
-    //       message: "请求数据错误",
-    //       description: "" + err
-    //     });
-    //     store.dispatch(loading.hideLoading());
-    //   });
   }
 
   addTableData(row, cb) {
@@ -82,10 +62,6 @@ class AccountsPage extends PureComponent {
         cb();
       })
       .catch(err => {
-        notification.error({
-          message: "添加数据错误",
-          description: "" + err
-        });
 
         store.dispatch(loading.hideLoading());
         cb(err);
@@ -113,10 +89,6 @@ class AccountsPage extends PureComponent {
         cb();
       })
       .catch(err => {
-        notification.error({
-          message: "编辑数据错误",
-          description: "" + err
-        });
 
         store.dispatch(loading.hideLoading());
         cb(err);
@@ -141,10 +113,6 @@ class AccountsPage extends PureComponent {
         cb();
       })
       .catch(err => {
-        notification["error"]({
-          message: "删除数据错误",
-          description: "" + err
-        });
 
         store.dispatch(loading.hideLoading());
         cb(err);
