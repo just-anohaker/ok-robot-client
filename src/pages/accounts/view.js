@@ -4,10 +4,14 @@ import { view as TableForm } from '../../components/tableform';
 import { actions as loading } from '../../components/loading';
 import store from "../../Store";
 import okrobot from "okrobot-js";
+<<<<<<< HEAD
 // import localDtore
+=======
+import { put as storePut } from "../../util/localstorage.js";
+>>>>>>> 0c477cad48ba8482196b17478feee2e30ff1a6c7
 
 // okrobot.config.hostname = "http://192.168.2.97:1996"
-okrobot.config.hostname = "http://47.111.160.173:1996"
+okrobot.config.hostname = "http://47.111.160.173:1996";
 
 class AccountsPage extends PureComponent {
   constructor(props) {
@@ -37,7 +41,7 @@ class AccountsPage extends PureComponent {
               passphrase: item.passphrase
             }
           });
-
+          storePut("allAccouts",res);
           this.setState({ tableData })
         }
 
