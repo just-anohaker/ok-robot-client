@@ -14,8 +14,6 @@ import store from "../../Store";
 import okrobot from "okrobot-js";
 import { put } from "../../util/localstorage.js";
 
-okrobot.config.hostname = "http://47.111.160.173:1996";
-
 class HomePage extends PureComponent {
   constructor(props) {
     super(props);
@@ -31,6 +29,9 @@ class HomePage extends PureComponent {
       .then((res) => {
         if (res.length > 0) {
           put("allAccouts", res);
+        }
+        else {
+          put("allAccouts", []);
         }
 
         store.dispatch(loading.hideLoading());

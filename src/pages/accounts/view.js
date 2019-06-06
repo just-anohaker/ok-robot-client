@@ -6,9 +6,6 @@ import store from "../../Store";
 import okrobot from "okrobot-js";
 import { put, get } from "../../util/localstorage.js";
 
-// okrobot.config.hostname = "http://192.168.2.97:1996"
-okrobot.config.hostname = "http://47.111.160.173:1996";
-
 class AccountsPage extends PureComponent {
   constructor(props) {
     super(props);
@@ -23,12 +20,12 @@ class AccountsPage extends PureComponent {
   transferData = (data) => {
     let rows = data.map((item, index) => {
       return {
-        key: index,
+        key: item.id,
         id: item.id,
         name: item.name,
         controller: item.groupName,
-        api: item.httpKey,
-        secret: item.httpSecret,
+        httpkey: item.httpkey,
+        httpsecret: item.httpsecret,
         passphrase: item.passphrase
       }
     });
@@ -37,9 +34,10 @@ class AccountsPage extends PureComponent {
 
   queryTableData() {
     let accounts = get("allAccouts");
-    if (!accounts instanceof Array) {
+    if (!(accounts instanceof Array)) {
       accounts = [];
     }
+    console.log(accounts)
     let tableData = this.transferData(accounts);
     this.setState({ tableData });
 
@@ -66,15 +64,17 @@ class AccountsPage extends PureComponent {
 
   addTableData(row, cb) {
     store.dispatch(loading.showLoading());
-    okrobot.user.add(row.controller, row.name, row.api, row.secret, row.passphrase)
+    okrobot.user.add(row.controller, row.name, row.httpkey, row.httpsecret, row.passphrase)
       .then((res) => {
-        console.log("updata accounts", res)
+        // console.log("updata accounts res", res)
         let newRow = this.transferData([res]);
+        // console.log("updata accounts newRow", newRow)
         let { tableData } = this.state;
-        tableData.push(newRow);
+        tableData.push(newRow[0]);
         this.setState({ tableData });
 
         let newAccounts = get("allAccouts");
+        // console.log("updata accounts newAccounts", newAccounts)
         newAccounts.push(res);
         put("allAccouts", newAccounts);
 
@@ -95,7 +95,7 @@ class AccountsPage extends PureComponent {
   editTableData(row, cb) {
     store.dispatch(loading.showLoading());
     okrobot.user.update(row.id, {
-      groupName: row.controller, name: row.name, httpKey: row.api, httpSecret: row.secret, passphrase: row.passphrase
+      groupName: row.controller, name: row.name, httpkey: row.api, httpsecret: row.secret, passphrase: row.passphrase
     })
       .then((res) => {
         let newAccounts = get("allAccouts");
@@ -125,8 +125,10 @@ class AccountsPage extends PureComponent {
 
   removeTableData(row, cb) {
     store.dispatch(loading.showLoading());
+    // console.log("removeTableData");
     okrobot.user.remove(row.id)
       .then((res) => {
+        // console.log("remove:", res);
         let newAccounts = get("allAccouts");
         // console.log("remove accounts", newAccounts)
         newAccounts = newAccounts.filter((item) => {
@@ -152,12 +154,14 @@ class AccountsPage extends PureComponent {
 
   onChange = (type, data, key, cb) => {// 表格更新
     let row = data.filter(item => item.key === key)[0];//被操作数据行
-
+    // console.log("ochange", type, data, key)
     if (type === "del") {//删除
       if (typeof key === "string" && key.indexOf("NEW_TEMP_ID_") === 0) {//取消新建
+        // console.log("aaaaaaaa")
         cb();
       }
       else {
+        // console.log("bbbbbbbb")
         this.removeTableData(row, cb);
       }
     }

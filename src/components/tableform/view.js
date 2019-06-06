@@ -13,21 +13,22 @@ class TableForm extends PureComponent {
     super(props);
 
     this.state = {
-      data: props.data,
+      data: props.data.slice(),
       loading: false,
-      value: props.data,
+      value: props.data.slice(),
     };
 
   }
 
   static getDerivedStateFromProps(nextProps, preState) {
+    // console.log("getDerivedStateFromProps", nextProps, preState)
     if (isEqual(nextProps.data, preState.value)) {
       return null;
     }
-
+    // console.log("ssssssssssssss")
     return {
-      data: nextProps.data,
-      value: nextProps.data,
+      data: nextProps.data.slice(),
+      value: nextProps.data.slice(),
     };
   }
 
@@ -59,8 +60,9 @@ class TableForm extends PureComponent {
       key: `NEW_TEMP_ID_${this.index}`,
       name: '',
       controller: '',
-      api: '',
-      secret: '',
+      httpkey: '',
+      httpsecret: '',
+      passphrase: '',
       editable: true,
       isNew: true,
     });
@@ -87,6 +89,7 @@ class TableForm extends PureComponent {
     this.setState({ loading: true });
     const { data } = this.state;
     const { onChange } = this.props;
+    // console.log("remove", data, key)
     onChange("del", data, key, (err) => {
       if (err) {
         message.error('删除信息失败！' + err);
@@ -111,7 +114,8 @@ class TableForm extends PureComponent {
     }
 
     const target = this.getRowByKey(key) || {};
-    if (!target.name || !target.controller || !target.api || !target.secret) {
+    // console.log(target)
+    if (!target.name || !target.controller || !target.httpkey || !target.httpsecret || !target.passphrase) {
       message.error('请填写完整成员信息。');
       e.target.focus();
       this.setState({ loading: false });
@@ -188,17 +192,17 @@ class TableForm extends PureComponent {
         },
       },
       {
-        title: 'API',
-        dataIndex: 'api',
+        title: 'httpkey',
+        dataIndex: 'httpkey',
         width: '400',
         render: (text, record) => {
           if (record.editable) {
             return (
               <Input
                 value={text}
-                onChange={e => this.handleFieldChange(e, 'api', record.key)}
+                onChange={e => this.handleFieldChange(e, 'httpkey', record.key)}
                 onKeyPress={e => this.handleKeyPress(e, record.key)}
-                placeholder="API key"
+                placeholder="httpkey"
               />
             );
           }
@@ -206,16 +210,16 @@ class TableForm extends PureComponent {
         },
       },
       {
-        title: "Secret",
-        dataIndex: 'secret',
+        title: "httpsecret",
+        dataIndex: 'httpsecret',
         render: (text, record) => {
           if (record.editable) {
             return (
               <Input
                 value={text}
-                onChange={e => this.handleFieldChange(e, 'secret', record.key)}
+                onChange={e => this.handleFieldChange(e, 'httpsecret', record.key)}
                 onKeyPress={e => this.handleKeyPress(e, record.key)}
-                placeholder="Secret"
+                placeholder="httpsecret"
               />
             );
           }

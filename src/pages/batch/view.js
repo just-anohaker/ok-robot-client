@@ -23,7 +23,7 @@ class BatchCard extends PureComponent {
 
   componentDidMount() {
     let accounts = get("allAccouts");
-    if (!accounts instanceof Array) {
+    if (!(accounts instanceof Array)) {
       accounts = [];
     }
     this.setState({ accounts })
