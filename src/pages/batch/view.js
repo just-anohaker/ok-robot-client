@@ -1,12 +1,13 @@
 import React, { PureComponent, Fragment } from 'react';
-// import styles from './batch.module.css';
+import { actions as loading } from '../../components/loading';
+import store from "../../Store";
 import okrobot from "okrobot-js";
-import { get as storeGet } from "../../util/localstorage.js";
-import { Card, Form, Input, Button, Radio, Select, Row, Col, message } from 'antd';
+import { get } from "../../util/localstorage.js";
+import { Card, Form, Input, Button, Radio, Select, Row, Col, notification } from 'antd';
 const { Option } = Select;
 
-// okrobot.config.hostname = "http://47.111.160.173:1996"
-okrobot.config.hostname = "http://192.168.2.214:1996"
+okrobot.config.hostname = "http://47.111.160.173:1996"
+// okrobot.config.hostname = "http://192.168.2.214:1996"
 
 
 class BatchCard extends PureComponent {
@@ -16,14 +17,16 @@ class BatchCard extends PureComponent {
     this.state = {
       delegate: "none",
       type: "none",
-      accounts:[]
+      accounts: []
     };
   }
 
-  handleFormAccounts =e=> {
-    let accounts = storeGet("allAccouts")||[];
-    console.log(accounts)
-    this.setState({accounts})
+  componentDidMount() {
+    let accounts = get("allAccouts");
+    if (!accounts instanceof Array) {
+      accounts = [];
+    }
+    this.setState({ accounts })
   }
 
   handleFormDelegate = e => {
@@ -42,33 +45,51 @@ class BatchCard extends PureComponent {
       if (!err) {
         console.log('Received values of form: ', values);
       }
-      console.log(values)
-      
+      console.log(values, this.state.accounts)
+
 
       if (values.delegate === "limit") {
-        okrobot.batch_order.limitOrder(values, {
-          httpkey: 'a97895ea-96b3-4645-b7b2-3cb9c02de0f2',
-          httpsecret: 'A463C43A23214D470D712311D88D3CEB',
-          passphrase: '88888888'
-        })
+        store.dispatch(loading.showLoading());
+        // let account =  {
+        //   httpkey: 'a97895ea-96b3-4645-b7b2-3cb9c02de0f2',
+        //   httpsecret: 'A463C43A23214D470D712311D88D3CEB',
+        //   passphrase: '88888888'
+        // };
+        let account = this.state.accounts.filter(a => a.name === values.account);
+        console.log(account)
+        okrobot.batch_order.limitOrder(values, account)
           .then(() => {
-
+            store.dispatch(loading.hideLoading());
           })
           .catch(err => {
-            message.error("现价交易失败失败！" + err);
+            store.dispatch(loading.hideLoading());
+            notification["error"]({
+              message: "现价交易失败失败",
+              description: "" + err
+            });
+            // message.error("现价交易失败失败！" + err);
           });
       }
       else if (values.delegate === "market") {
-        okrobot.batch_order.marketOrder(values, {
-          httpkey: 'a97895ea-96b3-4645-b7b2-3cb9c02de0f2',
-          httpsecret: 'A463C43A23214D470D712311D88D3CEB',
-          passphrase: '88888888'
-        })
-          .then(() => {
+        store.dispatch(loading.showLoading());
 
+        // let account =  {
+        //   httpkey: 'a97895ea-96b3-4645-b7b2-3cb9c02de0f2',
+        //   httpsecret: 'A463C43A23214D470D712311D88D3CEB',
+        //   passphrase: '88888888'
+        // };
+        let account = this.state.accounts.filter(a => a.name === values.account);
+        okrobot.batch_order.marketOrder(values, account)
+          .then(() => {
+            store.dispatch(loading.hideLoading());
           })
           .catch(err => {
-            message.error("市价交易失败失败！" + err);
+            store.dispatch(loading.hideLoading());
+            notification["error"]({
+              message: "市价交易失败失败",
+              description: "" + err
+            });
+            // message.error("市价交易失败失败！" + err);
           });
       }
 
@@ -84,16 +105,32 @@ class BatchCard extends PureComponent {
       return (
         <Fragment >
           <Form.Item label="委托总量">
-            <Input placeholder="请输入执行账户" />
+            {getFieldDecorator('total', {
+              rules: [{ required: true, message: '请输入委托总量!' }],
+            })(
+              <Input />
+            )}
           </Form.Item>
           <Form.Item label="委托深度" >
-            <Input placeholder="请输入执行账户" />
+            {getFieldDecorator('deep', {
+              rules: [{ required: true, message: '请输入委托深度!' }],
+            })(
+              <Input />
+            )}
           </Form.Item>
           <Form.Item label="数量(ETM)">
-            <Input placeholder="请输入执行账户" />
+            {getFieldDecorator('count', {
+              rules: [{ required: true, message: '请输入数量!' }],
+            })(
+              <Input />
+            )}
           </Form.Item>
           <Form.Item label="最高价(USDT)" >
-            <Input placeholder="请输入执行账户" />
+            {getFieldDecorator('max', {
+              rules: [{ required: true, message: '请输入最高价!' }],
+            })(
+              <Input />
+            )}
           </Form.Item>
         </Fragment>
       )
@@ -102,7 +139,6 @@ class BatchCard extends PureComponent {
       return (
         <Fragment>
           <Form.Item label="价格(USDT)" >
-
             {getFieldDecorator('price', {
               rules: [{ required: true, message: '请选择交易对!' }],
             })(
@@ -174,7 +210,7 @@ class BatchCard extends PureComponent {
       wrapperCol: { span: 4, offset: 4 },
     };
 
-    const {accounts} = this.state
+    const { accounts } = this.state
 
     return (
       <Row gutter={24}>
@@ -214,7 +250,7 @@ class BatchCard extends PureComponent {
                   >
                     <Option value="limit">限价交易</Option>
                     <Option value="market">市价交易</Option>
-                    <Option value="iceberg">冰山委托</Option>
+                    <Option value="iceberg" disabled>冰山委托</Option>
                   </Select>
                 )}
               </Form.Item>
@@ -230,14 +266,14 @@ class BatchCard extends PureComponent {
                   rules: [{ required: true, message: '请输入执行账户!' }],
                 })(
                   <Select
-                      placeholder="请选择交易执行账户"
-                      onChange={this.handleFormAccounts}
-                      filterOption={(input, option) =>
-                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                      }
-                    >
-                      {accounts.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)}
-                    </Select>
+                    placeholder="请选择交易执行账户"
+                    onChange={this.handleFormAccounts}
+                    filterOption={(input, option) =>
+                      option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {accounts.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)}
+                  </Select>
                 )}
               </Form.Item>
               <Form.Item {...formTailLayout}>

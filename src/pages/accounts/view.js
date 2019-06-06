@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react';
-import { Card, message } from 'antd';
+import { Card, notification } from 'antd';
 import { view as TableForm } from '../../components/tableform';
 import { actions as loading } from '../../components/loading';
 import store from "../../Store";
 import okrobot from "okrobot-js";
-import { put as storePut } from "../../util/localstorage.js";
+import { put, get } from "../../util/localstorage.js";
 
 // okrobot.config.hostname = "http://192.168.2.97:1996"
 okrobot.config.hostname = "http://47.111.160.173:1996";
@@ -20,31 +20,40 @@ class AccountsPage extends PureComponent {
     this.queryTableData();
   }
 
+  transferData = (data) => {
+    let rows = data.map((item, index) => {
+      return {
+        key: index,
+        id: item.id,
+        name: item.name,
+        controller: item.groupName,
+        api: item.httpKey,
+        secret: item.httpSecret,
+        passphrase: item.passphrase
+      }
+    });
+    return rows;
+  }
+
   queryTableData() {
     store.dispatch(loading.showLoading());
 
     okrobot.user.getAll()
       .then((res) => {
         if (res.length > 0) {
-          let tableData = res.map((item, index) => {
-            return {
-              key: index,
-              id: item.id,
-              name: item.name,
-              controller: item.groupName,
-              api: item.httpKey,
-              secret: item.httpSecret,
-              passphrase: item.passphrase
-            }
-          });
-          storePut("allAccouts",res);
-          this.setState({ tableData })
+          let tableData = this.transferData(res);
+          this.setState({ tableData });
+
+          put("allAccouts", res);
         }
 
         store.dispatch(loading.hideLoading());
       })
       .catch(err => {
-        message.error("请求账户数据失败！" + err);
+        notification["error"]({
+          message: "请求数据错误",
+          description: "" + err
+        });
         store.dispatch(loading.hideLoading());
       });
   }
@@ -52,14 +61,23 @@ class AccountsPage extends PureComponent {
   addTableData(row, cb) {
     okrobot.user.add(row.controller, row.name, row.api, row.secret, row.passphrase)
       .then((res) => {
-        let newRow = res;
+        console.log("updata accounts", res)
+        let newRow = this.transferData([res]);
         let { tableData } = this.state;
         tableData.push(newRow);
+        this.setState({ tableData });
 
-        this.setState({ tableData })
+        let newAccounts = get("allAccouts");
+        newAccounts.push(res);
+        put("allAccouts", newAccounts)
+
         cb();
       })
       .catch(err => {
+        notification.error({
+          message: "添加数据错误",
+          description: "" + err
+        });
         cb(err);
       });
   }
@@ -69,9 +87,24 @@ class AccountsPage extends PureComponent {
       groupName: row.controller, name: row.name, httpKey: row.api, httpSecret: row.secret, passphrase: row.passphrase
     })
       .then((res) => {
+        let newAccounts = get("allAccouts");
+        // console.log("edit accounts", newAccounts)
+        newAccounts = newAccounts.map((item) => {
+          if (item.id === res.id) {
+            item = res;
+          }
+          return item;
+        });
+        // console.log("edit accounts", newAccounts)
+        put("allAccouts", newAccounts);
+
         cb();
       })
       .catch(err => {
+        notification.error({
+          message: "编辑数据错误",
+          description: "" + err
+        });
         cb(err);
       });
   }
@@ -79,9 +112,21 @@ class AccountsPage extends PureComponent {
   removeTableData(row, cb) {
     okrobot.user.remove(row.id)
       .then((res) => {
+        let newAccounts = get("allAccouts");
+        // console.log("remove accounts", newAccounts)
+        newAccounts = newAccounts.filter((item) => {
+          return item.id !== res.id;
+        });
+        // console.log("remove accounts", newAccounts)
+        put("allAccouts", newAccounts);
+
         cb();
       })
       .catch(err => {
+        notification["error"]({
+          message: "删除数据错误",
+          description: "" + err
+        });
         cb(err);
       });
   }
