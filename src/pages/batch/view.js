@@ -1,9 +1,9 @@
 import React, { PureComponent, Fragment } from 'react';
 import { actions as loading } from '../../components/loading';
+import { connect } from 'react-redux';
 import store from "../../Store";
 import okrobot from "okrobot-js";
 import DetailBill from '../../components/detail-bill';
-import { get } from "../../util/localstorage.js";
 import { Card, Form, Input, Button, Radio, Select, Row, Col, notification } from 'antd';
 const { Option } = Select;
 
@@ -18,14 +18,6 @@ class BatchCard extends PureComponent {
     };
   }
 
-  // componentDidMount() {
-  //   let accounts = get("allAccouts");
-  //   if (!(accounts instanceof Array)) {
-  //     accounts = [];
-  //   }
-  //   this.setState({ accounts })
-  // }
-
   handleFormDelegate = e => {
     this.setState({ delegate: e });
   };
@@ -39,26 +31,26 @@ class BatchCard extends PureComponent {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-      }
 
-      let accounts = get("allAccouts");
-      if (!(accounts instanceof Array)) {
-        accounts = [];
-      }
-      let account = accounts.filter(a => `${a.name}-${a.groupName}` === values.account)[0];
-      // let account = this.state.accounts.filter(a => `${a.name}-${a.groupName}` === values.account)[0];
-
+      let account = this.props.account
       if (values.delegate === "limit") {
         store.dispatch(loading.showLoading());
 
         okrobot.batch_order.limitOrder(values, account)
-          .then(() => {
+          .then((res) => {
+            if(res && res.result){
+              notification.success({
+                message: '提示',
+                description:
+                  '交易成功',
+              });
+            }
             store.dispatch(loading.hideLoading());
           })
           .catch(err => {
             store.dispatch(loading.hideLoading());
             notification["error"]({
-              message: "现价交易失败失败",
+              message: "现价交易失败",
               description: "" + err
             });
           });
@@ -67,18 +59,31 @@ class BatchCard extends PureComponent {
         store.dispatch(loading.showLoading());
 
         okrobot.batch_order.marketOrder(values, account)
-          .then(() => {
+          .then((res) => {
+            if(res && res.result){
+              notification.success({
+                message: '提示',
+                description:
+                  '交易成功',
+              });
+            } else {
+              notification.error({
+                message: '提示',
+                description:
+                  '' + res.error_message,
+              });
+            }
             store.dispatch(loading.hideLoading());
           })
           .catch(err => {
             store.dispatch(loading.hideLoading());
             notification["error"]({
-              message: "市价交易失败失败",
+              message: "市价交易失败",
               description: "" + err
             });
           });
       }
-
+    }
     });
   };
 
@@ -148,7 +153,7 @@ class BatchCard extends PureComponent {
               {getFieldDecorator('notional', {
                 rules: [{ required: true, message: '请输入金额!' }],
               })(
-                <Input style={{ width: 230 }} />
+                <Input addonAfter="USDT" style={{ width: 230 }} />
               )}
             </Form.Item>
           </Fragment>
@@ -202,19 +207,6 @@ class BatchCard extends PureComponent {
         <Col xl={12} lg={24} md={24} sm={24} xs={24} >
           <Card title="批量交易" >
             <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-              {/* <Form.Item label="交易对">
-                {getFieldDecorator('tranPair', {
-                  rules: [{ required: true, message: '请选择交易对!' }],
-                })(
-                  <Select
-                    placeholder="请选择交易对"
-                    style={{ width: 230 }}
-                  >
-                    <Option value="ETM">ETM</Option>
-                    <Option value="USDT">USDT</Option>
-                  </Select>
-                )}
-              </Form.Item> */}
               <Form.Item label="交易类型" >
                 {getFieldDecorator('type', {
                   rules: [{ required: true, message: '请选择交易对!' }],
@@ -249,23 +241,6 @@ class BatchCard extends PureComponent {
                 <Input disabled addonAfter="USDT" style={{ width: 230 }} />
               </Form.Item>
 
-              {/* <Form.Item label="执行账户" >
-                {getFieldDecorator('account', {
-                  rules: [{ required: true, message: '请输入执行账户!' }],
-                })(
-                  <Select
-                    placeholder="请选择交易执行账户"
-                    style={{ width: 230 }}
-                    onChange={this.handleFormAccounts}
-                    filterOption={(input, option) =>
-                      option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                    }
-                  >
-                    {accounts.map((item, index) => <Option key={index} value={`${item.name}-${item.groupName}`}>{`${item.name}-${item.groupName}`}</Option>)}
-
-                  </Select>
-                )}
-              </Form.Item> */}
               <Form.Item {...formTailLayout}>
                 <Button type="primary" htmlType="submit">提交</Button>
               </Form.Item>
@@ -281,4 +256,12 @@ class BatchCard extends PureComponent {
 }
 
 const BatchPage = Form.create({ name: 'batchcard' })(BatchCard);
-export default BatchPage;
+const mapStateToProps = (state) => {
+  const infoingData = state.infoing;
+
+  return {
+    account: infoingData.account
+  };
+};
+
+export default connect(mapStateToProps)(BatchPage);

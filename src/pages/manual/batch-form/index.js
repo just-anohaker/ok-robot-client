@@ -239,7 +239,6 @@ class BatchFrom extends React.Component {
 
 const Batch = Form.create({ name: 'batch' })(BatchFrom);
 const mapStateToProps = (state) => {
-  console.log(state)
   const infoingData = state.infoing;
 
   return {

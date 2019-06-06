@@ -127,7 +127,6 @@ const Cancel = Form.create({ name: 'cancel' })(CancelFrom);
 
 
 const mapStateToProps = (state) => {
-  console.log(state)
   const infoingData = state.infoing;
 
   return {

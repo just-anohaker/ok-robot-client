@@ -13,7 +13,6 @@ class InfoAccount extends React.Component{
     }
   }
   handleTranTypeChange(value){
-    console.log(value)
     this.props.dispatch({type:'CHANGE_TRANTYPE','tranTran':value})
   }
   handleAccountChange(value){
@@ -64,7 +63,6 @@ class InfoAccount extends React.Component{
 }
 
 const mapStateToProps = (state) => {
-  console.log(state)
   const infoingData = state.infoing;
 
   return {
