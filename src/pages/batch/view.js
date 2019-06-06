@@ -6,10 +6,6 @@ import { get } from "../../util/localstorage.js";
 import { Card, Form, Input, Button, Radio, Select, Row, Col, notification } from 'antd';
 const { Option } = Select;
 
-okrobot.config.hostname = "http://47.111.160.173:1996"
-// okrobot.config.hostname = "http://192.168.2.214:1996"
-
-
 class BatchCard extends PureComponent {
   constructor(...args) {
     super(...args);
@@ -45,7 +41,7 @@ class BatchCard extends PureComponent {
       if (!err) {
         console.log('Received values of form: ', values);
       }
-      console.log(values, this.state.accounts)
+      // console.log("handleSubmit",values, this.state.accounts)
 
       if (values.delegate === "limit") {
         store.dispatch(loading.showLoading());
@@ -54,9 +50,10 @@ class BatchCard extends PureComponent {
         //   httpsecret: 'A463C43A23214D470D712311D88D3CEB',
         //   passphrase: '88888888'
         // };
-        let account = this.state.accounts.filter(a => a.name === values.account);
-        console.log(account)
-        okrobot.batch_order.limitOrder(values, account)
+        // console.log("state account",this.state.accounts)
+        let account = this.state.accounts.filter(a => `${a.name}-${a.groupName}` === values.account);
+        // console.log("account",account)
+        okrobot.batch_order.limitOrder(values, account[0])
           .then(() => {
             store.dispatch(loading.hideLoading());
           })
@@ -77,8 +74,8 @@ class BatchCard extends PureComponent {
         //   httpsecret: 'A463C43A23214D470D712311D88D3CEB',
         //   passphrase: '88888888'
         // };
-        let account = this.state.accounts.filter(a => a.name === values.account);
-        okrobot.batch_order.marketOrder(values, account)
+        let account = this.state.accounts.filter(a => `${a.name}-${a.groupName}` === values.account);
+        okrobot.batch_order.marketOrder(values, account[0])
           .then(() => {
             store.dispatch(loading.hideLoading());
           })
@@ -271,7 +268,7 @@ class BatchCard extends PureComponent {
                       option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                     }
                   >
-                    {accounts.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)}
+                    {accounts.map((item, index) => <Option key={index} value={`${item.name}-${item.groupName}`}>{`${item.name}-${item.groupName}`}</Option>)}
 
                   </Select>
                 )}
