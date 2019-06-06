@@ -22,6 +22,8 @@ class BatchFrom extends React.Component {
     this.state = {
       tranType: 'ZIL/USDT',
       accounts: [],
+      loading: false,
+      cost:'',
       data: []
     }
   }
@@ -100,35 +102,30 @@ class BatchFrom extends React.Component {
       }
     ];
     this.setState({ data: dataSource, accounts: account })
-    // this.props.form.setFieldsValue({
-    //   type: '0',
-    //   startPrice: 0.01,
-    //   topPrice: 0.02,
-    //   incr:0.1,
-    //   size: 1,
-    //   sizeIncr: 0.01
-    // })
   }
 
   async generate({ options, account }) {
-    console.log(options, account)
-    const result = await okrobot.batch_order.generate(options, account)
-    console.log(result)
-    // notification.open({
-    //   message: 'Notification Title',
-    //   description:
-    //     '333',
-    // });
-  }
-
-  async start() {
-    const result = await okrobot.batch_order.start()
-    console.log(result);
-    notification.open({
-      message: 'Notification Title',
-      description:
-        '333',
-    });
+    try {
+      const result = await okrobot.batch_order.generate(options, account)
+      if (result && result.result) {
+        this.setState({ loading: false,cost:result.cost })
+        notification.success({
+          message: '提示',
+          description:
+            '批量挂单成功',
+        });
+      } else {
+        this.setState({ loading: false })
+        notification.error({
+          message: '提示',
+          description:
+            '批量挂单失败',
+        });
+      }
+    } catch (error) {
+      this.setState({ loading: false })
+      console.log(error)
+    }
   }
 
   handleTranTypeChange(value) {
@@ -139,7 +136,8 @@ class BatchFrom extends React.Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        this.setState({ loading: true })
+
         let options = {
           type: Number(values.tradeMethod),
           startPrice: Number(values.bottom),
@@ -259,7 +257,7 @@ class BatchFrom extends React.Component {
                 </Form.Item>
 
                 <Form.Item label="成本">
-                  <Input disabled style={{ width: 230 }} />
+                  <Input value={this.state.cost} disabled style={{ width: 230 }} />
                 </Form.Item>
 
                 <Form.Item label="执行账户">
@@ -280,7 +278,7 @@ class BatchFrom extends React.Component {
                   )}
                 </Form.Item>
                 <Row gutter={24} className="btns" >
-                  <Button type="primary" htmlType="submit" className="submit">开始挂单</Button>
+                  <Button type="primary" htmlType="submit" loading={this.state.loading}  className="submit">开始挂单</Button>
                 </Row>
               </Form>
             </Card>
@@ -293,7 +291,6 @@ class BatchFrom extends React.Component {
     )
   }
 }
-
 
 const Batch = Form.create({ name: 'batch' })(BatchFrom);
 export default Batch

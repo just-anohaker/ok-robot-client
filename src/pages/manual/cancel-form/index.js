@@ -21,7 +21,8 @@ class CancelFrom extends React.Component {
     super(...args)
     this.state = {
       tranType: 'ZIL/USDT',
-      accounts: []
+      accounts: [],
+      loading:false
     }
   }
 
@@ -36,13 +37,27 @@ class CancelFrom extends React.Component {
   }
 
   async cancel(params) {
-    const result = await okrobot.batch_order.cancel(params.options,params.account)
-    console.log(result)
-    notification.open({
-      message: 'Notification Title',
-      description:
-        '333',
-    });
+    try {
+      const result = await okrobot.batch_order.cancel(params.options,params.account)
+    if(result && result.result){
+      notification.success({
+        message: '提示',
+        description:
+          '批量撤单成功',
+      });
+    } else {
+      notification.error({
+        message: '提示',
+        description:
+          '请求失败',
+      });
+    }
+    this.setState({loading:false})
+    } catch (error) {
+      this.setState({loading:false})
+      console.log(error)
+    }
+
   }
 
   handleTranTypeChange(value) {
@@ -53,7 +68,7 @@ class CancelFrom extends React.Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        this.setState({loading:true})
         let options = {
           topPrice: Number(values.top),
           startPrice: Number(values.bottom)
@@ -108,18 +123,6 @@ class CancelFrom extends React.Component {
                   )}
                 </Form.Item>
 
-               {/* <Form.Item label="交易方式">
-                  {getFieldDecorator('tradeMethod', {
-                    initialValue:'1',
-                    rules: [{ required: true, message: '请选择交易方式！' }],
-                  })(
-                    <Radio.Group buttonStyle="solid">
-                      <Radio.Button value="1">买入</Radio.Button>
-                      <Radio.Button value="2">卖出</Radio.Button>
-                    </Radio.Group>
-                  )}
-                </Form.Item>
-                  */}
                 <Form.Item className="require" label="价格范围" style={{ marginBottom: 0 }}>
                   <Form.Item style={{ display: 'inline-block' }}>
                     {getFieldDecorator('bottom', {
@@ -158,7 +161,7 @@ class CancelFrom extends React.Component {
                   )}
                 </Form.Item>
                 <Row gutter={24} className="btns" >
-                  <Button type="primary" htmlType="submit" className="submit">开始撤单</Button>
+                  <Button type="primary" htmlType="submit" loading={this.state.loading}  className="submit">开始撤单</Button>
                 </Row>
               </Form>
             </Card>
