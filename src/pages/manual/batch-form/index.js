@@ -20,7 +20,7 @@ class BatchFrom extends React.Component {
   constructor(...args) {
     super(...args)
     this.state = {
-      tranType: 'ZIL/USDT',
+      tranType: 'USDT',
       loading: false,
       account:this.props.account,
       cost:'',

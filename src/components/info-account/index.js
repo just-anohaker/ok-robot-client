@@ -46,13 +46,15 @@ class InfoAccount extends React.Component{
           style={{ width: 200 }}
           placeholder="请选择交易对!"
           optionFilterProp="children"
+          value={this.props.tranType}
           onChange={this.handleTranTypeChange.bind(this)}
           filterOption={(input, option) =>
             option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }
         >
-          <Option value="ZIL/USDT">ZIL-USDT</Option>
-          <Option value="ETM/USDT">ETM/USDT</Option>
+          <Option value="ZIL-USDT">ZIL/USDT</Option>
+          <Option value="ETM-USDT">ETM/USDT</Option>
+          <Option value="ETM-USDK">ETM/USDK</Option>
         </Select>
       </div>
 

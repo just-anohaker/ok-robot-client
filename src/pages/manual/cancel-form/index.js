@@ -1,12 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Card, Form, Input, Select, notification, Button } from 'antd';
+import { Row, Col, Card, Form, Input, notification, Button } from 'antd';
 import DetailBill from '../../../components/detail-bill'
 import { get } from "../../../util/localstorage.js";
 
 import okrobot from "okrobot-js";
 
-const Option = Select.Option;
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -22,7 +21,7 @@ class CancelFrom extends React.Component {
   constructor(...args) {
     super(...args)
     this.state = {
-      tranType: 'ZIL/USDT',
+      tranType: 'USDT',
       accounts: [],
       loading:false
     }
@@ -70,9 +69,9 @@ class CancelFrom extends React.Component {
           topPrice: Number(values.top),
           startPrice: Number(values.bottom)
         };
-        let accountsData = this.state.accounts.filter(item => item.id === values.account);
+        let accountsData = this.props.account;
 
-        this.cancel({ options, account: accountsData[0] })
+        this.cancel({ options, account: accountsData })
       }
     });
   }
@@ -80,7 +79,6 @@ class CancelFrom extends React.Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     let tranType = this.state.tranType
-    let accounts = this.state.accounts
     return (
       <div className="random-sale">
         {/*批量撤单*/}
@@ -88,26 +86,6 @@ class CancelFrom extends React.Component {
           <Col xl={12} lg={24} md={24} sm={24} xs={24} style={{ marginBottom: 24 }}>
             <Card title="批量撤单" >
               <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-
-                <Form.Item label="交易对">
-                  {getFieldDecorator('tranType', {
-                    initialValue: 'ZIL/USDT',
-                    rules: [{ required: true, message: '请选择交易对!' }],
-                  })(
-                    <Select
-                      showSearch
-                      style={{ width: 230 }}
-                      placeholder="请选择交易对!"
-                      optionFilterProp="children"
-                      onChange={this.handleTranTypeChange.bind(this)}
-                      filterOption={(input, option) =>
-                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                      }
-                    >
-                      <Option value="ZIL/USDT">ZIL/USDT</Option>
-                    </Select>
-                  )}
-                </Form.Item>
 
                 <Form.Item className="require" label="价格范围" style={{ marginBottom: 0 }}>
                   <Form.Item style={{ display: 'inline-block' }}>
@@ -129,23 +107,6 @@ class CancelFrom extends React.Component {
                   </Form.Item>
                 </Form.Item>
 
-                <Form.Item label="执行账户">
-                  {getFieldDecorator('account', {
-                    rules: [{ required: true, message: '请选择交易执行账户!' }],
-                  })(
-                    <Select
-                      showSearch
-                      style={{ width: 230 }}
-                      placeholder="请选择交易执行账户"
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                      }
-                    >
-                    {accounts.map(item => <Option key={item.id} value={item.id}>{`${item.name}-${item.groupName}`}</Option>)}
-                    </Select>
-                  )}
-                </Form.Item>
                 <Row gutter={24} className="btns" >
                   <Button type="primary" htmlType="submit" loading={this.state.loading}  className="submit">开始撤单</Button>
                 </Row>
