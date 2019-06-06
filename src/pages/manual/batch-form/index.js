@@ -1,8 +1,8 @@
 import React from 'react';
 import { Row, Col, Card, Radio, Form, Input, Select, notification, Button } from 'antd';
-import DetailBill from '../../../components/detail-bill'
+import DetailBill from '../../../components/detail-bill';
+import { get } from "../../../util/localstorage.js";
 import okrobot from "okrobot-js";
-okrobot.config.hostname = "http://192.168.2.214:1996"
 
 const Option = Select.Option;
 const formItemLayout = {
@@ -29,13 +29,7 @@ class BatchFrom extends React.Component {
   }
 
   componentDidMount() {
-
-    let account = [{
-      name: 'Jack',
-      httpkey: 'a97895ea-96b3-4645-b7b2-3cb9c02de0f2',
-      httpsecret: 'A463C43A23214D470D712311D88D3CEB',
-      passphrase: '88888888'
-    }];
+    let account = get("allAccouts") || [];
     const dataSource = [
       {
         key: '1',

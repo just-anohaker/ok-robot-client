@@ -47,7 +47,6 @@ class BatchCard extends PureComponent {
       }
       console.log(values, this.state.accounts)
 
-
       if (values.delegate === "limit") {
         store.dispatch(loading.showLoading());
         // let account =  {
@@ -138,18 +137,18 @@ class BatchCard extends PureComponent {
     else if (delegate === "limit") {
       return (
         <Fragment>
-          <Form.Item label="价格(USDT)" >
+          <Form.Item label="价格" >
             {getFieldDecorator('price', {
               rules: [{ required: true, message: '请选择交易对!' }],
             })(
-              <Input />
+              <Input addonAfter="USDT" />
             )}
           </Form.Item>
-          <Form.Item label="总量(ETM)">
+          <Form.Item label="总量">
             {getFieldDecorator('size', {
               rules: [{ required: true, message: '请选择交易对!' }],
             })(
-              <Input />
+              <Input addonAfter="ETM" />
             )}
           </Form.Item>
         </Fragment>
@@ -233,7 +232,7 @@ class BatchCard extends PureComponent {
                 {getFieldDecorator('type', {
                   rules: [{ required: true, message: '请选择交易对!' }],
                 })(
-                  <Radio.Group onChange={this.handleFormType}>
+                  <Radio.Group onChange={this.handleFormType} buttonStyle="solid">
                     <Radio.Button value="1">买入</Radio.Button>
                     <Radio.Button value="2">卖出</Radio.Button>
                   </Radio.Group>
@@ -273,11 +272,12 @@ class BatchCard extends PureComponent {
                     }
                   >
                     {accounts.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)}
+
                   </Select>
                 )}
               </Form.Item>
               <Form.Item {...formTailLayout}>
-                <Button type="primary" htmlType="submit">Submit</Button>
+                <Button type="primary" htmlType="submit">提交</Button>
               </Form.Item>
             </Form>
           </Card>
