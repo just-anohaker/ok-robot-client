@@ -140,20 +140,8 @@ class BatchFrom extends React.Component {
           size: Number(values.size),
           sizeIncr: Number(values.sizeIncr) / 100
         };
-        let accountsData = this.state.accounts;
-        let account = {};
-        for (let i = 0; i < accountsData.length; i++) {
-          if (accountsData[i]['name'] === values.account) {
-            account = {
-              name: values.account,
-              httpkey: accountsData[i].httpkey,
-              httpsecret: accountsData[i].httpsecret,
-              passphrase: accountsData[i].passphrase
-            }
-            break;
-          }
-        }
-        this.generate({ options, account })
+        let accountsData = this.state.accounts.filter(item => item.id === values.account);
+        this.generate({ options, account: accountsData[0] })
       }
     });
   }
@@ -267,7 +255,7 @@ class BatchFrom extends React.Component {
                         option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                       }
                     >
-                      {accounts.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)}
+                      {accounts.map(item => <Option key={item.id} value={item.id}>{`${item.name}-${item.groupName}`}</Option>)}
                     </Select>
                   )}
                 </Form.Item>

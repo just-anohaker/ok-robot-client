@@ -69,20 +69,9 @@ class CancelFrom extends React.Component {
           topPrice: Number(values.top),
           startPrice: Number(values.bottom)
         };
-        let account = {}
-        let accountData = this.state.accounts;
-        for (let i = 0; i < accountData.length; i++) {
-          if (accountData[i]['name'] === values.account) {
-            account = {
-              name: values.account,
-              httpkey: accountData[i].httpkey,
-              httpsecret: accountData[i].httpsecret,
-              passphrase: accountData[i].passphrase
-            }
-            break;
-          }
-        }
-        this.cancel({ options, account })
+        let accountsData = this.state.accounts.filter(item => item.id === values.account);
+
+        this.cancel({ options, account: accountsData[0] })
       }
     });
   }
@@ -152,7 +141,7 @@ class CancelFrom extends React.Component {
                         option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                       }
                     >
-                      {accounts.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)}
+                    {accounts.map(item => <Option key={item.id} value={item.id}>{`${item.name}-${item.groupName}`}</Option>)}
                     </Select>
                   )}
                 </Form.Item>
