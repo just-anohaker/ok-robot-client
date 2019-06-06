@@ -1,6 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 // import styles from './batch.module.css';
 import okrobot from "okrobot-js";
+import { get as storeGet } from "../../util/localstorage.js";
 import { Card, Form, Input, Button, Radio, Select, Row, Col, message } from 'antd';
 const { Option } = Select;
 
@@ -14,8 +15,15 @@ class BatchCard extends PureComponent {
 
     this.state = {
       delegate: "none",
-      type: "none"
+      type: "none",
+      accounts:[]
     };
+  }
+
+  handleFormAccounts =e=> {
+    let accounts = storeGet("allAccouts")||[];
+    console.log(accounts)
+    this.setState({accounts})
   }
 
   handleFormDelegate = e => {
@@ -35,6 +43,7 @@ class BatchCard extends PureComponent {
         console.log('Received values of form: ', values);
       }
       console.log(values)
+      
 
       if (values.delegate === "limit") {
         okrobot.batch_order.limitOrder(values, {
@@ -97,14 +106,14 @@ class BatchCard extends PureComponent {
             {getFieldDecorator('price', {
               rules: [{ required: true, message: '请选择交易对!' }],
             })(
-              <Input placeholder="请输入执行账户" />
+              <Input />
             )}
           </Form.Item>
           <Form.Item label="总量(ETM)">
             {getFieldDecorator('size', {
               rules: [{ required: true, message: '请选择交易对!' }],
             })(
-              <Input placeholder="请输入执行账户" />
+              <Input />
             )}
           </Form.Item>
         </Fragment>
@@ -165,6 +174,7 @@ class BatchCard extends PureComponent {
       wrapperCol: { span: 4, offset: 4 },
     };
 
+    const {accounts} = this.state
 
     return (
       <Row gutter={24}>
@@ -219,7 +229,15 @@ class BatchCard extends PureComponent {
                 {getFieldDecorator('account', {
                   rules: [{ required: true, message: '请输入执行账户!' }],
                 })(
-                  <Input />
+                  <Select
+                      placeholder="请选择交易执行账户"
+                      onChange={this.handleFormAccounts}
+                      filterOption={(input, option) =>
+                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {accounts.map((item, index) => <Option key={index} value={item.name}>{item.name}</Option>)}
+                    </Select>
                 )}
               </Form.Item>
               <Form.Item {...formTailLayout}>
