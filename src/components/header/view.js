@@ -1,6 +1,6 @@
 import React from 'react';
-
 import { Icon } from 'antd';
+import InfoAccount from '../../components/info-account'
 // import { Dropdown, Icon, Menu } from 'antd';
 // import { Icon, Menu } from 'antd';
 // import { Link } from 'react-router-dom';
@@ -24,6 +24,7 @@ import styles from './header.module.css';
 // );
 
 const Header = ({ collapsed, setCollapsed }) => {
+
   return (
     <div className={styles['header-wrapper']}>
       <span className={styles['header-collapsed']} onClick={() => setCollapsed(!collapsed)}>
@@ -36,6 +37,9 @@ const Header = ({ collapsed, setCollapsed }) => {
           </span>
         </Dropdown>
       </div> */}
+
+      <InfoAccount></InfoAccount>
+
     </div>
   );
 };

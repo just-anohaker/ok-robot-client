@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Row, Col, Card, Form, Input, Select, notification, Button } from 'antd';
 import DetailBill from '../../../components/detail-bill'
 import { get } from "../../../util/localstorage.js";
@@ -162,4 +163,15 @@ class CancelFrom extends React.Component {
 
 
 const Cancel = Form.create({ name: 'cancel' })(CancelFrom);
-export default Cancel
+
+
+const mapStateToProps = (state) => {
+  console.log(state)
+  const infoingData = state.infoing;
+
+  return {
+    account: infoingData.account
+  };
+};
+
+export default connect(mapStateToProps)(Cancel);

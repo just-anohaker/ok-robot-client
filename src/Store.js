@@ -3,10 +3,12 @@ import thunk from 'redux-thunk';
 import { routerReducer } from 'react-router-redux';
 import resetEnhancer from './enhancer/reset.js';
 import { reducer as loadingReducer } from './components/loading';
+import infoReducer from './components/info-account/reducer';
 
 const originalReducers = {
   loading: loadingReducer,
-  routing: routerReducer
+  routing: routerReducer,
+  infoing: infoReducer
 };
 const reducer = combineReducers(originalReducers);
 const win = window;

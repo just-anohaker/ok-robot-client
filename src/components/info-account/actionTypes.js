@@ -1,0 +1,2 @@
+export const CHANGE_ACCOUNT = 'CHANGE_ACCOUNT';
+export const CHANGE_TRANTYPE = 'CHANGE_TRANTYPE';

@@ -1,0 +1,13 @@
+.header-account{
+  float: right;
+  margin-right: 22px;
+  display: flex;
+}
+.header-account .tran-item{
+  margin-left: 13px;
+}
+.header-account .name{
+  margin-right: 5px;
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 14px;
+}
