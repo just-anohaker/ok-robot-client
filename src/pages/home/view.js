@@ -32,7 +32,6 @@ const HomePage = (props) => {
           <Route path="/home/batch" component={Batch} />
           {/* <Route path="/home/automatic" component={Automatic} /> */}
           <Route path="/home/manual" component={Manual} />
-          <Route path="/home/transaction" component={Manual} />
           <Route path="/home/accounts" component={Accounts} />
         </div>
       </div>
