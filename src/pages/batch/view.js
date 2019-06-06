@@ -6,7 +6,7 @@ import { get } from "../../util/localstorage.js";
 import { Card, Form, Input, Button, Radio, Select, Row, Col, notification } from 'antd';
 const { Option } = Select;
 
-okrobot.config.hostname = "http://47.111.160.173:1996"
+// okrobot.config.hostname = "http://47.111.160.173:1996"
 // okrobot.config.hostname = "http://192.168.2.214:1996"
 
 
