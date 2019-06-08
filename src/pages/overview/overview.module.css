@@ -1,17 +1,6 @@
-.overview{
-    display: flex;
-    justify-content: space-between ;
-    margin-bottom: 20px;
-    
-    height: 600px;
-}
-
-.chart{
-    width: 70%;
-}
 
 .chartTitle{
-    height: 60px;
+    height: 70px;
 }
 
 .titleContent{
@@ -41,8 +30,4 @@
     font-weight:bold;
     font-size: 18px;
     color:block;
-}
-
-.new{
-    width: calc(30% - 20px);
 }

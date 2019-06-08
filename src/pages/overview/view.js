@@ -3,7 +3,7 @@ import { view as StretchTable } from '../../components/stretchtable';
 import { view as CandleChart } from '../../components/candlechart';
 import { actions as loading } from '../../components/loading';
 import store from "../../Store";
-import { Card, Tag, Table } from 'antd';
+import { Card, Tag, Table,Row,Col } from 'antd';
 
 import styles from './overview.module.css';
 
@@ -448,38 +448,42 @@ class OverviewPage extends PureComponent {
     let { isUp, dealprice, gain, max, min, count } = this.state;
 
     return (
-      <div>
-        <div className={styles.overview}>
-          <Card title="ETM/USTD 概览" className={styles.chart}>
-            <div className={styles.chartTitle}>
-              <div className={styles.titleContent}>
-                {this.getIsUpTitle(isUp, dealprice, gain)}
-                <div className={styles.titleItem}>
-                  <p>24小时最高</p>
-                  <p className={styles.titleValue3}> {max.toLocaleString()} USDT</p>
-                </div>
-                <div className={styles.titleItem}>
-                  <p>24小时最低</p>
-                  <p className={styles.titleValue3}> {min.toLocaleString()} USDT</p>
-                </div>
-                <div className={styles.titleItem}>
-                  <p>24小时成交量</p>
-                  <p className={styles.titleValue3}> {count.toLocaleString()} USDT</p>
+      <Fragment>
+        <Row gutter={24} >
+          <Col xl={16} lg={24} md={24} sm={24} xs={24} >
+            <Card title="ETM/USTD 概览" style={{ marginBottom: 24 }}>
+              <div className={styles.chartTitle}>
+                <div className={styles.titleContent}>
+                  {this.getIsUpTitle(isUp, dealprice, gain)}
+                  <div className={styles.titleItem}>
+                    <p>24小时最高</p>
+                    <p className={styles.titleValue3}> {max.toLocaleString()} USDT</p>
+                  </div>
+                  <div className={styles.titleItem}>
+                    <p>24小时最低</p>
+                    <p className={styles.titleValue3}> {min.toLocaleString()} USDT</p>
+                  </div>
+                  <div className={styles.titleItem}>
+                    <p>24小时成交量</p>
+                    <p className={styles.titleValue3}> {count.toLocaleString()} USDT</p>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className={styles.chartCandle}>
-              <CandleChart ref="candelChart" data={this.state.chartData} {...propsChart} />
-            </div>
-          </Card>
-          <Card title="最新成交" className={styles.new}>
-            <Table dataSource={this.state.newData} {...propsNewTable} />
-          </Card>
-        </div>
-        <Card title="交易记录">
+              <div className={styles.chartCandle}>
+                <CandleChart ref="candelChart" data={this.state.chartData} {...propsChart} />
+              </div>
+            </Card>
+          </Col>
+          <Col xl={8} lg={24} md={24} sm={24} xs={24} >
+            <Card title="最新成交" style={{ marginBottom: 24 }}>
+              <Table dataSource={this.state.newData} {...propsNewTable}/>
+            </Card>
+          </Col>
+        </Row>
+        <Card title="交易记录" >
           <StretchTable data={this.state.trData} columns={trColumns} />
         </Card>
-      </div >
+      </Fragment >
     )
   }
 }

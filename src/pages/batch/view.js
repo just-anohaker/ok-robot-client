@@ -3,8 +3,8 @@ import { actions as loading } from '../../components/loading';
 import { connect } from 'react-redux';
 import store from "../../Store";
 import okrobot from "okrobot-js";
-import DetailBill from '../../components/detail-bill/detail';
-import { Card, Form, Input, Button, Radio, Select, Row, Col, notification } from 'antd';
+// import DetailBill from '../../components/detail-bill/detail';
+import { Card, Form, Input, Button, Radio, Select, Row, Col, notification, Table } from 'antd';
 const { Option } = Select;
 
 class BatchCard extends PureComponent {
@@ -202,10 +202,38 @@ class BatchCard extends PureComponent {
 
     // const { accounts } = this.state
 
+    const columns = [
+      {
+        title: '订单号',
+        dataIndex: 'price',
+        key: 'price',
+      },
+      {
+        title: '时间',
+        dataIndex: 'sum',
+        key: 'sum',
+      },
+      {
+        title: '委托价格',
+        dataIndex: 'mine',
+        key: 'mine',
+      },
+      {
+        title: '数量',
+        dataIndex: 'other',
+        key: 'other',
+      },
+      {
+        title: '成本',
+        dataIndex: 'aaa',
+        key: 'aaa',
+      },
+    ];
+    
     return (
       <Row gutter={24}>
         <Col xl={12} lg={24} md={24} sm={24} xs={24} >
-          <Card title="批量交易" >
+          <Card title="批量交易" style={{ marginBottom: 24 }}>
             <Form {...formItemLayout} onSubmit={this.handleSubmit}>
               <Form.Item label="交易类型" >
                 {getFieldDecorator('type', {
@@ -248,7 +276,9 @@ class BatchCard extends PureComponent {
           </Card>
         </Col>
         <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-          <DetailBill title="交易情况" data={this.state.data}></DetailBill>
+          <Card title="交易情况" style={{ marginBottom: 24 }}>
+            <Table  columns={columns} data={this.state.data} scroll={{ y: 360 }}/>
+          </Card>
         </Col>
       </Row>
     );

@@ -119,7 +119,6 @@ class AccountsPage extends PureComponent {
       });
   }
 
-
   onChange = (type, data, key, cb) => {// 表格更新
     let row = data.filter(item => item.key === key)[0];//被操作数据行
     // console.log("ochange", type, data, key)
