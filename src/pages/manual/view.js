@@ -18,8 +18,11 @@ class ManualPage extends React.Component {
   }
 
   componentDidMount() {
-    let o_account = this.props.account
-    okrobot.batch_order.startDepInfo(o_account)
+    let { account, tranType } = this.props;
+    let option = Object.assign({}, account);
+    option.instrument_id = tranType;
+
+    okrobot.batch_order.startDepInfo(option)
       .then((res) => {
         console.log("startDepInfo-then", res);
       })
@@ -31,7 +34,7 @@ class ManualPage extends React.Component {
     okrobot.eventbus.on("depth", this.getDepathData);
 
     _interval = setInterval(() => {
-      console.log("setInterval")
+      // console.log("setInterval")
       this.setState({ dataAsks: _dataAsks, dataBids: _dataBids });
     }, 1000);
   }
@@ -76,25 +79,21 @@ class ManualPage extends React.Component {
       {
         title: '价格',
         dataIndex: 'price',
-        key: 'price',
         width: '25%',
       },
       {
         title: '总委托量',
         dataIndex: 'sum',
-        key: 'sum',
         width: '25%',
       },
       {
         title: '我的委托',
         dataIndex: 'mine',
-        key: 'mine',
         width: '25%',
       },
       {
         title: '外部委托',
         dataIndex: 'other',
-        key: 'other',
         width: '25%',
       },
     ];
@@ -137,7 +136,8 @@ class ManualPage extends React.Component {
 const mapStateToProps = (state) => {
   const infoingData = state.infoing;
   return {
-    account: infoingData.account
+    account: infoingData.account,
+    tranType: infoingData.tranType.name
   };
 };
 

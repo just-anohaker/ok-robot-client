@@ -45,7 +45,7 @@ class BatchCard extends PureComponent {
                   description:
                     '交易成功',
                 });
-              }  else {
+              } else {
                 notification.error({
                   message: '提示',
                   description:
@@ -211,31 +211,26 @@ class BatchCard extends PureComponent {
       {
         title: '订单号',
         dataIndex: 'price',
-        key: 'price',
         width: '20%',
       },
       {
         title: '时间',
         dataIndex: 'sum',
-        key: 'sum',
         width: '20%',
       },
       {
         title: '委托价格',
         dataIndex: 'mine',
-        key: 'mine',
         width: '20%',
       },
       {
         title: '数量',
         dataIndex: 'other',
-        key: 'other',
         width: '20%',
       },
       {
         title: '成本',
         dataIndex: 'cost',
-        key: 'cost',
         width: '20%',
       },
     ];

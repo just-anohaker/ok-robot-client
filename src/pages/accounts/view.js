@@ -18,7 +18,7 @@ class AccountsPage extends PureComponent {
   }
 
   transferData = (data) => {
-    let rows = data.map((item, index) => {
+    let rows = data.map(item => {
       return {
         key: item.id,
         id: item.id,
@@ -57,7 +57,7 @@ class AccountsPage extends PureComponent {
         // console.log("updata accounts newAccounts", newAccounts)
         newAccounts.push(res);
         put("allAccouts", newAccounts);
-        store.dispatch({type:'ALL_ACCOUNTS'});
+        store.dispatch({ type: 'ALL_ACCOUNTS' });
 
         store.dispatch(loading.hideLoading());
         cb();
@@ -85,7 +85,7 @@ class AccountsPage extends PureComponent {
         });
         // console.log("edit accounts", newAccounts)
         put("allAccouts", newAccounts);
-        store.dispatch({type:'ALL_ACCOUNTS'});
+        store.dispatch({ type: 'ALL_ACCOUNTS' });
 
         store.dispatch(loading.hideLoading());
         cb();
@@ -110,7 +110,7 @@ class AccountsPage extends PureComponent {
         });
         // console.log("remove accounts", newAccounts)
         put("allAccouts", newAccounts);
-        store.dispatch({type:'ALL_ACCOUNTS'});
+        store.dispatch({ type: 'ALL_ACCOUNTS' });
 
         store.dispatch(loading.hideLoading());
         cb();
