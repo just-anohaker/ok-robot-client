@@ -14,7 +14,7 @@ class BatchCard extends PureComponent {
 
     this.state = {
       delegate: "none",
-      type: "none",
+      type: "1",
       accounts: []
     };
   }
@@ -33,58 +33,58 @@ class BatchCard extends PureComponent {
       if (!err) {
         console.log('Received values of form: ', values);
 
-      let account = this.props.account
-      if (values.delegate === "limit") {
-        store.dispatch(loading.showLoading());
+        let account = this.props.account
+        if (values.delegate === "limit") {
+          store.dispatch(loading.showLoading());
 
-        okrobot.batch_order.limitOrder(values, account)
-          .then((res) => {
-            if(res && res.result){
-              notification.success({
-                message: '提示',
-                description:
-                  '交易成功',
+          okrobot.batch_order.limitOrder(values, account)
+            .then((res) => {
+              if (res && res.result) {
+                notification.success({
+                  message: '提示',
+                  description:
+                    '交易成功',
+                });
+              }
+              store.dispatch(loading.hideLoading());
+            })
+            .catch(err => {
+              store.dispatch(loading.hideLoading());
+              notification["error"]({
+                message: "现价交易失败",
+                description: "" + err
               });
-            }
-            store.dispatch(loading.hideLoading());
-          })
-          .catch(err => {
-            store.dispatch(loading.hideLoading());
-            notification["error"]({
-              message: "现价交易失败",
-              description: "" + err
             });
-          });
-      }
-      else if (values.delegate === "market") {
-        store.dispatch(loading.showLoading());
+        }
+        else if (values.delegate === "market") {
+          store.dispatch(loading.showLoading());
 
-        okrobot.batch_order.marketOrder(values, account)
-          .then((res) => {
-            if(res && res.result){
-              notification.success({
-                message: '提示',
-                description:
-                  '交易成功',
+          okrobot.batch_order.marketOrder(values, account)
+            .then((res) => {
+              if (res && res.result) {
+                notification.success({
+                  message: '提示',
+                  description:
+                    '交易成功',
+                });
+              } else {
+                notification.error({
+                  message: '提示',
+                  description:
+                    '' + res.error_message,
+                });
+              }
+              store.dispatch(loading.hideLoading());
+            })
+            .catch(err => {
+              store.dispatch(loading.hideLoading());
+              notification["error"]({
+                message: "市价交易失败",
+                description: "" + err
               });
-            } else {
-              notification.error({
-                message: '提示',
-                description:
-                  '' + res.error_message,
-              });
-            }
-            store.dispatch(loading.hideLoading());
-          })
-          .catch(err => {
-            store.dispatch(loading.hideLoading());
-            notification["error"]({
-              message: "市价交易失败",
-              description: "" + err
             });
-          });
+        }
       }
-    }
     });
   };
 
@@ -99,28 +99,28 @@ class BatchCard extends PureComponent {
             {getFieldDecorator('total', {
               rules: [{ required: true, message: '请输入委托总量!' }],
             })(
-              <Input />
+              <Input style={{ width: 230 }} />
             )}
           </Form.Item>
           <Form.Item label="委托深度" >
             {getFieldDecorator('deep', {
               rules: [{ required: true, message: '请输入委托深度!' }],
             })(
-              <Input />
+              <Input style={{ width: 230 }} />
             )}
           </Form.Item>
-          <Form.Item label="数量(ETM)">
+          <Form.Item label="数量">
             {getFieldDecorator('count', {
               rules: [{ required: true, message: '请输入数量!' }],
             })(
-              <Input />
+              <Input style={{ width: 230 }} addonAfter="ETM" />
             )}
           </Form.Item>
-          <Form.Item label="最高价(USDT)" >
+          <Form.Item label="最高价" >
             {getFieldDecorator('max', {
               rules: [{ required: true, message: '请输入最高价!' }],
             })(
-              <Input />
+              <Input style={{ width: 230 }} addonAfter="USDT" />
             )}
           </Form.Item>
         </Fragment>
@@ -201,88 +201,98 @@ class BatchCard extends PureComponent {
       wrapperCol: { span: 4, offset: 4 },
     };
 
-    // const { accounts } = this.state
-
     const columns = [
       {
         title: '订单号',
         dataIndex: 'price',
         key: 'price',
+        width: '20%',
       },
       {
         title: '时间',
         dataIndex: 'sum',
         key: 'sum',
+        width: '20%',
       },
       {
         title: '委托价格',
         dataIndex: 'mine',
         key: 'mine',
+        width: '20%',
       },
       {
         title: '数量',
         dataIndex: 'other',
         key: 'other',
+        width: '20%',
       },
       {
         title: '成本',
-        dataIndex: 'aaa',
-        key: 'aaa',
+        dataIndex: 'cost',
+        key: 'cost',
+        width: '20%',
       },
     ];
 
+    const tableAttr = {
+      columns,
+      scroll: { y: 360 }
+
+    };
+
     return (
       <div className="trans">
-      <Row gutter={24} >
-        <Col xl={12} lg={24} md={24} sm={24} xs={24} >
-          <Card title="批量交易" style={{ marginBottom: 24 }}>
-            <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-              <Form.Item label="交易类型" >
-                {getFieldDecorator('type', {
-                  rules: [{ required: true, message: '请选择交易对!' }],
-                })(
-                  <Radio.Group onChange={this.handleFormType} buttonStyle="solid">
-                    <Radio.Button value="1">买入</Radio.Button>
-                    <Radio.Button value="2">卖出</Radio.Button>
-                  </Radio.Group>
-                )}
-              </Form.Item>
-              <Form.Item label="委托类型">
-                {getFieldDecorator('delegate', {
-                  rules: [{ required: true }],
-                })(
-                  <Select
-                    placeholder="请选择委托类型"
-                    onChange={this.handleFormDelegate}
-                    style={{ width: 230 }}
-                  >
-                    <Option value="limit">限价交易</Option>
-                    <Option value="market">市价交易</Option>
-                    <Option value="iceberg" disabled>冰山委托</Option>
-                  </Select>
-                )}
-              </Form.Item>
-              {this.getDelegatePanel()}
+        <Row gutter={24} >
+          <Col xl={12} lg={24} md={24} sm={24} xs={24} >
+            <Card title="批量交易" style={{ marginBottom: 24 }}>
+              <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+                <Form.Item label="交易类型" >
+                  {getFieldDecorator('type', {
+                    initialValue: '1',
+                    rules: [{ required: true, message: '请选择交易对!' }],
+                  })(
+                    <Radio.Group onChange={this.handleFormType} buttonStyle="solid">
+                      <Radio.Button value="1">买入</Radio.Button>
+                      <Radio.Button value="2">卖出</Radio.Button>
+                    </Radio.Group>
+                  )}
+                </Form.Item>
+                <Form.Item label="委托类型">
+                  {getFieldDecorator('delegate', {
+                    rules: [{ required: true }],
+                  })(
+                    <Select
+                      placeholder="请选择委托类型"
+                      onChange={this.handleFormDelegate}
+                      style={{ width: 230 }}
+                    >
+                      <Option value="limit">限价交易</Option>
+                      <Option value="market">市价交易</Option>
+                      <Option value="iceberg">冰山委托</Option>
+                    </Select>
+                  )}
+                </Form.Item>
+                {this.getDelegatePanel()}
 
-              <Form.Item label="可买">
-                <Input disabled addonAfter="ETM" style={{ width: 230 }} />
-              </Form.Item>
-              <Form.Item label="余额">
-                <Input disabled addonAfter="USDT" style={{ width: 230 }} />
-              </Form.Item>
+                <Form.Item label="可买">
+                  <Input disabled addonAfter="ETM" style={{ width: 230 }} />
+                </Form.Item>
+                <Form.Item label="余额">
+                  <Input disabled addonAfter="USDT" style={{ width: 230 }} />
+                </Form.Item>
 
-              <Form.Item {...formTailLayout}>
-                <Button type="primary" htmlType="submit">提交</Button>
-              </Form.Item>
-            </Form>
-          </Card>
-        </Col>
-        <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-          <Card title="交易情况" style={{ marginBottom: 24 }}>
-            <Table  columns={columns} data={this.state.data} scroll={{ y: 360 }}/>
-          </Card>
-        </Col>
-      </Row>
+                <Form.Item {...formTailLayout}>
+                  <Button type="primary" htmlType="submit">提交</Button>
+                </Form.Item>
+              </Form>
+            </Card>
+          </Col>
+          <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+            <Card title="交易情况" style={{ marginBottom: 24 }}>
+              <Table data={this.state.data} {...tableAttr} />
+            </Card>
+          </Col>
+        </Row>
       </div>
     );
   }

@@ -6,6 +6,8 @@ import './less/index.less';
 import okrobot from "okrobot-js";
 import { connect } from 'react-redux';
 
+let _dataAsks, _dataBids, _interval;
+
 class ManualPage extends React.Component {
   constructor(...args) {
     super(...args)
@@ -14,7 +16,6 @@ class ManualPage extends React.Component {
       dataBids: []
     }
   }
-
 
   componentDidMount() {
     let o_account = this.props.account
@@ -26,26 +27,28 @@ class ManualPage extends React.Component {
         console.log("startDepInfo-catch", err);
       })
 
-    let provious = Date.now();
 
-    okrobot.eventbus.on("depth", (name, data) => {
-      // console.log("startDepInfo-depthevent", name, data);
-      this.getData(provious,data)
-    });
+    okrobot.eventbus.on("depth", this.getDepathData);
+
+    _interval = setInterval(() => {
+      console.log("setInterval")
+      this.setState({ dataAsks: _dataAsks, dataBids: _dataBids });
+    }, 1000);
   }
-  getData(provious,data) {
-    let now = Date.now();
-    console.log(now - provious > 5000)
-    if(now - provious > 5000){
-      provious = now;
 
-      let { asks, bids } = data;
-      asks.reverse();
-      let dataAsks = this.generateData(asks);
-      let dataBids = this.generateData(bids);
-      this.setState({ dataAsks, dataBids });
+  componentWillUnmount() {
+    okrobot.eventbus.remove("depth", this.getDepathData);
+    clearInterval(_interval);
+  }
+
+  getDepathData = (name, data) => {
+    let { asks, bids } = data;
+    if (!asks || !bids || asks.length <= 0 || bids.length <= 0) {
+      return
     }
 
+    _dataAsks = this.generateData(asks);
+    _dataBids = this.generateData(bids);
   }
 
   generateData = (arr) => {
@@ -64,7 +67,7 @@ class ManualPage extends React.Component {
         other
       }
     });
-    return newArr;
+    return newArr.slice(0, 50);
   }
 
   render() {
@@ -74,24 +77,34 @@ class ManualPage extends React.Component {
         title: '价格',
         dataIndex: 'price',
         key: 'price',
+        width: '25%',
       },
       {
         title: '总委托量',
         dataIndex: 'sum',
         key: 'sum',
+        width: '25%',
       },
       {
         title: '我的委托',
         dataIndex: 'mine',
         key: 'mine',
+        width: '25%',
       },
       {
         title: '外部委托',
         dataIndex: 'other',
         key: 'other',
+        width: '25%',
       },
     ];
 
+    const tableAttr = {
+      columns,
+      pagination: false,
+      scroll: { y: 300 }
+
+    };
 
     return (
       <div className="manual">
@@ -101,7 +114,7 @@ class ManualPage extends React.Component {
           </Col>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card title="卖单情况" style={{ marginBottom: 24 }}>
-              <Table columns={columns} dataSource={this.state.dataAsks} scroll={{ y: 360 }} />
+              <Table dataSource={this.state.dataAsks} {...tableAttr} />
             </Card>
           </Col>
         </Row>
@@ -111,7 +124,7 @@ class ManualPage extends React.Component {
           </Col>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card title="买单情况" style={{ marginBottom: 24 }}>
-              <Table columns={columns} dataSource={this.state.dataBids} scroll={{ y: 360 }} />
+              <Table dataSource={this.state.dataBids}  {...tableAttr} />
             </Card>
           </Col>
         </Row>

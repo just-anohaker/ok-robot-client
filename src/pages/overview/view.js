@@ -3,7 +3,7 @@ import { view as StretchTable } from '../../components/stretchtable';
 import { view as CandleChart } from '../../components/candlechart';
 import { actions as loading } from '../../components/loading';
 import store from "../../Store";
-import { Card, Tag, Table,Row,Col } from 'antd';
+import { Card, Tag, Table, Row, Col } from 'antd';
 
 import styles from './overview.module.css';
 
@@ -145,68 +145,68 @@ const trData = [
   }
 ];
 const newData = [
-  {
-    key: '1',
-    time: '2019-02-11',
-    dealprice: 3.21,
-    count: 3,
-    width: 100
-  },
-  {
-    key: '2',
-    time: '2019-04-11',
-    dealprice: 3.21,
-    count: 3,
-    width: 100
-  },
-  {
-    key: '3',
-    time: '2019-02-11',
-    dealprice: 3.21,
-    count: 3
-  },
-  {
-    key: '4',
-    time: '2019-02-11',
-    dealprice: 3.21,
-    count: 3
-  },
-  {
-    key: '5',
-    time: '2019-02-11',
-    dealprice: 3.21,
-    count: 3
-  },
-  {
-    key: '6',
-    time: '2019-02-11',
-    dealprice: 3.21,
-    count: 3
-  },
-  {
-    key: '7',
-    time: '2019-02-11',
-    dealprice: 3.21,
-    count: 3
-  },
-  {
-    key: '8',
-    time: '2019-02-11',
-    dealprice: 3.21,
-    count: 3
-  },
-  {
-    key: '9',
-    time: '2019-02-11',
-    dealprice: 3.21,
-    count: 3
-  },
-  {
-    key: '10',
-    time: '2019-02-11',
-    dealprice: 3.21,
-    count: 3
-  },
+  // {
+  //   key: '1',
+  //   time: '2019-02-11',
+  //   dealprice: 3.21,
+  //   count: 3,
+  //   width: 100
+  // },
+  // {
+  //   key: '2',
+  //   time: '2019-04-11',
+  //   dealprice: 3.21,
+  //   count: 3,
+  //   width: 100
+  // },
+  // {
+  //   key: '3',
+  //   time: '2019-02-11',
+  //   dealprice: 3.21,
+  //   count: 3
+  // },
+  // {
+  //   key: '4',
+  //   time: '2019-02-11',
+  //   dealprice: 3.21,
+  //   count: 3
+  // },
+  // {
+  //   key: '5',
+  //   time: '2019-02-11',
+  //   dealprice: 3.21,
+  //   count: 3
+  // },
+  // {
+  //   key: '6',
+  //   time: '2019-02-11',
+  //   dealprice: 3.21,
+  //   count: 3
+  // },
+  // {
+  //   key: '7',
+  //   time: '2019-02-11',
+  //   dealprice: 3.21,
+  //   count: 3
+  // },
+  // {
+  //   key: '8',
+  //   time: '2019-02-11',
+  //   dealprice: 3.21,
+  //   count: 3
+  // },
+  // {
+  //   key: '9',
+  //   time: '2019-02-11',
+  //   dealprice: 3.21,
+  //   count: 3
+  // },
+  // {
+  //   key: '10',
+  //   time: '2019-02-11',
+  //   dealprice: 3.21,
+  //   count: 3
+  // },
 ];
 
 const buyStuct = {
@@ -476,11 +476,11 @@ class OverviewPage extends PureComponent {
           </Col>
           <Col xl={8} lg={24} md={24} sm={24} xs={24} >
             <Card title="最新成交" style={{ marginBottom: 24 }}>
-              <Table dataSource={this.state.newData} {...propsNewTable}/>
+              <Table dataSource={this.state.newData} {...propsNewTable} />
             </Card>
           </Col>
         </Row>
-        <Card title="交易记录" >
+        <Card title="交易记录" style={{ display: "none" }}>
           <StretchTable data={this.state.trData} columns={trColumns} />
         </Card>
       </Fragment >
