@@ -1,2 +1,3 @@
 export const CHANGE_ACCOUNT = 'CHANGE_ACCOUNT';
 export const CHANGE_TRANTYPE = 'CHANGE_TRANTYPE';
+export const ALL_ACCOUNTS = 'ALL_ACCOUNTS';

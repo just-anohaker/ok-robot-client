@@ -29,9 +29,11 @@ class HomePage extends PureComponent {
       .then((res) => {
         if (res.length > 0) {
           put("allAccouts", res);
+          store.dispatch({type:'ALL_ACCOUNTS'})
         }
         else {
           put("allAccouts", []);
+          store.dispatch({type:'ALL_ACCOUNTS'})
         }
 
         store.dispatch(loading.hideLoading());

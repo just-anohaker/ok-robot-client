@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Card, Radio, Form, Input, notification, Button } from 'antd';
-// import DetailBill from '../../../components/detail-bill';
-// import { get } from "../../../util/localstorage.js";
 import okrobot from "okrobot-js";
 
 const formItemLayout = {
@@ -27,12 +25,6 @@ class BatchFrom extends React.Component {
       data: []
     }
   }
-
-  // componentDidMount() {
-  //   let account = get("allAccouts") || [];
-  //   this.setState({ accounts: account });
-
-  // }
 
   async generate({ options, account }) {
     try {
@@ -87,8 +79,6 @@ class BatchFrom extends React.Component {
     return (
       <div className="random-sale">
         {/*批量挂单*/}
-        {/* <Row gutter={24}>
-          <Col xl={12} lg={24} md={24} sm={24} xs={24} style={{ marginBottom: 24 }}> */}
         <Card title="批量挂单" >
           <Form {...formItemLayout} onSubmit={this.handleSubmit}>
 
@@ -163,11 +153,6 @@ class BatchFrom extends React.Component {
             </Row>
           </Form>
         </Card>
-        {/* </Col>
-          <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-            <DetailBill title="卖单情况" data={this.state.data}></DetailBill>
-          </Col>
-        </Row> */}
       </div>
     )
   }

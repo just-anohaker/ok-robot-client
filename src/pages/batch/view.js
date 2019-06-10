@@ -3,8 +3,9 @@ import { actions as loading } from '../../components/loading';
 import { connect } from 'react-redux';
 import store from "../../Store";
 import okrobot from "okrobot-js";
-// import DetailBill from '../../components/detail-bill/detail';
 import { Card, Form, Input, Button, Radio, Select, Row, Col, notification, Table } from 'antd';
+
+import './index.css'
 const { Option } = Select;
 
 class BatchCard extends PureComponent {
@@ -229,9 +230,10 @@ class BatchCard extends PureComponent {
         key: 'aaa',
       },
     ];
-    
+
     return (
-      <Row gutter={24}>
+      <div className="trans">
+      <Row gutter={24} >
         <Col xl={12} lg={24} md={24} sm={24} xs={24} >
           <Card title="批量交易" style={{ marginBottom: 24 }}>
             <Form {...formItemLayout} onSubmit={this.handleSubmit}>
@@ -281,6 +283,7 @@ class BatchCard extends PureComponent {
           </Card>
         </Col>
       </Row>
+      </div>
     );
   }
 }

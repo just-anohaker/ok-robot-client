@@ -66,7 +66,7 @@ class ManualPage extends React.Component {
   }
 
   render() {
-    
+
     const columns = [
       {
         title: '价格',
@@ -82,7 +82,7 @@ class ManualPage extends React.Component {
         title: '我的委托',
         dataIndex: 'mine',
         key: 'mine',
-      },  
+      },
       {
         title: '外部委托',
         dataIndex: 'other',

@@ -1,0 +1,16 @@
+.trans .ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled){
+  background: #a0d911;
+  border-color: #a0d911;
+}
+.trans .ant-radio-button-wrapper-checked:last-child{
+  background: #f5222d!important;
+  border-color: #f5222d!important;
+}
+.trans .ant-radio-button-wrapper-checked::before{
+  background-color: #f5222d!important;
+  opacity: 1;
+
+}
+.trans .ant-radio-button-wrapper:hover{
+  color: rgba(0, 0, 0, 0.65);
+}
