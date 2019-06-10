@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select } from 'antd'
+import { Select, Radio } from 'antd'
 import { connect } from 'react-redux';
 import styles from './info.module.css'
 const Option = Select.Option;
@@ -13,7 +13,7 @@ class InfoAccount extends React.Component {
   }
   componentWillMount() { }
   handleTranTypeChange(value) {
-    this.props.dispatch({ type: 'CHANGE_TRANTYPE', 'tranTran': value })
+    this.props.dispatch({ type: 'CHANGE_TRANTYPE', 'tranTran': value.target.value })
   }
   handleAccountChange(value) {
     this.props.dispatch({ type: 'CHANGE_ACCOUNT', 'name': value })
@@ -41,21 +41,10 @@ class InfoAccount extends React.Component {
 
         <div className={styles['tran-item']}>
           <span className={styles['name']}>交易对 :</span>
-          <Select
-            showSearch
-            style={{ width: 200 }}
-            placeholder="请选择交易对!"
-            optionFilterProp="children"
-            value={this.props.tranType}
-            onChange={this.handleTranTypeChange.bind(this)}
-            filterOption={(input, option) =>
-              option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            }
-          >
-            <Option value="ZIL-USDT">ZIL/USDT</Option>
-            <Option value="ETM-USDT">ETM/USDT</Option>
-            <Option value="ETM-USDK">ETM/USDK</Option>
-          </Select>
+          <Radio.Group onChange={this.handleTranTypeChange.bind(this)} value={this.props.tranType}  buttonStyle="solid">
+            <Radio.Button value="ETM-USDT">ETM/USDT</Radio.Button>
+            <Radio.Button value="ETM-USDK">ETM/USDK</Radio.Button>
+          </Radio.Group>
         </div>
 
       </div>
@@ -64,6 +53,7 @@ class InfoAccount extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+  console.log(state)
   const infoingData = state.infoing;
 
   return {

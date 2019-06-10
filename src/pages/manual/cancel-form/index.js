@@ -67,7 +67,9 @@ class CancelFrom extends React.Component {
         this.setState({ loading: true })
         let options = {
           topPrice: Number(values.top),
-          startPrice: Number(values.bottom)
+          startPrice: Number(values.bottom),
+          instrument_id:this.props.tranType
+
         };
         let accountsData = this.props.account;
 
@@ -130,7 +132,8 @@ const mapStateToProps = (state) => {
   const infoingData = state.infoing;
 
   return {
-    account: infoingData.account
+    account: infoingData.account,
+    tranType: infoingData.tranType.name
   };
 };
 

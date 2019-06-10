@@ -66,9 +66,9 @@ class BatchFrom extends React.Component {
           topPrice: Number(values.top),
           incr: Number(values.incr) / 100,
           size: Number(values.size),
-          sizeIncr: Number(values.sizeIncr) / 100
+          sizeIncr: Number(values.sizeIncr) / 100,
+          instrument_id:this.props.tranType
         };
-        console.log(this.props.account);
         this.generate({ options, account: this.props.account })
       }
     });
@@ -163,7 +163,8 @@ const mapStateToProps = (state) => {
   const infoingData = state.infoing;
 
   return {
-    account: infoingData.account
+    account: infoingData.account,
+    tranType: infoingData.tranType.name
   };
 };
 

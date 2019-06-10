@@ -32,7 +32,7 @@ class BatchCard extends PureComponent {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-
+        values.instrument_id = this.props.tranType
         let account = this.props.account
         if (values.delegate === "limit") {
           store.dispatch(loading.showLoading());
@@ -44,6 +44,12 @@ class BatchCard extends PureComponent {
                   message: '提示',
                   description:
                     '交易成功',
+                });
+              }  else {
+                notification.error({
+                  message: '提示',
+                  description:
+                    '' + res.error_message,
                 });
               }
               store.dispatch(loading.hideLoading());
@@ -303,7 +309,8 @@ const mapStateToProps = (state) => {
   const infoingData = state.infoing;
 
   return {
-    account: infoingData.account
+    account: infoingData.account,
+    tranType: infoingData.tranType.name
   };
 };
 

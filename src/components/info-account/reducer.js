@@ -13,7 +13,7 @@ function getAllaccount() {
 let account = {
   accounts: getAllaccount().allAccouts,
   account: getAllaccount().initAccount,
-  tranType: { name: 'ZIL/USDT' }
+  tranType: { name: 'ETM-USDT' }
 }
 
 export default (state = account, action) => {
