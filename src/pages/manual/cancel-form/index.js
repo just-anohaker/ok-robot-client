@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Card, Form, Input, notification, Button } from 'antd';
-// import DetailBill from '../../../components/detail-bill'
 import { get } from "../../../util/localstorage.js";
 
 import okrobot from "okrobot-js";
@@ -13,7 +12,7 @@ const formItemLayout = {
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 },
+    sm: { span: 18 },
   },
 };
 
@@ -80,20 +79,16 @@ class CancelFrom extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    let tranType = this.state.tranType
+    let tranType = this.props.addonAfter
     return (
       <div className="random-sale">
         {/*批量撤单*/}
-        {/* <Row gutter={24}>
-          <Col xl={12} lg={24} md={24} sm={24} xs={24} style={{ marginBottom: 24 }}> */}
         <Card title="批量撤单" >
           <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-
             <Form.Item className="require" label="价格范围" style={{ marginBottom: 0 }}>
               <Form.Item style={{ display: 'inline-block' }}>
                 {getFieldDecorator('bottom', {
-                  initialValue: '0.01',
-                  rules: [{ required: true, message: '请选择价格范围！' }],
+                  rules: [{ required: true, message: '请输入价格范围起始值！' }],
                 })(
                   <Input addonAfter={tranType} type="number" style={{ width: 150 }} />
                 )}
@@ -101,8 +96,7 @@ class CancelFrom extends React.Component {
               <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}>~</span>
               <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
                 {getFieldDecorator('top', {
-                  initialValue: '0.02',
-                  rules: [{ required: true, message: '请选择交易区间！' }],
+                  rules: [{ required: true, message: '请输入价格范围最终值！' }],
                 })(
                   <Input addonAfter={tranType} type="number" style={{ width: 150 }} />
                 )}
@@ -114,11 +108,6 @@ class CancelFrom extends React.Component {
             </Row>
           </Form>
         </Card>
-        {/* </Col>
-          <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-            <DetailBill title="卖单情况"></DetailBill>
-          </Col>
-        </Row> */}
       </div>
     )
   }
@@ -133,7 +122,9 @@ const mapStateToProps = (state) => {
 
   return {
     account: infoingData.account,
-    tranType: infoingData.tranType.name
+    tranType: infoingData.tranType.name,
+    addonAfter: infoingData.tranType.name.substring(4)
+
   };
 };
 

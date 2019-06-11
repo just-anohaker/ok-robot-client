@@ -1,12 +1,30 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { PureComponent, Fragment } from 'react';
 import { actions as loading } from '../../components/loading';
 import { connect } from 'react-redux';
 import store from "../../Store";
 import okrobot from "okrobot-js";
 import { Card, Form, Input, Button, Radio, Select, Row, Col, notification, Table } from 'antd';
+import { parseTime } from '../../util/utils';
+import FallPage from './fall-dowm'
+import './index.css';
 
-import './index.css'
 const { Option } = Select;
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 4 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
+const formTailLayout = {
+  labelCol: { span: 2 },
+  wrapperCol: { span: 4, offset: 4 },
+};
+
 
 class BatchCard extends PureComponent {
   constructor(...args) {
@@ -15,9 +33,83 @@ class BatchCard extends PureComponent {
     this.state = {
       delegate: "none",
       type: "1",
-      accounts: []
+      data: [],
+      accounts: [],
+      loading: false,
+      pagination: {}
     };
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.tranType !== nextProps.tranType || this.props.account.httpkey !== nextProps.account.httpkey) {
+      this.getOrderData({ options: { instrument_id: nextProps.tranType }, account: nextProps.account })
+    }
+  }
+
+  componentWillMount() {
+    let tranType = this.props.tranType;
+    let account = this.props.account;
+    this.getOrderData({ options: { instrument_id: tranType }, account: account })
+  }
+
+  refresh() {
+    let tranType = this.props.tranType;
+    let account = this.props.account;
+    this.getOrderData({ options: { instrument_id: tranType }, account: account })
+  }
+
+  async getOrderData({ options = {}, account }) {
+    try {
+      this.setState({ loading: true });
+      const res = await okrobot.batch_order.getOrderData(options, account);
+      if (res && res.length > 0) {
+        const pagination = { ...this.state.pagination };
+        pagination.total = res.length;
+        this.setState({ loading: false, data: res });
+      } else {
+        this.setState({ loading: false });
+        this.setState({ data: [] })
+      }
+    } catch (error) {
+      this.setState({ loading: false });
+      this.setState({ data: [] })
+      console.log(error)
+    }
+
+  }
+
+  statusType(type) {
+    // eslint-disable-next-line default-case
+    switch (type) {
+      case '-2':
+        return '失败'
+      case '-1':
+        return '撤单成功'
+      case '0':
+        return '等待成交'
+      case '1':
+        return '部分成交'
+      case '2':
+        return '完全成交'
+      case '3':
+        return '下单中'
+      case '4':
+        return '撤单中'
+      case '6':
+        return '未完成'
+      case '7':
+        return '已完成'
+    }
+  }
+  // handleTableChange = (pagination) => {
+  //   console.log(pagination)
+  //   const pager = { ...this.state.pagination };
+  //   pager.current = pagination.current;
+  //   this.setState({
+  //     pagination: pager,
+  //   });
+  //   this.getOrderData({ options: { instrument_id: this.props.tranType }, account: this.props.account })
+  // }
 
   handleFormDelegate = e => {
     this.setState({ delegate: e });
@@ -139,7 +231,7 @@ class BatchCard extends PureComponent {
             {getFieldDecorator('price', {
               rules: [{ required: true, message: '请选择交易对!' }],
             })(
-              <Input style={{ width: 230 }} addonAfter="USDT" />
+              <Input style={{ width: 230 }} addonAfter={this.props.addonAfter} />
             )}
           </Form.Item>
           <Form.Item label="总量">
@@ -160,7 +252,7 @@ class BatchCard extends PureComponent {
               {getFieldDecorator('notional', {
                 rules: [{ required: true, message: '请输入金额!' }],
               })(
-                <Input addonAfter="USDT" style={{ width: 230 }} />
+                <Input addonAfter={this.props.addonAfter} style={{ width: 230 }} />
               )}
             </Form.Item>
           </Fragment>
@@ -189,58 +281,50 @@ class BatchCard extends PureComponent {
   }
 
   render() {
-
     const { getFieldDecorator } = this.props.form;
-
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 4 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 16 },
-      },
-    };
-    const formTailLayout = {
-      labelCol: { span: 2 },
-      wrapperCol: { span: 4, offset: 4 },
-    };
-
     const columns = [
       {
         title: '订单号',
-        dataIndex: 'price',
-        width: '20%',
+        dataIndex: 'client_oid',
       },
       {
         title: '时间',
-        dataIndex: 'sum',
-        width: '20%',
+        dataIndex: 'created_at',
+        render: (text) => (
+          <span>{parseTime(text)}</span>
+        )
       },
       {
         title: '委托价格',
-        dataIndex: 'mine',
-        width: '20%',
+        dataIndex: 'price',
       },
       {
         title: '数量',
-        dataIndex: 'other',
-        width: '20%',
+        dataIndex: 'size',
       },
       {
         title: '成本',
-        dataIndex: 'cost',
-        width: '20%',
+        dataIndex: 'price_avg',
       },
+      {
+        title: '状态',
+        dataIndex: 'state',
+        render: (text) => <span>{this.statusType(text)}</span>
+      },
+      // {
+      //   title: '操作',
+      //   dataIndex: 'action',
+      //   key: 'action',
+      //   //  eslint-disable-next-line
+      //   render: text => <a href="javascript:;">详情</a>,
+      // },
     ];
 
     const tableAttr = {
       columns,
-      scroll: { y: 360 }
-
+      scroll: { x: 600 }
     };
-
+    let tranType = this.props.addonAfter
     return (
       <div className="trans">
         <Row gutter={24} >
@@ -269,7 +353,7 @@ class BatchCard extends PureComponent {
                     >
                       <Option value="limit">限价交易</Option>
                       <Option value="market">市价交易</Option>
-                      <Option value="iceberg">冰山委托</Option>
+                      <Option disabled value="iceberg">冰山委托</Option>
                     </Select>
                   )}
                 </Form.Item>
@@ -279,7 +363,7 @@ class BatchCard extends PureComponent {
                   <Input disabled addonAfter="ETM" style={{ width: 230 }} />
                 </Form.Item>
                 <Form.Item label="余额">
-                  <Input disabled addonAfter="USDT" style={{ width: 230 }} />
+                  <Input disabled addonAfter={tranType} style={{ width: 230 }} />
                 </Form.Item>
 
                 <Form.Item {...formTailLayout}>
@@ -289,11 +373,14 @@ class BatchCard extends PureComponent {
             </Card>
           </Col>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-            <Card title="交易情况" style={{ marginBottom: 24 }}>
-              <Table data={this.state.data} {...tableAttr} />
+            <Card title="交易情况" style={{ marginBottom: 24 }} extra={<Button onClick={this.refresh.bind(this)} type="primary">刷新</Button>} >
+              <Table rowKey={record => record.client_oid} loading={this.state.loading} dataSource={this.state.data} {...tableAttr} />
             </Card>
           </Col>
+
+
         </Row>
+        <FallPage></FallPage>
       </div>
     );
   }
@@ -305,7 +392,9 @@ const mapStateToProps = (state) => {
 
   return {
     account: infoingData.account,
-    tranType: infoingData.tranType.name
+    tranType: infoingData.tranType.name,
+    addonAfter: infoingData.tranType.name.substring(4)
+
   };
 };
 

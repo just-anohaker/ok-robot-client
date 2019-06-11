@@ -10,7 +10,7 @@ const formItemLayout = {
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 },
+    sm: { span: 18 },
   },
 };
 
@@ -100,16 +100,16 @@ class BatchFrom extends React.Component {
                   initialValue: '0.01',
                   rules: [{ required: true, message: '请选择价格范围！' }],
                 })(
-                  <Input addonAfter={this.state.tranType} type="number" style={{ width: 150 }} />
+                  <Input addonAfter={this.props.addonAfter} type="number" style={{ width: 150 }} />
                 )}
               </Form.Item>
               <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}>~</span>
               <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
                 {getFieldDecorator('top', {
                   initialValue: '0.015',
-                  rules: [{ required: true, message: '请选择交易区间！' }],
+                  rules: [{ required: true, message: '请选择价格范围！' }],
                 })(
-                  <Input addonAfter={this.state.tranType} type="number" style={{ width: 150 }} />
+                  <Input addonAfter={this.props.addonAfter} type="number" style={{ width: 150 }} />
                 )}
               </Form.Item>
             </Form.Item>
@@ -129,7 +129,7 @@ class BatchFrom extends React.Component {
                   initialValue: '1',
                   rules: [{ required: true, message: '起始数量不能为空!' }],
                 })(
-                  <Input addonAfter={this.state.tranType} type="number" style={{ width: 150 }} />
+                  <Input addonAfter={this.props.addonAfter} type="number" style={{ width: 150 }} />
                 )}
               </Form.Item>
               <span style={{ display: 'inline-block', width: '50px', textAlign: 'center' }}>增量</span>
@@ -164,7 +164,8 @@ const mapStateToProps = (state) => {
 
   return {
     account: infoingData.account,
-    tranType: infoingData.tranType.name
+    tranType: infoingData.tranType.name,
+    addonAfter: infoingData.tranType.name.substring(4)
   };
 };
 
