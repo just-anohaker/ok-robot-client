@@ -47,7 +47,7 @@ class BatchFrom extends React.Component {
         notification.error({
           message: '提示',
           description:
-            '批量撤单失败，请重试'
+            '批量挂单失败，请重试'
         });
       }
     } catch (error) {

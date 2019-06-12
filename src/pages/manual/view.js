@@ -63,7 +63,7 @@ const columns1 = [
     width: '20%',
   },
 ];
-let _dataAsks, _dataBids, _interval;
+let _dataAsks, _dataBids;
 
 class ManualPage extends React.Component {
   constructor(...args) {
@@ -87,6 +87,7 @@ class ManualPage extends React.Component {
     this.linkSock(tranType)
   }
   linkSock(tranType) {
+    console.log(1)
     this.setState({ loading: true });
     let { account } = this.props;
     let option = Object.assign({}, account);
@@ -102,15 +103,15 @@ class ManualPage extends React.Component {
         this.setState({ loading: false });
       })
     okrobot.eventbus.on("depth", this.getDepathData);
-    clearInterval(_interval);
+    // clearInterval(_interval);
 
-    _interval = setInterval(() => {
-      this.setState({ dataAsks: _dataAsks, dataBids: _dataBids });
-    }, 1000);
+    // _interval = setInterval(() => {
+    //   this.setState({ dataAsks: _dataAsks, dataBids: _dataBids });
+    // }, 1000);
   }
   componentWillUnmount() {
     okrobot.eventbus.remove("depth", this.getDepathData);
-    clearInterval(_interval);
+    // clearInterval(_interval);
   }
 
   getDepathData = (name, data) => {
@@ -122,6 +123,8 @@ class ManualPage extends React.Component {
 
     _dataAsks = this.generateData(asks);
     _dataBids = this.generateData(bids);
+    this.setState({ dataAsks: _dataAsks, dataBids: _dataBids });
+
   }
 
   generateData = (arr) => {
