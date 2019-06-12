@@ -291,8 +291,9 @@ class BatchCard extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     const columns = [
       {
-        title: '订单号',
-        dataIndex: 'order_id',
+        title: '类型',
+        dataIndex: 'side',
+        render:(text) => <span>{text === 'sell' ? '卖出':'买入'}</span>
       },
       {
         title: '时间',

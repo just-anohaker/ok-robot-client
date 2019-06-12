@@ -87,7 +87,6 @@ class ManualPage extends React.Component {
     this.linkSock(tranType)
   }
   linkSock(tranType) {
-    console.log(1)
     this.setState({ loading: true });
     let { account } = this.props;
     let option = Object.assign({}, account);
