@@ -6,16 +6,18 @@ const request = (url, config) => {
       // 服务器异常返回
       throw Error('');
     }
-
+    // console.log("fetch1", res)
     return res.json();
   }).then((resJson) => {
-    if (!resJson.success) {
-      // 项目内部认为的错误
-      throw Error('');
-    } else {
-      return resJson;
-    }
+    // console.log("fetch2", resJson)
+    // if (!resJson.success) {
+    //   // 项目内部认为的错误
+    //   throw Error('');
+    // } else {
+    return resJson;
+    // }
   }).catch(() => {
+    // console.log("fetch3")
     // 公共错误处理
     message.error('内部错误，请重新登录');
   });
@@ -23,7 +25,7 @@ const request = (url, config) => {
 
 // GET请求
 export const get = (url) => {
-  return request(url, {method: 'GET'});
+  return request(url, { method: 'GET' });
 };
 
 // POST请求
