@@ -35,6 +35,7 @@ class CancelFrom extends React.Component {
     try {
       const result = await okrobot.batch_order.cancel(params.options, params.account)
       if (result && result.result) {
+      this.setState({ loading: false })
         notification.success({
           message: '提示',
           description:
@@ -44,12 +45,16 @@ class CancelFrom extends React.Component {
         notification.error({
           message: '提示',
           description:
-            '请求失败',
+            result.error_message,
         });
       }
-      this.setState({ loading: false })
     } catch (error) {
       this.setState({ loading: false })
+      notification.error({
+        message: '提示',
+        description:
+          '' + error,
+      });
       console.log(error)
     }
 
@@ -67,7 +72,7 @@ class CancelFrom extends React.Component {
         let options = {
           topPrice: Number(values.top),
           startPrice: Number(values.bottom),
-          instrument_id:this.props.tranType
+          instrument_id: this.props.tranType
 
         };
         let accountsData = this.props.account;

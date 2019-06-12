@@ -37,16 +37,20 @@ class BatchFrom extends React.Component {
             '批量挂单成功',
         });
       } else {
-        this.setState({ loading: false })
         notification.error({
           message: '提示',
           description:
-            '批量挂单失败',
+            result.error_message,
         });
+        this.setState({ loading: false })
       }
     } catch (error) {
       this.setState({ loading: false })
-      console.log(error)
+      notification.error({
+        message: '提示',
+        description:
+          '' + error,
+      });
     }
   }
 
@@ -67,7 +71,7 @@ class BatchFrom extends React.Component {
           incr: Number(values.incr) / 100,
           size: Number(values.size),
           sizeIncr: Number(values.sizeIncr) / 100,
-          instrument_id:this.props.tranType
+          instrument_id: this.props.tranType
         };
         this.generate({ options, account: this.props.account })
       }

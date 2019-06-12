@@ -3,7 +3,7 @@ import { get } from "../../util/localstorage.js";
 
 function getAllaccount() {
   const allAccouts = get("allAccouts") || [];
-  const initAccount = allAccouts[0] || {};
+  const initAccount = allAccouts[0] || {id: '', httpkey: '', groupName: '', httpsecret: '', name: '', passphrase: ''};
   return {
     allAccouts,
     initAccount

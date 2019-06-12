@@ -36,6 +36,7 @@ class BatchCard extends PureComponent {
       data: [],
       accounts: [],
       loading: false,
+      lastOderId:'',
       pagination: {}
     };
   }
@@ -55,17 +56,18 @@ class BatchCard extends PureComponent {
   refresh() {
     let tranType = this.props.tranType;
     let account = this.props.account;
-    this.getOrderData({ options: { instrument_id: tranType }, account: account })
+    this.getOrderData({ options: { instrument_id: tranType}, account: account })
   }
 
   async getOrderData({ options = {}, account }) {
     try {
       this.setState({ loading: true });
       const res = await okrobot.batch_order.getOrderData(options, account);
-      if (res && res.length > 0) {
+      if (res && res.list.length > 0) {
         const pagination = { ...this.state.pagination };
+        const data = res.list;
         pagination.total = res.length;
-        this.setState({ loading: false, data: res });
+        this.setState({ loading: false, data: data });
       } else {
         this.setState({ loading: false });
         this.setState({ data: [] })
@@ -101,14 +103,19 @@ class BatchCard extends PureComponent {
         return '已完成'
     }
   }
-  // handleTableChange = (pagination) => {
+  // setStateAsync(state) {
+  //   return new Promise((resolve) => {
+  //     this.setState(state, resolve)
+  //   })
+  // }
+  // async handleTableChange  (pagination)  {
   //   console.log(pagination)
   //   const pager = { ...this.state.pagination };
   //   pager.current = pagination.current;
-  //   this.setState({
-  //     pagination: pager,
-  //   });
-  //   this.getOrderData({ options: { instrument_id: this.props.tranType }, account: this.props.account })
+  //   // await this.setStateAsync({ pagination: pager });
+
+  //   console.log(this.state.lastOderId)
+  //   this.getOrderData({ options: { instrument_id: this.props.tranType,from:this.state.lastOderId,limit:10 }, account: this.props.account })
   // }
 
   handleFormDelegate = e => {
@@ -285,7 +292,7 @@ class BatchCard extends PureComponent {
     const columns = [
       {
         title: '订单号',
-        dataIndex: 'client_oid',
+        dataIndex: 'order_id',
       },
       {
         title: '时间',
@@ -322,14 +329,15 @@ class BatchCard extends PureComponent {
 
     const tableAttr = {
       columns,
-      scroll: { x: 600 }
+      scroll: { x: 600 },
+      size:'small'
     };
     let tranType = this.props.addonAfter
     return (
       <div className="trans">
         <Row gutter={24} >
           <Col xl={12} lg={24} md={24} sm={24} xs={24} >
-            <Card title="批量交易" style={{ marginBottom: 24 }}>
+            <Card title="批量交易" style={{ marginBottom: 24,height:606.5 }}>
               <Form {...formItemLayout} onSubmit={this.handleSubmit}>
                 <Form.Item label="交易类型" >
                   {getFieldDecorator('type', {
@@ -374,7 +382,7 @@ class BatchCard extends PureComponent {
           </Col>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card title="交易情况" style={{ marginBottom: 24 }} extra={<Button onClick={this.refresh.bind(this)} type="primary">刷新</Button>} >
-              <Table rowKey={record => record.client_oid} loading={this.state.loading} dataSource={this.state.data} {...tableAttr} />
+              <Table  rowKey={record => record.order_id}  loading={this.state.loading} dataSource={this.state.data} {...tableAttr} />
             </Card>
           </Col>
 
