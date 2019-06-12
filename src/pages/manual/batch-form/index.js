@@ -28,21 +28,27 @@ class BatchFrom extends React.Component {
 
   async generate({ options, account }) {
     try {
-      const result = await okrobot.batch_order.generate(options, account)
+      const result = await okrobot.batch_order.generate(options, account);
+      this.setState({ loading: false })
       if (result && result.result) {
-        this.setState({ loading: false, cost: result.cost })
+        this.setState({ cost: result.cost })
         notification.success({
           message: '提示',
           description:
             '批量挂单成功',
         });
-      } else {
+      } else if (result && result.error_message) {
         notification.error({
           message: '提示',
           description:
             result.error_message,
         });
-        this.setState({ loading: false })
+      } else {
+        notification.error({
+          message: '提示',
+          description:
+            '批量撤单失败，请重试'
+        });
       }
     } catch (error) {
       this.setState({ loading: false })

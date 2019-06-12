@@ -33,19 +33,25 @@ class CancelFrom extends React.Component {
 
   async cancel(params) {
     try {
-      const result = await okrobot.batch_order.cancel(params.options, params.account)
+      const result = await okrobot.batch_order.cancel(params.options, params.account);
+      this.setState({ loading: false });
       if (result && result.result) {
-      this.setState({ loading: false })
         notification.success({
           message: '提示',
           description:
             '批量撤单成功',
         });
-      } else {
+      } else if(result && result.error_message) {
         notification.error({
           message: '提示',
           description:
             result.error_message,
+        });
+      } else {
+        notification.error({
+          message: '提示',
+          description:
+            '批量撤单失败，请重试',
         });
       }
     } catch (error) {

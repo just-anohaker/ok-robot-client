@@ -11,7 +11,7 @@ const Sidebar = ({ collapsed,params }) => {
   return (
     <div className="ant-layout-sider-children">
       <div className={styles.logo}>
-        <a href="/">
+        <a href="javacript:void(0)">
           <img src={logo} alt="logo" />
           <h1>ETM & OKEx Robot</h1>
         </a>
