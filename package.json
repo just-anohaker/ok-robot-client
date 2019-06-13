@@ -32,6 +32,7 @@
     "eject": "react-scripts eject"
   },
   "homepage": ".",
+  "proxy": "https://www.okex.com/api/spot/v3/",
   "eslintConfig": {
     "extends": "react-app"
   },
