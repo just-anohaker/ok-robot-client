@@ -293,7 +293,7 @@ class BatchCard extends PureComponent {
       {
         title: '类型',
         dataIndex: 'side',
-        render:(text) => <span>{text === 'sell' ? '卖出':'买入'}</span>
+        render:(text) => (<span>{text === 'buy' ? <span style={{color:'#2fc25b'}}>买入</span> : <span style={{color:'#f04864'}}>卖出</span>}</span>)
       },
       {
         title: '时间',

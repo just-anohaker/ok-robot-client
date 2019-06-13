@@ -116,14 +116,26 @@ class Fall extends React.Component {
             <Card title="自动对倒" style={{ marginBottom: 24 }} extra={(<div><span style={{fontWeight: 600}} >状态 : </span>{status2} <Button style={{ marginLeft: 20 }} loading={this.state.loading} onClick={this.refresh.bind(this)} type="primary">刷新</Button></div>)}>
               <Form {...formItemLayout} onSubmit={this.handleSubmit}>
 
-                <Form.Item label="单笔委托数量">
-                  {getFieldDecorator('perSize', {
-                    initialValue: '1',
-                    rules: [{ required: true, message: '请选择交易方式！' }],
-                  })(
-                    <Input addonAfter="ETM" style={{ width: 230 }} />
-                  )}
-                </Form.Item>
+              <Form.Item className="require" label="单笔委托范围" style={{ marginBottom: 0 }}>
+              <Form.Item style={{ display: 'inline-block' }}>
+                {getFieldDecorator('perStartSize', {
+                  rules: [{ required: true, message: '请输入单笔起始值！' }],
+                })(
+                  <Input addonAfter="ETM" type="number" style={{ width: 150 }} />
+                )}
+              </Form.Item>
+              <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}>~</span>
+              <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
+                {getFieldDecorator('perTopSize', {
+                  rules: [{ required: true, message: '请输入单笔结束值！' }],
+                })(
+                  <Input addonAfter="ETM" type="number" style={{ width: 150 }} />
+                )}
+              </Form.Item>
+
+            </Form.Item>
+
+
                 <Form.Item label="成交次数">
                   {getFieldDecorator('countPerM', {
                     initialValue: '1',
