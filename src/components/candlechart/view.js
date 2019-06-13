@@ -30,6 +30,9 @@ const scale1 = [
     dataKey: 'min',
     alias: '最低价'
   }, {
+    dataKey: 'mean',
+    alias: 'MA：'
+  }, {
     dataKey: 'price',
     alias: '股票价格'
   }];
@@ -66,7 +69,8 @@ export default class CandleChart extends PureComponent {
       start,
       end,
       data: props.data,
-      value: props.data
+      value: props.data,
+      refresh: 400
     }
   }
 
@@ -120,13 +124,19 @@ export default class CandleChart extends PureComponent {
       'trend',
       val => {
         if (val === '上涨') {
-          return '#f04864';
+          return '#2fc25b';
         }
         if (val === '下跌') {
-          return '#2fc25b';
+          return '#f04864';
         }
       }
     ];
+  }
+
+  refresh = () => {
+    let refresh = this.state.refresh
+    this.setState({ refresh: refresh === 400 ? refresh + 1 : refresh - 1 })
+    console.log(this.state.refresh)
   }
 
   render() {
@@ -157,8 +167,8 @@ export default class CandleChart extends PureComponent {
       onChange: this.slideChange.bind(this)
     };
     return (
-      <div>
-        <Chart forceFit height={400} animate={false} padding={[20, 40, 40, 40]} data={dv} scale={scale1}>
+      <div >
+        <Chart forceFit={true} height={400} animate={false} padding={[20, 40, 40, 40]} data={dv} scale={scale1} >
           <Tooltip {...tooltipOpts} />
           <Axis />
           <Legend offset={1} />
@@ -173,6 +183,7 @@ export default class CandleChart extends PureComponent {
                           <span style="padding-left: 16px">最低价：${min} </span>`
               };
             }]} />
+            {/* <Line position="time*mean" color="#FACC14" /> */}
           </View>
           <View data={dv} scale={scale2} start={{ x: 0, y: 0.65 }}>
             <Axis dataKey='time' tickLine={null} label={null} />
@@ -187,11 +198,13 @@ export default class CandleChart extends PureComponent {
                 value: `<br/><span style="padding-left: 16px">成交量：${volumn} </span><br/>`
               };
             }]} />
+            {/* <Line position="time*volumn" color="#FACC14" /> */}
           </View>
         </Chart>
         <Plugin>
           <Slider {...sliderOpts} />
         </Plugin>
+        {/* <button onClick={this.refresh}>刷新</button> */}
       </div>
     );
   }

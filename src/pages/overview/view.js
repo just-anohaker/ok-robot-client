@@ -1,19 +1,18 @@
 import React, { PureComponent, Fragment } from 'react';
 import { view as StretchTable } from '../../components/stretchtable';
 import { view as CandleChart } from '../../components/candlechart';
-// import { actions as loading } from '../../components/loading';
-// import store from "../../Store";
+// import { view as CandleChart2 } from '../../components/candlechart2';
 import { Card, Tag, Table, Row, Col, Select } from 'antd';
 import { connect } from 'react-redux';
 
 import styles from './overview.module.css';
-import { get as fetchGet } from '../../util/fetch';
 import { parseTime } from '../../util/utils';
+import okrobot from "okrobot-js";
 
 const { Option } = Select;
 
-// import candlesData from './data';
-// import candlesData from './data1';
+// import candleData from './data';
+// import candleData from './data1';
 
 const trData = [
   {
@@ -290,12 +289,10 @@ const newColums = [
     render: (text, record) => {
       // console.log("成交量=>", text, v)
       if (record && record.side === "buy") {
-        // text.style.color = "f04864"
-        return <div style={{ color: "#f04864" }}>{text}</div>
+        return <div style={{ color: "#2fc25b" }}>{text}</div>
       }
       else {
-        // text.style.color = "2fc25b"
-        return <div style={{ color: "#2fc25b" }}>{text}</div>
+        return <div style={{ color: "#f04864" }}>{text}</div>
       }
     },
   },
@@ -352,7 +349,8 @@ const timeSharing = [
   }
 ]
 
-let _newDataIntervel, _candleInterval, _tickerInterval;
+let o_tradesCache = [],
+  o_candleCache = [];
 
 class OverviewPage extends PureComponent {
   constructor(props) {
@@ -362,9 +360,9 @@ class OverviewPage extends PureComponent {
       timeSharing: "3600",
       pairType: "USDT",
       cardCandleLoading: false,
-      cardNewLoading: false,
-      candlesData: [],
-      newData: [],
+      cardTradesLoading: false,
+      candleData: [],
+      tradesData: [],
       trData,
       isUp: true,
       dealprice: 0,
@@ -384,154 +382,152 @@ class OverviewPage extends PureComponent {
       else {
         this.setState({ pairType: "USDT" });
       }
-      setImmediate(() => this.refreshData());
+      let { tranType } = this.props;
+      let granularity = parseInt(this.state.timeSharing);
+      okrobot.batch_order.pageKline({ instrument_id: tranType, channel: `spot/candle${granularity}s` })
+        .then(res => {
+          console.log("pageKline ok=>", res)
+        })
+        .catch(err => {
+          console.log("startDepInfo-catch", err);
+        });
     }
   }
 
   componentDidMount() {
-
-    this.refreshData();
-
+    this.queryCandleData();
     this.queryTradesData();
-    this.queryTickerData();
 
-    _newDataIntervel = setInterval(this.queryTradesData, 10000);
-    _tickerInterval = setInterval(this.queryTickerData, 10 * 1000);
+    this.listenWs();
+
   }
 
   componentWillUnmount() {
-    if (_newDataIntervel) {
-      clearInterval(_newDataIntervel);
-    }
-    if (_candleInterval) {
-      clearInterval(_candleInterval);
-    }
-    if (_tickerInterval) {
-      clearInterval(_tickerInterval);
-    }
+    okrobot.eventbus.remove(`page/candle:ETM-USDT`, this.updateCandleData);
+    okrobot.eventbus.remove(`page/ticker:ETM-USDT`, this.updateTickerData);
+    okrobot.eventbus.remove(`page/trade:ETM-USDT`, this.updateTradesData);
+
+    okrobot.eventbus.remove(`page/candle:ETM-USDK`, this.updateCandleData);
+    okrobot.eventbus.remove(`page/ticker:ETM-USDK`, this.updateTickerData);
+    okrobot.eventbus.remove(`page/trade:ETM-USDK`, this.updateTradesData);
   }
 
-  refreshData = () => {
-    if (_candleInterval) {
-      clearInterval(_candleInterval);
-    }
+  listenWs() {
+    let { tranType } = this.props;//交易对
+    let granularity = parseInt(this.state.timeSharing);//时间间隔
 
-    this.queryCandleData();
-    // this.queryTickerData();
+    console.log("on listenWs", granularity, tranType)
+    okrobot.batch_order.pageInfo({ instrument_id: tranType, channel: `spot/candle${granularity}s` })
+      .then(res => {
+        console.log("listenWs ok=>", res)
+      })
+      .catch(err => {
+        console.log("startDepInfo-catch", err);
+      });
 
-    let granularity = parseInt(this.state.timeSharing);
-    console.log("refreshData=>", granularity)
-    _candleInterval = setInterval(() => {
-      this.queryCandleData();
-      // this.queryTickerData();
-    }, granularity * 1000);
+    okrobot.eventbus.on(`page/candle:ETM-USDT`, this.updateCandleData);
+    okrobot.eventbus.on(`page/ticker:ETM-USDT`, this.updateTickerData);
+    okrobot.eventbus.on(`page/trade:ETM-USDT`, this.updateTradesData);
+
+    okrobot.eventbus.on(`page/candle:ETM-USDK`, this.updateCandleData);
+    okrobot.eventbus.on(`page/ticker:ETM-USDK`, this.updateTickerData);
+    okrobot.eventbus.on(`page/trade:ETM-USDK`, this.updateTradesData);
+
   }
 
   queryCandleData = () => {
-    let { tranType } = this.props;
-    // let start = '2019-06-10T12:00:00.000Z';
-    // let end = '2019-06-10T18:00:00.000Z';
-    let granularity = this.state.timeSharing;
-
-    console.log("queryCandleData=>", granularity, tranType)
-    fetchGet(`instruments/${tranType}/candles?granularity=${granularity}`)
+    this.setState({ cardCandleLoading: true });
+    let instrument_id = this.props.tranType;//交易对
+    let granularity = parseInt(this.state.timeSharing);
+    console.log("queryCandleData start=>", instrument_id, granularity);
+    okrobot.okex_utils.getSpotCandles({ instrument_id, params: { granularity } })
       .then(res => {
-        // console.log("fetchGet ok 1=>", res);
-        let o_candlesData = [];
-        if (res instanceof Array) {
-          o_candlesData = this.convertData(res);
+        console.log("queryCandleData ok=>", res);
+        if (res && res instanceof Array) {
+          o_candleCache = res.slice(0);
+          let _candleData = this.convertCandleData(o_candleCache);
+          this.setState({ candleData: _candleData });
         }
-        this.setState({ candlesData: o_candlesData });
 
-        return fetchGet(`instruments/${tranType}/ticker`);
-
-        // store.dispatch(loading.hideLoading());
-      })
-      .then(res => {
-        // console.log("fetchGet ok 2=>", res)
-        if (res) {
-          let spread = parseFloat(res.last) - parseFloat(res.open_24h);
-
-          this.setState({
-            isUp: spread > 0,
-            dealprice: parseFloat(res.last),
-            gain: (Math.abs(spread) / parseFloat(res.open_24h) * 100).toFixed(2),
-            max: parseFloat(res.high_24h),
-            min: parseFloat(res.low_24h),
-            volume: parseInt(res.base_volume_24h),
-          });
-        }
-        // this.setState({ cardCandleLoading: false });
-        // return fetchGet(`instruments/${tranType}/trades`);
+        this.setState({ cardCandleLoading: false });
       })
       .catch(err => {
-        console.log("fetchGet err", err);
-        // this.setState({ cardCandleLoading: false });
-        // store.dispatch(loading.hideLoading());
-      });
-  }
-
-  queryTickerData = () => {
-    let { tranType } = this.props;
-    fetchGet(`instruments/${tranType}/ticker`)
-      .then(res => {
-        // console.log("fetchGet ok 2=>", res)
-        if (res) {
-          let spread = parseFloat(res.last) - parseFloat(res.open_24h);
-
-          this.setState({
-            isUp: spread > 0,
-            dealprice: parseFloat(res.last),
-            gain: (Math.abs(spread) / parseFloat(res.open_24h) * 100).toFixed(2),
-            max: parseFloat(res.high_24h),
-            min: parseFloat(res.low_24h),
-            volume: parseInt(res.base_volume_24h),
-          });
-        }
-        // this.setState({ cardCandleLoading: false });
-        // return fetchGet(`instruments/${tranType}/trades`);
-      })
-      .catch(err => {
-        console.log("fetchGet err", err);
-        // this.setState({ cardCandleLoading: false });
-        // store.dispatch(loading.hideLoading());
+        console.log("queryCandleData err=>", err);
+        this.setState({ cardCandleLoading: false });
       });
   }
 
   queryTradesData = () => {
-    // this.setState({ cardNewLoading: true });
-    // console.log("getNewData=>")
+    this.setState({ cardTradesLoading: true });
 
-    let { tranType } = this.props;
-    fetchGet(`instruments/${tranType}/trades`)
+    let instrument_id = this.props.tranType;
+    okrobot.okex_utils.getSpotTrade({ instrument_id })
       .then(res => {
-        // console.log("fetchGet ok 3=>", res)
+        console.log("queryTradesData ok=>", res);
         if (res && res instanceof Array) {
-          let _newData = [];
-          for (let i = 0; i < res.length; i++) {
-            _newData.push({
-              key: i,
-              time: parseTime(Date.parse(res[i].time), '{h}:{i}:{s}'),
-              dealprice: parseFloat(res[i].price),
-              volume: parseFloat(res[i].size),
-              side: res[i].side
-            })
+          if (res.length > 60) {
+            o_tradesCache = res.slice(-60);
           }
-          this.setState({
-            newData: _newData
-          });
+          else {
+            o_tradesCache = res.slice();
+          }
+          let tradesData = this.convertTrandsData(res);
+          this.setState({ tradesData });
         }
-        // this.setState({ cardNewLoading: false });
-        // store.dispatch(loading.hideLoading());
+
+
+        this.setState({ cardTradesLoading: false });
       })
       .catch(err => {
-        console.log("fetchGet err", err);
-        // this.setState({ cardNewLoading: false });
-        // store.dispatch(loading.hideLoading());
+        console.log("queryTradesData err=>", err);
+
+        this.setState({ cardTradesLoading: false });
       });
   }
 
-  convertData = (data) => {
+  updateCandleData = (name, data) => {
+    o_candleCache.push(data);
+    if (o_candleCache.length > 200) {
+      o_candleCache = o_candleCache.slice(-200);
+    }
+
+    let candleData = this.convertCandleData(o_candleCache);
+    this.setState({ candleData });
+  }
+
+  updateTickerData = (name, data) => {
+    let res = data;
+    if (res) {
+      let spread = parseFloat(res.last) - parseFloat(res.open_24h);
+
+      this.setState({
+        isUp: spread > 0,
+        dealprice: parseFloat(res.last),
+        gain: (Math.abs(spread) / parseFloat(res.open_24h) * 100).toFixed(2),
+        max: parseFloat(res.high_24h),
+        min: parseFloat(res.low_24h),
+        volume: parseInt(res.base_volume_24h),
+      });
+    }
+  }
+
+  updateTradesData = (name, data) => {
+    if (!data) return;
+    console.log("updateTradesData=>", data)
+    o_tradesCache.push(data);
+    if (o_tradesCache.length > 60) {
+      o_tradesCache = o_tradesCache.slice(-60);
+    }
+
+    let res = o_tradesCache;
+    if (res && res instanceof Array) {
+      let tradesData = this.convertTrandsData(res);
+      this.setState({ tradesData });
+    }
+  }
+
+  convertCandleData = (data) => {
+    console.log("convertCandleData start=>", data)
     let o_data = [];
     for (let i = 0; i < data.length; i++) {
       let temp = data[i];
@@ -543,10 +539,29 @@ class OverviewPage extends PureComponent {
           min: parseFloat(temp[3]),
           close: parseFloat(temp[4]),
           volumn: parseFloat(temp[5]),
+          mean: parseFloat(temp[4]),
         }
         o_data.push(candle);
       }
     }
+    console.log("convertCandleData end=>", o_data)
+    return o_data;
+  }
+
+  convertTrandsData = (data) => {
+    console.log("convertTrandsData start=>", data)
+    let o_data = [];
+    for (let i = 0; i < data.length; i++) {
+      let temp = data[i];
+      o_data.push({
+        key: i,
+        time: parseTime(Date.parse(temp.timestamp), '{h}:{i}:{s}'),
+        dealprice: parseFloat(temp.price),
+        volume: parseFloat(temp.size),
+        side: temp.side
+      })
+    }
+    console.log("convertTrandsData end=>", o_data)
     return o_data;
   }
 
@@ -589,9 +604,18 @@ class OverviewPage extends PureComponent {
   }
 
   handleSelectChange = (e) => {
-    // console.log("handleSelectChange=>", e)
+    console.log("handleSelectChange=>", e)
     this.setState({ timeSharing: e });
-    setImmediate(() => this.refreshData());
+    // setImmediate(() => this.refreshData());
+
+    let { tranType } = this.props;
+    okrobot.batch_order.pageKline({ instrument_id: tranType, channel: `spot/candle${e}s` })
+      .then(res => {
+        console.log("pageKline ok=>", res)
+      })
+      .catch(err => {
+        console.log("startDepInfo-catch", err);
+      });
   }
 
   render() {
@@ -628,19 +652,22 @@ class OverviewPage extends PureComponent {
                 </div>
               </div>
               <div className={styles.chartCandle}>
-                <CandleChart data={this.state.candlesData} />
+                <CandleChart data={this.state.candleData} />
               </div>
             </Card>
           </Col>
           <Col xl={8} lg={24} md={24} sm={24} xs={24} >
-            <Card title="最新成交" style={{ marginBottom: 24 }} loading={this.state.cardNewLoading}>
-              <Table dataSource={this.state.newData} {...propsNewTable} />
+            <Card title="最新成交" style={{ marginBottom: 24 }} loading={this.state.cardTradesLoading}>
+              <Table dataSource={this.state.tradesData} {...propsNewTable} />
             </Card>
           </Col>
         </Row>
         <Card title="交易记录" style={{ display: "none" }}>
           <StretchTable data={this.state.trData} columns={trColumns} />
         </Card>
+        {/* <Card title="AAAAAA" >
+          <CandleChart2 />
+        </Card> */}
       </Fragment >
     )
   }
