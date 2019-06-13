@@ -391,6 +391,9 @@ class OverviewPage extends PureComponent {
         .catch(err => {
           console.log("startDepInfo-catch", err);
         });
+
+      this.queryCandleData();
+      this.queryTradesData();
     }
   }
 
