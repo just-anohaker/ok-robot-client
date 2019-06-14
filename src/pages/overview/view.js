@@ -576,7 +576,9 @@ class OverviewPage extends PureComponent {
       }
     }
     else {//没有candle缓存，重新请求
-      this.queryCandleData();
+      let instrument_id = this.props.tranType || "ETM-USDT";//交易对
+      let granularity = this.state.granularity || 3600;//时间间隔
+      this.queryCandleData(instrument_id, granularity);
       return;
     }
 
@@ -591,16 +593,22 @@ class OverviewPage extends PureComponent {
   updateTradesData = (name, data) => {
     // console.log("updateTradesData=>", name, data);
     if (!data) return;
-    o_tradesCache.unshift(...data);
+
+    if (o_tradesCache.length > 0) {
+      o_tradesCache.unshift(...data);
+    }
+    else {
+      let instrument_id = this.props.tranType || "ETM-USDT";//交易对
+      this.queryTradesData(instrument_id);
+      return;
+    }
+
     if (o_tradesCache.length > 60) {
       o_tradesCache = o_tradesCache.slice(0, 60);
     }
 
-    let res = o_tradesCache;
-    if (res && res instanceof Array) {
-      let tradesData = this.convertTrandsData(res);
-      this.setState({ tradesData });
-    }
+    let tradesData = this.convertTrandsData(o_tradesCache);
+    this.setState({ tradesData });
   }
 
   convertCandleData = (data) => {//转换candle数据
