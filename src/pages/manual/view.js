@@ -70,6 +70,12 @@ class ManualPage extends React.Component {
     super(...args)
     this.state = {
       dataAsks: [],
+      sellPrice:'',
+      sumSell: '',
+      otherSell: '',
+      buyPrice:'',
+      otherBuy: '',
+      sumBuy: '',
       dataBids: [],
       loading: false
     }
@@ -78,7 +84,8 @@ class ManualPage extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.tranType !== nextProps.tranType) {
       okrobot.eventbus.remove("depth", this.getDepathData);
-      this.linkSock(nextProps.tranType)
+      this.linkSock(nextProps.tranType);
+      this.setState({sellPrice:'',sumSell:'',otherSell:'',buyPrice:'',sumBuy:'',otherBuy:''});
     }
   }
 
@@ -112,7 +119,32 @@ class ManualPage extends React.Component {
     okrobot.eventbus.remove("depth", this.getDepathData);
     // clearInterval(_interval);
   }
-
+  rowSellClickHandle(record) {
+    return {
+      onClick: event => {
+        let data = this.state.dataAsks.slice();
+        let sumSell = data.filter(item => item.key <= record.key).reduce((pre, next) => {
+          return { sum: pre.sum + next.sum * next.price, other: pre.other + next.other * next.price }
+        }, {sum:0,other:0});
+        let sum = sumSell.sum.toFixed(2);
+        let other = sumSell.other.toFixed(2);
+        this.setState({sellPrice:record.price,sumSell:sum,otherSell:other});
+      } // 点击行
+    }
+  }
+  rowBuyClickHandle(record){
+    return {
+      onClick: event => {
+        let data = this.state.dataBids.slice();
+        let sumBuy = data.filter(item => item.key <= record.key).reduce((pre, next) => {
+          return { sum: pre.sum + Number(next.sum), other: pre.other + Number(next.other) }
+        }, {sum:0,other:0});
+        let sum = sumBuy.sum.toFixed(2);
+        let other = sumBuy.other.toFixed(2);
+        this.setState({buyPrice:record.price,sumBuy:sum,otherBuy:other});
+      }, // 点击行
+    }
+  }
   getDepathData = (name, data) => {
     let { asks, bids } = data;
     // asks.reverse();
@@ -142,7 +174,7 @@ class ManualPage extends React.Component {
         other
       }
     });
-    return newArr.slice(0, 60);
+    return newArr.slice(0);
   }
 
   render() {
@@ -163,8 +195,8 @@ class ManualPage extends React.Component {
             <Batch></Batch>
           </Col>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-            <Card title="卖单情况" style={{ marginBottom: 24 }}>
-              <Table dataSource={this.state.dataAsks} columns={columns} loading={this.state.loading}  {...tableAttr} />
+            <Card title="卖单情况" style={{ marginBottom: 24 }} extra={`拉盘到：${this.state.sellPrice}  总成本：${this.state.sumSell}  ${this.props.addonAfter} 净成本 ：${this.state.otherSell} ${this.props.addonAfter}`}>
+              <Table dataSource={this.state.dataAsks} onRow={this.rowSellClickHandle.bind(this)} columns={columns} loading={this.state.loading}  {...tableAttr} />
             </Card>
           </Col>
         </Row>
@@ -173,8 +205,8 @@ class ManualPage extends React.Component {
             <Cancel></Cancel>
           </Col>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
-            <Card title="买单情况" style={{ marginBottom: 24 }}>
-              <Table dataSource={this.state.dataBids} columns={columns1} loading={this.state.loading} {...tableAttr} />
+            <Card title="买单情况" style={{ marginBottom: 24 }} extra={`砸盘到：${this.state.buyPrice}  总成本：${this.state.sumBuy}  ETM 净成本 ：${this.state.otherBuy} ETM`}>
+              <Table dataSource={this.state.dataBids}  onRow={this.rowBuyClickHandle.bind(this)}  columns={columns1} loading={this.state.loading} {...tableAttr} />
             </Card>
           </Col>
         </Row>
@@ -188,7 +220,8 @@ const mapStateToProps = (state) => {
   const infoingData = state.infoing;
   return {
     account: infoingData.account,
-    tranType: infoingData.tranType.name
+    tranType: infoingData.tranType.name,
+    addonAfter: infoingData.tranType.name.substring(4)
   };
 };
 

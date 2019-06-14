@@ -2,12 +2,20 @@
   background: #a0d911;
   border-color: #a0d911;
 }
-.trans .ant-radio-button-wrapper-checked:last-child{
+.trans .ant-radio-button-wrapper-checked:nth-child(2){
   background: #f5222d!important;
   border-color: #f5222d!important;
 }
 .trans .ant-radio-button-wrapper-checked::before{
   background-color: #f5222d!important;
+  opacity: 1;
+}
+.trans .ant-radio-button-wrapper-checked:nth-child(3){
+  background: #1890ff!important;
+  border-color: #1890ff!important;
+}
+.trans .ant-radio-button-wrapper-checked:nth-child(3)::before{
+  background-color: #1890ff!important;
   opacity: 1;
 
 }

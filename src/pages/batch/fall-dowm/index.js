@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Form, Input, Button, Row, Col, notification } from 'antd';
+import { Card, Form, Input, Button, Row, Col, notification,Radio } from 'antd';
 import { connect } from 'react-redux';
 import okrobot from "okrobot-js";
 import './index.less'
@@ -116,6 +116,18 @@ class Fall extends React.Component {
             <Card title="自动对倒" style={{ marginBottom: 24 }} extra={(<div><span style={{fontWeight: 600}} >状态 : </span>{status2} <Button style={{ marginLeft: 20 }} loading={this.state.loading} onClick={this.refresh.bind(this)} type="primary">刷新</Button></div>)}>
               <Form {...formItemLayout} onSubmit={this.handleSubmit}>
 
+              <Form.Item label="挂单顺序" >
+              {getFieldDecorator('type', {
+                initialValue: '1',
+                rules: [{ required: true, message: '请选择挂单顺序!' }],
+              })(
+                <Radio.Group buttonStyle="solid">
+                  <Radio.Button value="1">先买</Radio.Button>
+                  <Radio.Button value="2">先卖</Radio.Button>
+                  <Radio.Button value="3">随机</Radio.Button>
+                </Radio.Group>
+              )}
+            </Form.Item>
               <Form.Item className="require" label="单笔委托范围" style={{ marginBottom: 0 }}>
               <Form.Item style={{ display: 'inline-block' }}>
                 {getFieldDecorator('perStartSize', {
