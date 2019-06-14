@@ -46,15 +46,13 @@ class AccountsPage extends PureComponent {
     store.dispatch(loading.showLoading());
     okrobot.user.add(row.controller, row.name, row.httpkey, row.httpsecret, row.passphrase)
       .then((res) => {
-        // console.log("updata accounts res", res)
         let newRow = this.transferData([res]);
-        // console.log("updata accounts newRow", newRow)
+
         let { tableData } = this.state;
         tableData.push(newRow[0]);
         this.setState({ tableData });
 
         let newAccounts = get("allAccouts");
-        // console.log("updata accounts newAccounts", newAccounts)
         newAccounts.push(res);
         put("allAccouts", newAccounts);
         store.dispatch({ type: 'ALL_ACCOUNTS' });
@@ -76,14 +74,13 @@ class AccountsPage extends PureComponent {
     })
       .then((res) => {
         let newAccounts = get("allAccouts");
-        // console.log("edit accounts", newAccounts)
         newAccounts = newAccounts.map((item) => {
           if (item.id === res.id) {
             item = res;
           }
           return item;
         });
-        // console.log("edit accounts", newAccounts)
+
         put("allAccouts", newAccounts);
         store.dispatch({ type: 'ALL_ACCOUNTS' });
 
@@ -99,16 +96,13 @@ class AccountsPage extends PureComponent {
 
   removeTableData(row, cb) {
     store.dispatch(loading.showLoading());
-    // console.log("removeTableData");
     okrobot.user.remove(row.id)
       .then((res) => {
-        // console.log("remove:", res);
         let newAccounts = get("allAccouts");
-        // console.log("remove accounts", newAccounts)
         newAccounts = newAccounts.filter((item) => {
           return item.id !== res.id;
         });
-        // console.log("remove accounts", newAccounts)
+
         put("allAccouts", newAccounts);
         store.dispatch({ type: 'ALL_ACCOUNTS' });
 
@@ -124,14 +118,11 @@ class AccountsPage extends PureComponent {
 
   onChange = (type, data, key, cb) => {// 表格更新
     let row = data.filter(item => item.key === key)[0];//被操作数据行
-    // console.log("ochange", type, data, key)
     if (type === "del") {//删除
       if (typeof key === "string" && key.indexOf("NEW_TEMP_ID_") === 0) {//取消新建
-        // console.log("aaaaaaaa")
         cb();
       }
       else {
-        // console.log("bbbbbbbb")
         this.removeTableData(row, cb);
       }
     }

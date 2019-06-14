@@ -93,7 +93,7 @@ class TableForm extends PureComponent {
         // message.error('删除信息失败！' + err);
         notification.error({
           message: "删除信息失败！",
-          description: ""+ err
+          description: "" + err
         });
         this.setState({ loading: false });
         return;
@@ -120,9 +120,9 @@ class TableForm extends PureComponent {
     if (!target.name || !target.controller || !target.httpkey || !target.httpsecret || !target.passphrase) {
       // message.error('请填写完整成员信息。');
       notification.error({
-          message: "添加数据失败",
-          description: "请填写完整成员信息。"
-        });
+        message: "添加数据失败",
+        description: "请填写完整成员信息。"
+      });
       e.target.focus();
       this.setState({ loading: false });
       return;
@@ -135,7 +135,7 @@ class TableForm extends PureComponent {
         // message.error("保存信息失败！" + err);
         notification.error({
           message: "保存数据失败！",
-          description: ""+ err
+          description: "" + err
         });
         this.setState({ loading: false });
         return;
