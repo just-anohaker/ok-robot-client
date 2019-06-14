@@ -51,12 +51,34 @@ const tooltipOpts = {
         </li>`,
 };
 
+let indexStart = -1;//开始下标
+let indexEnd = -1;//结束下标
 const _generateStartEnd = (data) => {
   let start = 0, end = 0;
-  if ((data instanceof Array) && data.length > 1) {
-    start = data[data.length - 1].time;
-    end = data[0].time;
+  if ((data instanceof Array)) {
+    let l = data.length;
+    if (l < 1) {
+      return { start, end };
+    }
+    else if (indexStart === -1 || indexEnd === -1) {
+      start = data[l - 1].time;
+      end = data[0].time;
+    }
+    else if (l > indexStart) {
+      start = data[indexStart].time;
+      end = data[indexEnd].time
+    }
+    else if (l > indexStart - indexEnd) {
+      start = data[l - 1 - indexEnd].time;
+      end = data[indexEnd].time
+    }
+    else {
+      start = data[l - 1].time;
+      end = data[0].time;
+    }
   }
+
+  // console.log("_generateStartEnd=>", start, end);
   return { start, end };
 }
 
@@ -90,6 +112,17 @@ export default class CandleChart extends PureComponent {
   }
 
   slideChange = (opts) => {
+    // console.log("slideChange=>", opts)
+    let { data } = this.state;
+    data.forEach((v, i) => {
+      if (v.time === opts.startValue) {
+        indexStart = i;
+      }
+      if (v.time === opts.endValue) {
+        indexEnd = i;
+      }
+    });
+
     this.setState({
       start: opts.startValue, end: opts.endValue,
     });

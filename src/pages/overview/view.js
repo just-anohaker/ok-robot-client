@@ -356,8 +356,21 @@ class OverviewPage extends PureComponent {
   constructor(props) {
     super(props);
 
+    this.tickerEvent = undefined;
+    this.tickerInstrumentId = undefined;
+    this._tickerDataHandler = this.updateTickerData;
+
+    this.candleEvent = undefined;
+    this.candleInstrumentId = undefined;
+    this.candleGranularity = undefined;
+    this._candelDataHandler = this.updateCandleData;
+
+    this.tradeEvent = undefined;
+    this.tradeInstrumentId = undefined;
+    this._tradeDataHander = this.updateTradesData;
+
     this.state = {
-      timeSharing: "3600",
+      granularity: 3600,
       pairType: "USDT",
       cardCandleLoading: false,
       cardTradesLoading: false,
@@ -382,102 +395,144 @@ class OverviewPage extends PureComponent {
       else {
         this.setState({ pairType: "USDT" });
       }
-      let { tranType } = this.props;
-      let granularity = parseInt(this.state.timeSharing);
-      okrobot.batch_order.pageKline({ instrument_id: tranType, channel: `spot/candle${granularity}s` })
-        .then(res => {
-          console.log("pageKline ok=>", res)
-        })
-        .catch(err => {
-          console.log("startDepInfo-catch", err);
-        });
 
-      this.queryCandleData();
-      this.queryTradesData();
+      let instrument_id = nextProps.tranType;//交易对
+      let granularity = this.state.granularity;//时间间隔
+      this.queryCandleData(instrument_id, granularity);
+      this.queryTradesData(instrument_id);
+
+      this.monitorTicker(instrument_id);
+      this.monitorCandle(instrument_id, granularity);
+      this.monitorTrades(instrument_id);
     }
   }
 
   componentDidMount() {
-    this.queryCandleData();
-    this.queryTradesData();
+    let instrument_id = this.props.tranType;//交易对
+    let granularity = this.state.granularity;//时间间隔
+    this.queryCandleData(instrument_id, granularity);
+    this.queryTradesData(instrument_id);
 
-    this.listenWs();
-
+    this.monitorTicker(instrument_id);
+    this.monitorCandle(instrument_id, granularity);
+    this.monitorTrades(instrument_id);
   }
 
   componentWillUnmount() {
-    okrobot.eventbus.remove(`page/candle:ETM-USDT`, this.updateCandleData);
-    okrobot.eventbus.remove(`page/ticker:ETM-USDT`, this.updateTickerData);
-    okrobot.eventbus.remove(`page/trade:ETM-USDT`, this.updateTradesData);
-
-    okrobot.eventbus.remove(`page/candle:ETM-USDK`, this.updateCandleData);
-    okrobot.eventbus.remove(`page/ticker:ETM-USDK`, this.updateTickerData);
-    okrobot.eventbus.remove(`page/trade:ETM-USDK`, this.updateTradesData);
+    this.unmonitorTicker();
+    this.unmonitorCandle();
+    this.unmonitorTrades();
   }
 
-  listenWs() {
-    let { tranType } = this.props;//交易对
-    let granularity = parseInt(this.state.timeSharing);//时间间隔
+  monitorTicker(instrument_id) {
+    this.unmonitorTicker();
 
-    console.log("on listenWs", granularity, tranType)
-    okrobot.batch_order.pageInfo({ instrument_id: tranType, channel: `spot/candle${granularity}s` })
+    okrobot.okex_monitor.monitSpotTicker(instrument_id)
       .then(res => {
-        console.log("listenWs ok=>", res)
+        this.tickerEvent = res;
+        this.tickerInstrumentId = instrument_id;
+        okrobot.eventbus.on(this.tickerEvent, this._tickerDataHandler);
       })
       .catch(err => {
-        console.log("startDepInfo-catch", err);
+        setTimeout(() => {
+          this.monitorTicker(instrument_id);
+        }, 10 * 1000);
       });
-
-    okrobot.eventbus.on(`page/candle:ETM-USDT`, this.updateCandleData);
-    okrobot.eventbus.on(`page/ticker:ETM-USDT`, this.updateTickerData);
-    okrobot.eventbus.on(`page/trade:ETM-USDT`, this.updateTradesData);
-
-    okrobot.eventbus.on(`page/candle:ETM-USDK`, this.updateCandleData);
-    okrobot.eventbus.on(`page/ticker:ETM-USDK`, this.updateTickerData);
-    okrobot.eventbus.on(`page/trade:ETM-USDK`, this.updateTradesData);
-
   }
 
-  queryCandleData = () => {
-    this.setState({ cardCandleLoading: true });
-    let instrument_id = this.props.tranType;//交易对
-    let granularity = parseInt(this.state.timeSharing);
+  unmonitorTicker() {
+    if (this.tickerEvent) {
+      okrobot.eventbus.remove(this.tickerEvent, this._tickerDataHandler);
+      okrobot.okex_monitor.unmonitSpotTicker(this.tickerInstrumentId);
+      this.tickerEvent = undefined;
+      this.tickerInstrumentId = undefined;
+    }
+  }
+
+  monitorCandle(instrument_id, granularity) {
+    this.unmonitorCandle();
+
+    okrobot.okex_monitor.monitSpotChannel(`candle${granularity}s`, instrument_id)
+      .then(res => {
+        this.candleEvent = res;
+        this.candleInstrumentId = instrument_id;
+        this.candleGranularity = `candle${granularity}s`;
+        okrobot.eventbus.on(this.candleEvent, this._candelDataHandler);
+      })
+      .catch(err => {
+        setTimeout(() => {
+          this.monitorCandle(instrument_id, granularity);
+        }, 10 * 1000);
+      });
+  }
+
+  unmonitorCandle() {
+    if (this.candleEvent) {
+      okrobot.eventbus.remove(this.candleEvent, this._candelDataHandler);
+      okrobot.okex_monitor.unmonitSpotChannel(this.candleInstrumentId, this.candleGranularity);
+      this.candleEvent = undefined;
+      this.candleInstrumentId = undefined;
+    }
+  }
+
+  monitorTrades(instrument_id) {
+    this.unmonitorTrades();
+
+    okrobot.okex_monitor.monitSpotTrade(instrument_id)
+      .then(res => {
+        this.tradeEvent = res;
+        this.tradeInstrumentId = instrument_id;
+        okrobot.eventbus.on(this.tradeEvent, this._tradeDataHander);
+      })
+      .catch(err => {
+        setTimeout(() => {
+          this.monitorTrades(instrument_id);
+        }, 10 * 1000);
+      });
+  }
+
+  unmonitorTrades() {
+    console.log("unmonitorTrades=>", this.tradeEvent)
+    if (this.tradeEvent) {
+      okrobot.eventbus.remove(this.tradeEvent, this._tradeDataHander);
+      okrobot.okex_monitor.unmonitSpotTrade(this.tradeInstrumentId);
+      this.tradeEvent = undefined;
+      this.tradeInstrumentId = undefined;
+    }
+  }
+
+  queryCandleData = (instrument_id, granularity) => {
+    // this.setState({ cardCandleLoading: true });
+
     console.log("queryCandleData start=>", instrument_id, granularity);
     okrobot.okex_utils.getSpotCandles({ instrument_id, params: { granularity } })
       .then(res => {
-        console.log("queryCandleData ok=>", res);
+        // console.log("queryCandleData ok=>", res);
         if (res && res instanceof Array) {
           o_candleCache = res.slice(0);
-          let _candleData = this.convertCandleData(o_candleCache);
-          this.setState({ candleData: _candleData });
+          let candleData = this.convertCandleData(o_candleCache);
+          this.setState({ candleData });
         }
 
-        this.setState({ cardCandleLoading: false });
+        // this.setState({ cardCandleLoading: false });
       })
       .catch(err => {
         console.log("queryCandleData err=>", err);
-        this.setState({ cardCandleLoading: false });
+        // this.setState({ cardCandleLoading: false });
       });
   }
 
-  queryTradesData = () => {
+  queryTradesData = (instrument_id) => {
     this.setState({ cardTradesLoading: true });
 
-    let instrument_id = this.props.tranType;
-    okrobot.okex_utils.getSpotTrade({ instrument_id })
+    okrobot.okex_utils.getSpotTrade({ instrument_id, params: { limit: 60 } })
       .then(res => {
-        console.log("queryTradesData ok=>", res);
+        // console.log("queryTradesData ok=>", res);
         if (res && res instanceof Array) {
-          if (res.length > 60) {
-            o_tradesCache = res.slice(-60);
-          }
-          else {
-            o_tradesCache = res.slice();
-          }
-          let tradesData = this.convertTrandsData(res);
+          o_tradesCache = res.slice(-60);
+          let tradesData = this.convertTrandsData(o_tradesCache);
           this.setState({ tradesData });
         }
-
 
         this.setState({ cardTradesLoading: false });
       })
@@ -488,18 +543,11 @@ class OverviewPage extends PureComponent {
       });
   }
 
-  updateCandleData = (name, data) => {
-    o_candleCache.push(data);
-    if (o_candleCache.length > 200) {
-      o_candleCache = o_candleCache.slice(-200);
-    }
-
-    let candleData = this.convertCandleData(o_candleCache);
-    this.setState({ candleData });
-  }
-
   updateTickerData = (name, data) => {
-    let res = data;
+    // console.log("updateTickerData=>", name, data);
+    if (!data || !data[0]) return;
+
+    let res = data[0];
     if (res) {
       let spread = parseFloat(res.last) - parseFloat(res.open_24h);
 
@@ -514,12 +562,38 @@ class OverviewPage extends PureComponent {
     }
   }
 
+  updateCandleData = (name, data) => {
+    // console.log("updateCandleData=>", name, data);
+    if (!data || !data[0] || !data[0].candle) return;
+
+    let candle = data[0].candle;
+    if (o_candleCache.length > 0) {
+      if (o_candleCache[0][0] === candle[0]) {//更新最后节点数据
+        o_candleCache[0] = candle;
+      }
+      else {//新节点
+        o_candleCache.unshift(candle);
+      }
+    }
+    else {//没有candle缓存，重新请求
+      this.queryCandleData();
+      return;
+    }
+
+    if (o_candleCache.length > 200) {
+      o_candleCache = o_candleCache.slice(0, 200);
+    }
+
+    let candleData = this.convertCandleData(o_candleCache);
+    this.setState({ candleData });
+  }
+
   updateTradesData = (name, data) => {
+    // console.log("updateTradesData=>", name, data);
     if (!data) return;
-    console.log("updateTradesData=>", data)
-    o_tradesCache.push(data);
+    o_tradesCache.unshift(...data);
     if (o_tradesCache.length > 60) {
-      o_tradesCache = o_tradesCache.slice(-60);
+      o_tradesCache = o_tradesCache.slice(0, 60);
     }
 
     let res = o_tradesCache;
@@ -529,8 +603,8 @@ class OverviewPage extends PureComponent {
     }
   }
 
-  convertCandleData = (data) => {
-    console.log("convertCandleData start=>", data)
+  convertCandleData = (data) => {//转换candle数据
+    // console.log("convertCandleData start=>", data)
     let o_data = [];
     for (let i = 0; i < data.length; i++) {
       let temp = data[i];
@@ -547,12 +621,12 @@ class OverviewPage extends PureComponent {
         o_data.push(candle);
       }
     }
-    console.log("convertCandleData end=>", o_data)
+    // console.log("convertCandleData end=>", o_data)
     return o_data;
   }
 
-  convertTrandsData = (data) => {
-    console.log("convertTrandsData start=>", data)
+  convertTrandsData = (data) => {//转换Trands数据
+    // console.log("convertTrandsData start=>", data)
     let o_data = [];
     for (let i = 0; i < data.length; i++) {
       let temp = data[i];
@@ -564,7 +638,7 @@ class OverviewPage extends PureComponent {
         side: temp.side
       })
     }
-    console.log("convertTrandsData end=>", o_data)
+    // console.log("convertTrandsData end=>", o_data)
     return o_data;
   }
 
@@ -608,17 +682,13 @@ class OverviewPage extends PureComponent {
 
   handleSelectChange = (e) => {
     console.log("handleSelectChange=>", e)
-    this.setState({ timeSharing: e });
-    // setImmediate(() => this.refreshData());
+    let granularity = parseInt(e);
+    this.setState({ granularity });
 
-    let { tranType } = this.props;
-    okrobot.batch_order.pageKline({ instrument_id: tranType, channel: `spot/candle${e}s` })
-      .then(res => {
-        console.log("pageKline ok=>", res)
-      })
-      .catch(err => {
-        console.log("startDepInfo-catch", err);
-      });
+    let instrument_id = this.props.tranType;
+    this.queryCandleData(instrument_id, granularity);
+    this.monitorCandle(instrument_id, granularity);
+
   }
 
   render() {
