@@ -408,8 +408,8 @@ class OverviewPage extends PureComponent {
   }
 
   componentDidMount() {
-    let instrument_id = this.props.tranType;//交易对
-    let granularity = this.state.granularity;//时间间隔
+    let instrument_id = this.props.tranType || "ETM-USDT";//交易对
+    let granularity = this.state.granularity || 3600;//时间间隔
     this.queryCandleData(instrument_id, granularity);
     this.queryTradesData(instrument_id);
 
