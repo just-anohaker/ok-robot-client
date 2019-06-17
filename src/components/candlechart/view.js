@@ -54,13 +54,14 @@ const tooltipOpts = {
 let indexStart = -1;//开始下标
 let indexEnd = -1;//结束下标
 const _generateStartEnd = (data) => {
-  let start = 0, end = 0;
+  let start = 0, end = 0, l = 0;
   if ((data instanceof Array)) {
-    let l = data.length;
+    l = data.length;
+    // console.log("_generateStartEnd=>", l, indexStart, indexEnd);
     if (l < 1) {
       return { start, end };
     }
-    else if (indexStart === -1 || indexEnd === -1) {
+    else if (indexStart === -1 || indexEnd === -1 || l < indexEnd) {
       start = data[l - 1].time;
       end = data[0].time;
     }
@@ -78,7 +79,6 @@ const _generateStartEnd = (data) => {
     }
   }
 
-  // console.log("_generateStartEnd=>", start, end);
   return { start, end };
 }
 
