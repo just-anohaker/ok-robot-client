@@ -54,13 +54,14 @@ const tooltipOpts = {
 let indexStart = -1;//开始下标
 let indexEnd = -1;//结束下标
 const _generateStartEnd = (data) => {
-  let start = 0, end = 0;
+  let start = 0, end = 0, l = 0;
   if ((data instanceof Array)) {
-    let l = data.length;
+    l = data.length;
+    // console.log("_generateStartEnd=>", l, indexStart, indexEnd);
     if (l < 1) {
       return { start, end };
     }
-    else if (indexStart === -1 || indexEnd === -1) {
+    else if (indexStart === -1 || indexEnd === -1 || l < indexEnd) {
       start = data[l - 1].time;
       end = data[0].time;
     }
@@ -78,7 +79,6 @@ const _generateStartEnd = (data) => {
     }
   }
 
-  // console.log("_generateStartEnd=>", start, end);
   return { start, end };
 }
 
@@ -92,7 +92,6 @@ export default class CandleChart extends PureComponent {
       end,
       data: props.data,
       value: props.data,
-      refresh: 400
     }
   }
 
@@ -166,12 +165,6 @@ export default class CandleChart extends PureComponent {
     ];
   }
 
-  refresh = () => {
-    let refresh = this.state.refresh
-    this.setState({ refresh: refresh === 400 ? refresh + 1 : refresh - 1 })
-    console.log(this.state.refresh)
-  }
-
   render() {
     const { start, end, data } = this.state;
     const dv = this.getData();
@@ -201,7 +194,7 @@ export default class CandleChart extends PureComponent {
     };
     return (
       <div >
-        <Chart forceFit={true} height={400} animate={false} padding={[20, 40, 40, 40]} data={dv} scale={scale1} >
+        <Chart forceFit={true} height={400} animate={false} padding={[20, 30, 40, 45]} data={dv} scale={scale1} >
           <Tooltip {...tooltipOpts} />
           <Axis />
           <Legend offset={1} />
@@ -237,7 +230,6 @@ export default class CandleChart extends PureComponent {
         <Plugin>
           <Slider {...sliderOpts} />
         </Plugin>
-        {/* <button onClick={this.refresh}>刷新</button> */}
       </div>
     );
   }

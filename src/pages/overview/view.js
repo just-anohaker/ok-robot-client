@@ -441,6 +441,7 @@ class OverviewPage extends PureComponent {
   }
 
   unmonitorTicker() {
+    console.log("unmonitorTicker=>", this.tradeEvent);
     if (this.tickerEvent) {
       okrobot.eventbus.remove(this.tickerEvent, this._tickerDataHandler);
       okrobot.okex_monitor.unmonitSpotTicker(this.tickerInstrumentId);
@@ -467,6 +468,7 @@ class OverviewPage extends PureComponent {
   }
 
   unmonitorCandle() {
+    console.log("unmonitorCandle=>", this.tradeEvent);
     if (this.candleEvent) {
       okrobot.eventbus.remove(this.candleEvent, this._candelDataHandler);
       okrobot.okex_monitor.unmonitSpotChannel(this.candleInstrumentId, this.candleGranularity);
@@ -492,7 +494,7 @@ class OverviewPage extends PureComponent {
   }
 
   unmonitorTrades() {
-    console.log("unmonitorTrades=>", this.tradeEvent)
+    console.log("unmonitorTrades=>", this.tradeEvent);
     if (this.tradeEvent) {
       okrobot.eventbus.remove(this.tradeEvent, this._tradeDataHander);
       okrobot.okex_monitor.unmonitSpotTrade(this.tradeInstrumentId);
