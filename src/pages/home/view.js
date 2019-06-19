@@ -13,6 +13,7 @@ import { actions as loading } from '../../components/loading';
 import store from "../../Store";
 import okrobot from "okrobot-js";
 import { put } from "../../util/localstorage.js";
+import LoadData from '../../util/LoadData'
 
 class HomePage extends PureComponent {
   constructor(props) {
@@ -72,7 +73,6 @@ class HomePage extends PureComponent {
           <div className={`${styles.content} ant-layout-content`}>
             <Route path="/home/overview" component={Overview} />
             <Route path="/home/batch" component={Batch} />
-            {/* <Route path="/home/automatic" component={Automatic} /> */}
             <Route path="/home/manual" component={Manual} />
             <Route path="/home/accounts" component={Accounts} />
           </div>
@@ -82,5 +82,6 @@ class HomePage extends PureComponent {
   }
 
 };
+const Home = LoadData()(HomePage);
 
-export default HomePage;
+export default Home;

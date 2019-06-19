@@ -5,6 +5,7 @@ import { Row, Col, Card, Table } from 'antd';
 import './less/index.less';
 import okrobot from "okrobot-js";
 import { connect } from 'react-redux';
+import {  KeepAlive } from "react-keep-alive";
 
 const columns = [
   {
@@ -190,7 +191,9 @@ class ManualPage extends React.Component {
       <div className="manual">
         <Row gutter={24} >
           <Col xl={12} lg={24} md={24} sm={24} xs={24} style={{ marginBottom: 24 }}>
+          <KeepAlive name="Batch">
             <Batch></Batch>
+          </KeepAlive>
           </Col>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card title="卖单情况" style={{ marginBottom: 24 }} extra={`拉盘到：${this.state.sellPrice}  总成本：${this.state.sumSell}  ${this.props.addonAfter} 净成本 ：${this.state.otherSell} ${this.props.addonAfter}`}>
@@ -200,7 +203,9 @@ class ManualPage extends React.Component {
         </Row>
         <Row gutter={24}>
           <Col xl={12} lg={24} md={24} sm={24} xs={24} style={{ marginBottom: 24 }}>
-            <Cancel></Cancel>
+            <KeepAlive name="Cancel">
+             <Cancel></Cancel>
+            </KeepAlive>
           </Col>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card title="买单情况" style={{ marginBottom: 24 }} extra={`砸盘到：${this.state.buyPrice}  总成本：${this.state.sumBuy}  ${this.props.addonAfter} 净成本 ：${this.state.otherBuy} ${this.props.addonAfter}`}>

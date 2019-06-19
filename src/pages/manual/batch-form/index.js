@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Card, Radio, Form, Input, notification, Button } from 'antd';
+import { Row, Card, Radio, Form, Input, notification, Button,Modal } from 'antd';
 import okrobot from "okrobot-js";
 
 const formItemLayout = {
@@ -22,7 +22,8 @@ class BatchFrom extends React.Component {
       loading: false,
       account: this.props.account,
       cost: '',
-      data: []
+      data: [],
+      visible:false
     }
   }
 
@@ -79,11 +80,27 @@ class BatchFrom extends React.Component {
           sizeIncr: Number(values.sizeIncr) / 100,
           instrument_id: this.props.tranType
         };
-        this.generate({ options, account: this.props.account })
+        this.showModal();
+        // this.generate({ options, account: this.props.account })
       }
     });
   }
+  showModal = () => {
+    this.setState({
+      visible: true,
+    });
+  };
+  handleOk = e => {
+    this.setState({
+      visible: false,
+    });
+  };
 
+  handleCancel = e => {
+    this.setState({
+      visible: false,
+    });
+  };
   render() {
     const { getFieldDecorator } = this.props.form;
     return (
@@ -163,6 +180,17 @@ class BatchFrom extends React.Component {
             </Row>
           </Form>
         </Card>
+        <Modal
+          title="Basic Modal"
+          visible={this.state.visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+        >
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Modal>
+
       </div>
     )
   }

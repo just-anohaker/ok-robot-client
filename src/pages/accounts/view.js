@@ -5,6 +5,7 @@ import { actions as loading } from '../../components/loading';
 import store from "../../Store";
 import okrobot from "okrobot-js";
 import { put, get } from "../../util/localstorage.js";
+import LoadData from '../../util/LoadData'
 
 class AccountsPage extends PureComponent {
   constructor(props) {
@@ -146,6 +147,6 @@ class AccountsPage extends PureComponent {
   }
 
 };
-
-export default AccountsPage;
+const AccountsPageData = LoadData()(AccountsPage);
+export default AccountsPageData;
 

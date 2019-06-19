@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Form, Input, Button, Row, Col, notification,Radio } from 'antd';
 import { connect } from 'react-redux';
 import okrobot from "okrobot-js";
+import LoadData from '../../../util/LoadData'
 import './index.less'
 const formItemLayout = {
   labelCol: {
@@ -170,8 +171,8 @@ class Fall extends React.Component {
     )
   }
 }
-
-const FallPage = Form.create({ name: 'fallpage' })(Fall);
+const LoadFall = LoadData()(Fall);
+const FallPage = Form.create({ name: 'fallpage' })(LoadFall);
 const mapStateToProps = (state) => {
   const infoingData = state.infoing;
 
