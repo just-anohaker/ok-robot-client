@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import { Table, Input, InputNumber, Popconfirm, Form } from 'antd';
 import './index.less'
@@ -90,21 +91,15 @@ class EditableTable extends React.Component {
             <span>
               <EditableContext.Consumer>
                 {form => (
-                  <a
-                    href="javacript:void(0)"
-                    onClick={() => this.save(form, record.client_oid)}
-                    style={{ marginRight: 8 }}
-                  >
-                    保存
-                  </a>
+                  <a onClick={() => this.save(form, record.client_oid)} style={{ marginRight: 8 }}>保存</a>
                 )}
               </EditableContext.Consumer>
               <Popconfirm title="确认取消?" onConfirm={() => this.cancel(record.client_oid)}>
-              <a href="javacript:void(0)"> 取消</a>
+              <a > 取消</a>
               </Popconfirm>
             </span>
           ) : (
-            <a href="javacript:void(0)" disabled={editingKey !== ''} onClick={() => this.edit(record.client_oid)}>
+            <a  disabled={editingKey !== ''} onClick={() => this.edit(record.client_oid)}>
               编辑
             </a>
           );

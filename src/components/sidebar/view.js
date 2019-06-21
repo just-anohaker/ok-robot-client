@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
 import data from './data';
 import { Link } from 'react-router-dom';
@@ -11,7 +12,7 @@ const Sidebar = ({ collapsed,params }) => {
   return (
     <div className="ant-layout-sider-children">
       <div className={styles.logo}>
-        <a href="javacript:void(0)">
+        <a >
           <img src={logo} alt="logo" />
           <h1>ETM & OKEx Robot</h1>
         </a>

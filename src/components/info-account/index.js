@@ -22,6 +22,11 @@ class InfoAccount extends React.Component {
     let accounts = this.props.accounts
     return (
       <div className={styles['header-account']}>
+        {/* <div className="header-item header-balance">
+          <span className={styles['name']}>账号余额 :</span>
+          <span>3242342</span>
+        </div> */}
+
         <div className="header-item">
           <span className={styles['name']}>执行账户 :</span>
           <Select

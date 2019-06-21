@@ -3,6 +3,9 @@
   margin-right: 22px;
   display: flex;
 }
+.header-account .header-balance{
+  margin-right: 13px;
+}
 .header-account .tran-item{
   margin-left: 13px;
 }
