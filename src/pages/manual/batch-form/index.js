@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Card, Radio, Form, Input, notification, Button,Modal } from 'antd';
+import { Row, Card, Radio, Form, Input, notification, Button, Modal } from 'antd';
 import okrobot from "okrobot-js";
-
+import EditableFormTable from '../../../components/editable'
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -23,7 +23,8 @@ class BatchFrom extends React.Component {
       account: this.props.account,
       cost: '',
       data: [],
-      visible:false
+      detailData: [],
+      visible: false
     }
   }
 
@@ -32,12 +33,7 @@ class BatchFrom extends React.Component {
       const result = await okrobot.batch_order.generate(options, account);
       this.setState({ loading: false })
       if (result && result.result) {
-        this.setState({ cost: result.cost })
-        notification.success({
-          message: '提示',
-          description:
-            '批量挂单成功',
-        });
+        this.setState({ detailData: result.orders, visible: true })
       } else if (result && result.error_message) {
         notification.error({
           message: '提示',
@@ -80,20 +76,55 @@ class BatchFrom extends React.Component {
           sizeIncr: Number(values.sizeIncr) / 100,
           instrument_id: this.props.tranType
         };
-        this.showModal();
-        // this.generate({ options, account: this.props.account })
+
+        this.generate({ options, account: this.props.account })
       }
     });
   }
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  };
+
+  changeProps = (data) => {
+    this.setState({ detailData: data })
+  }
+  async sendBatch(options, acct) {
+    try {
+      const result = await okrobot.batch_order.toBatchOrder(options, acct);
+      this.setState({ visible: false });
+
+      if (result && result.result) {
+        notification.success({
+          message: '提示',
+          description:
+            '批量挂单成功',
+        });
+      } else if (result && result.error_message) {
+        notification.error({
+          message: '提示',
+          description:
+            result.error_message,
+        });
+      } else {
+        notification.error({
+          message: '提示',
+          description:
+            '批量挂单失败，请重试'
+        });
+      }
+    } catch (error) {
+      notification.error({
+        message: '提示',
+        description:
+          '' + error,
+      });
+      this.setState({ visible: false });
+
+    }
+
+  }
   handleOk = e => {
-    this.setState({
-      visible: false,
-    });
+    console.log(this.state.detailData)
+    let options = { orders: this.state.detailData, instrument_id: this.props.tranType };
+    let acct = this.props.account
+    this.sendBatch(options, acct)
   };
 
   handleCancel = e => {
@@ -181,16 +212,18 @@ class BatchFrom extends React.Component {
           </Form>
         </Card>
         <Modal
-          title="Basic Modal"
+          title="订单预览"
+          destroyOnClose
           visible={this.state.visible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
+          okText="确认"
+          cancelText="取消"
         >
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
+          <div>
+            <EditableFormTable ref={r => this.child = r} changeProps={this.changeProps} addonAfter={this.props.addonAfter} data={this.state.detailData} ></EditableFormTable>
+          </div>
         </Modal>
-
       </div>
     )
   }

@@ -11,7 +11,7 @@ const columns = [
   {
     title: '卖出',
     dataIndex: 'key',
-    width: '20%',
+    width: '13%',
     render: (text) => <span style={{ color: '#f5222d' }}>{text}</span>
   },
   {
@@ -22,12 +22,12 @@ const columns = [
   {
     title: '总委托量',
     dataIndex: 'sum',
-    width: '20%',
+    width: '24%',
   },
   {
     title: '我的委托',
     dataIndex: 'mine',
-    width: '20%',
+    width: '23%',
   },
   {
     title: '外部委托',
@@ -40,7 +40,7 @@ const columns1 = [
   {
     title: '买入',
     dataIndex: 'key',
-    width: '20%',
+    width: '13%',
     render: (text) => <span style={{ color: '#a0d911' }}>{text}</span>
   },
   {
@@ -51,12 +51,12 @@ const columns1 = [
   {
     title: '总委托量',
     dataIndex: 'sum',
-    width: '20%',
+    width: '24%',
   },
   {
     title: '我的委托',
     dataIndex: 'mine',
-    width: '20%',
+    width: '23%',
   },
   {
     title: '外部委托',
