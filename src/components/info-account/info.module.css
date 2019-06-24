@@ -4,7 +4,20 @@
   display: flex;
 }
 .header-account .header-balance{
-  margin-right: 13px;
+  margin-right: 15px;
+  display: flex;
+  flex-direction: row;
+}
+.header-account .header-balance .count{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+}
+.header-account .header-balance .count-item{
+  font-size: 14px;
+  padding: 0;
+  line-height: 16px;
 }
 .header-account .tran-item{
   margin-left: 13px;
