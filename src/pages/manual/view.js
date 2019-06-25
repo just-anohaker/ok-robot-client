@@ -164,7 +164,7 @@ class ManualPage extends React.Component {
       if (v.length === 4) {
         mine = v[3];
       }
-      other = sum - mine;
+      other = sum - mine <= 0 ? 0 : (sum - mine).toFixed(4);
       return {
         key: i + 1,
         price,
