@@ -30,7 +30,9 @@ class CancelFrom extends React.Component {
     let account = get("allAccouts") || [];
     this.setState({ accounts: account })
   }
-
+  cancelAll = () => {
+    this.cancel({options:{ topPrice: 0,startPrice:0,instrument_id: this.props.tranType},account:this.props.account})
+  }
   async cancel(params) {
     try {
       const result = await okrobot.batch_order.cancel(params.options, params.account);
@@ -39,7 +41,7 @@ class CancelFrom extends React.Component {
         notification.success({
           message: '提示',
           description:
-            '批量撤单成功',
+            '撤单成功',
         });
       } else if(result && result.error_message) {
         notification.error({
@@ -51,7 +53,7 @@ class CancelFrom extends React.Component {
         notification.error({
           message: '提示',
           description:
-            '批量撤单失败，请重试',
+            '撤单失败，请重试',
         });
       }
     } catch (error) {
@@ -94,7 +96,7 @@ class CancelFrom extends React.Component {
     return (
       <div className="random-sale">
         {/*批量撤单*/}
-        <Card title="批量撤单" >
+        <Card title="批量撤单" extra={<Button type="primary" onClick={this.cancelAll}>一键撤单</Button>} >
           <Form {...formItemLayout} onSubmit={this.handleSubmit}>
             <Form.Item className="require" label="价格范围" style={{ marginBottom: 0 }}>
               <Form.Item style={{ display: 'inline-block' }}>

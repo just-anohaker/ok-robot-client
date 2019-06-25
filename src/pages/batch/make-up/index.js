@@ -1,9 +1,8 @@
 import React from 'react';
-import { Card, Form, Input, Button,  notification,Radio } from 'antd';
+import { Card, Form, Input, Button,  notification } from 'antd';
 import { connect } from 'react-redux';
 import okrobot from "okrobot-js";
 import LoadData from '../../../util/LoadData'
-import './index.less'
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -19,7 +18,7 @@ const formTailLayout = {
   wrapperCol: { span: 5, offset: 5 },
 };
 
-class Fall extends React.Component {
+class MakeUp extends React.Component {
   constructor(...args) {
     super(...args)
     this.state = {
@@ -29,15 +28,15 @@ class Fall extends React.Component {
   }
   componentDidUpdate(prevProps) {
     if(prevProps.tranType !== this.props.tranType){
-        this.statusFall()
+        this.statusMakeUp()
     }
   }
   componentWillMount() {
-    this.statusFall()
+    this.statusMakeUp()
   }
   async refresh() {
     this.setState({ loading: true })
-    await this.statusFall()
+    await this.statusMakeUp()
     setTimeout(() => {
       this.setState({ loading: false })
     }, 1000)
@@ -45,12 +44,12 @@ class Fall extends React.Component {
   }
   async stop() {
     try {
-      const result = await okrobot.auto_maker.stop();
+      const result = await okrobot.auto_market.stop();
       if (result) {
         notification.success({
           message: '提示',
           description:
-            '对倒已停止',
+            '补单已停止',
         });
         this.setState({ status: false })
       }
@@ -64,24 +63,25 @@ class Fall extends React.Component {
     }
 
   }
-  async statusFall() {
+  async statusMakeUp() {
     try {
-      const result = await okrobot.auto_maker.isRunning();
+      const result = await okrobot.auto_market.isRunning();
       if (result === true || result === false) {
+        console.log(result,'makeup')
         this.setState({ status: result })
       }
     } catch (error) {
       console.log(error)
     }
   }
-  async fallHandle(options, account) {
+  async makeUpHandle(options, account) {
     try {
-      const result = await okrobot.auto_maker.init(options, account);
+      const result = await okrobot.auto_market.init(options, account);
       if (result && result.result) {
         notification.success({
           message: '提示',
           description:
-            '对倒开始',
+            '补单开始',
         });
         this.setState({ status: true })
       }
@@ -101,7 +101,7 @@ class Fall extends React.Component {
       if (!err) {
         values.instrument_id = this.props.tranType
         let account = this.props.account
-        this.fallHandle(values, account)
+        this.makeUpHandle(values, account)
       }
     });
   }
@@ -109,28 +109,23 @@ class Fall extends React.Component {
     const { getFieldDecorator } = this.props.form;
     const status = this.state.status ? 'show' : 'hidden';
     const status1 = this.state.status ? 'hidden' : 'show';
-    const status2 = this.state.status ? '对倒中' : '已停止'
+    const status2 = this.state.status ? '补单中' : '已停止'
     return (
       <div className='fall'>
-
-            <Card title="自动对倒" style={{ marginBottom: 24 }} extra={(<div><span style={{fontWeight: 600}} >状态 : </span>{status2} <Button style={{ marginLeft: 20 }} loading={this.state.loading} onClick={this.refresh.bind(this)} type="primary">刷新</Button></div>)}>
+            <Card title="自动补单" style={{ marginBottom: 24 }} extra={(<div><span style={{fontWeight: 600}} >状态 : </span>{status2} <Button style={{ marginLeft: 20 }} loading={this.state.loading} onClick={this.refresh.bind(this)} type="primary">刷新</Button></div>)}>
               <Form {...formItemLayout} onSubmit={this.handleSubmit}>
 
-              <Form.Item label="挂单顺序" >
-              {getFieldDecorator('type', {
-                initialValue: '1',
-                rules: [{ required: true, message: '请选择挂单顺序!' }],
-              })(
-                <Radio.Group buttonStyle="solid">
-                  <Radio.Button value="1">先买</Radio.Button>
-                  <Radio.Button value="2">先卖</Radio.Button>
-                  <Radio.Button value="3">随机</Radio.Button>
-                </Radio.Group>
-              )}
-            </Form.Item>
+              <Form.Item label="盘口距离">
+                  {getFieldDecorator('distance', {
+                    initialValue: '1',
+                    rules: [{ required: true, message: '请输入盘口距离！' }],
+                  })(
+                    <Input  style={{ width: 230 }} />
+                  )}
+                </Form.Item>
               <Form.Item className="require" label="单笔委托范围" style={{ marginBottom: 0 }}>
               <Form.Item style={{ display: 'inline-block' }}>
-                {getFieldDecorator('perStartSize', {
+                {getFieldDecorator('startSize', {
                   rules: [{ required: true, message: '请输入单笔起始值！' }],
                 })(
                   <Input addonAfter="ETM" type="number" style={{ width: 150 }} />
@@ -138,8 +133,8 @@ class Fall extends React.Component {
               </Form.Item>
               <span style={{ display: 'inline-block', width: '24px', textAlign: 'center' }}>~</span>
               <Form.Item style={{ display: 'inline-block', width: 'calc(50% - 12px)' }}>
-                {getFieldDecorator('perTopSize', {
-                  rules: [{ required: true, message: '请输入单笔结束值！' }],
+                {getFieldDecorator('topSize', {
+                  rules: [{ required: true, message: '请输入挂测次数！' }],
                 })(
                   <Input addonAfter="ETM" type="number" style={{ width: 150 }} />
                 )}
@@ -148,7 +143,7 @@ class Fall extends React.Component {
             </Form.Item>
 
 
-                <Form.Item label="成交次数">
+                <Form.Item label="挂撤次数">
                   {getFieldDecorator('countPerM', {
                     initialValue: '1',
                     rules: [{ required: true, message: '请选择交易方式！' }],
@@ -158,18 +153,17 @@ class Fall extends React.Component {
                 </Form.Item>
 
                 <Form.Item {...formTailLayout}>
-                  <Button type="primary" className={status1} htmlType="submit">开始对倒</Button>
-                  <Button type="primary" className={status} onClick={this.stop.bind(this)}>停止对倒</Button>
+                  <Button type="primary" className={status1} htmlType="submit">开始补单</Button>
+                  <Button type="primary" className={status} onClick={this.stop.bind(this)}>停止补单</Button>
                 </Form.Item>
               </Form>
             </Card>
-
       </div>
     )
   }
 }
-const LoadFall = LoadData()(Fall);
-const FallPage = Form.create({ name: 'fallpage' })(LoadFall);
+const LoadMakeUp = LoadData()(MakeUp);
+const LoadMake = Form.create({ name: 'fallpage' })(LoadMakeUp);
 const mapStateToProps = (state) => {
   const infoingData = state.infoing;
 
@@ -179,5 +173,5 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(FallPage);
+export default connect(mapStateToProps)(LoadMake);
 

@@ -6,7 +6,9 @@ import { Card, Form, Button, Row, Col, Table } from 'antd';
 import { parseTime } from '../../util/utils';
 import { KeepAlive } from "react-keep-alive";
 import TransFrom from './trans-form'
+import LoadData from '../../util/LoadData'
 import FallPage from './fall-dowm'
+import MakeUp from './make-up'
 import './index.css';
 
 class BatchCard extends PureComponent {
@@ -138,15 +140,28 @@ class BatchCard extends PureComponent {
             </Card>
           </Col>
         </Row>
-        <KeepAlive name="FallPage">
-          <FallPage></FallPage>
-        </KeepAlive>
+        <Row gutter={24}>
+          <Col xl={12} lg={24} md={24} sm={24} xs={24} >
+            <KeepAlive name="FallPage">
+              <FallPage></FallPage>
+            </KeepAlive>
+          </Col>
+          <Col xl={12} lg={24} md={24} sm={24} xs={24} >
+            <KeepAlive name="MakeUp">
+              <MakeUp></MakeUp>
+            </KeepAlive>
+          </Col>
+        </Row>
+
+
       </div>
     );
   }
 }
+const BatchCardLoad = LoadData()(BatchCard);
 
-const BatchPage = Form.create({ name: 'batchcard' })(BatchCard);
+const BatchPage = Form.create({ name: 'batchcard' })(BatchCardLoad);
+
 const mapStateToProps = (state) => {
   const infoingData = state.infoing;
 

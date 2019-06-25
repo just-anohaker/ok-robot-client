@@ -4,6 +4,7 @@ import { view as CandleChart } from '../../components/candlechart';
 // import { view as CandleChart2 } from '../../components/candlechart2';
 import { Card, Tag, Table, Row, Col, Select } from 'antd';
 import { connect } from 'react-redux';
+import LoadData from '../../util/LoadData'
 
 import styles from './overview.module.css';
 import { parseTime } from '../../util/utils';
@@ -756,7 +757,7 @@ class OverviewPage extends PureComponent {
   }
 }
 
-
+const Overview = LoadData()(OverviewPage)
 const mapStateToProps = (state) => {
   const infoingData = state.infoing;
   return {
@@ -765,4 +766,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(OverviewPage);
+export default connect(mapStateToProps)(Overview);
