@@ -209,14 +209,13 @@ class TableForm extends PureComponent {
           if (record.editable) {
             return (
               <Input
-                value={text}
                 onChange={e => this.handleFieldChange(e, 'httpkey', record.key)}
                 onKeyPress={e => this.handleKeyPress(e, record.key)}
                 placeholder="httpkey"
               />
             );
           }
-          return text;
+          return "******";
         },
       },
       {
@@ -226,14 +225,13 @@ class TableForm extends PureComponent {
           if (record.editable) {
             return (
               <Input
-                value={text}
                 onChange={e => this.handleFieldChange(e, 'httpsecret', record.key)}
                 onKeyPress={e => this.handleKeyPress(e, record.key)}
                 placeholder="httpsecret"
               />
             );
           }
-          return text;
+          return "******";
         },
       },
       {
@@ -243,14 +241,13 @@ class TableForm extends PureComponent {
           if (record.editable) {
             return (
               <Input
-                value={text}
                 onChange={e => this.handleFieldChange(e, 'passphrase', record.key)}
                 onKeyPress={e => this.handleKeyPress(e, record.key)}
                 placeholder="Passphrase"
               />
             );
           }
-          return text;
+          return "******";
         },
       },
       {

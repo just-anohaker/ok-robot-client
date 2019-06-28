@@ -71,7 +71,7 @@ class AccountsPage extends PureComponent {
   editTableData(row, cb) {
     store.dispatch(loading.showLoading());
     okrobot.user.update(row.id, {
-      groupName: row.controller, name: row.name, httpkey: row.api, httpsecret: row.secret, passphrase: row.passphrase
+      groupName: row.controller, name: row.name, httpkey: row.httpkey, httpsecret: row.httpsecret, passphrase: row.passphrase
     })
       .then((res) => {
         let newAccounts = get("allAccouts");

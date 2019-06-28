@@ -5,17 +5,17 @@ import { view as Home } from './pages/home';
 
 import okrobot from "okrobot-js";
 // okrobot.config.hostname = "http://192.168.2.96:1996";
-okrobot.config.hostname = "http://192.168.2.74:1996";
+okrobot.config.hostname = "http://192.168.2.221:1996";
 // okrobot.config.hostname = "http://47.111.160.173:1996";
 
 const App = () => {
   return (
     <div>
       <Loading />
-      <Switch>
-        <Route path="/home/:item" component={Home} />
-        <Redirect to="/home/overview" />
-      </Switch>
+        <Switch>
+          <Route path="/home/:item" component={Home} />
+          <Redirect to="/home/overview" />
+        </Switch>
     </div>
   );
 };

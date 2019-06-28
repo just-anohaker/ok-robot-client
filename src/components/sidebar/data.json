@@ -6,6 +6,12 @@
     "url": "/home/overview"
   },
   {
+    "icon": "project",
+    "key": "transaction",
+    "label": "查看记录",
+    "url": "/home/transaction"
+  },
+  {
     "icon": "bars",
     "key": "batch",
     "label": "批量交易",

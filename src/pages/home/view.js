@@ -4,7 +4,7 @@ import { view as Header } from '../../components/header';
 import { view as Sidebar } from '../../components/sidebar';
 import { view as Overview } from '../overview';
 import { view as Batch } from '../batch';
-// import { view as Automatic } from '../automatic';
+import { view as Transaction } from '../transaction';
 import { view as Manual } from '../manual';
 import { view as Accounts } from '../accounts';
 import styles from './home.module.css';
@@ -72,6 +72,7 @@ class HomePage extends PureComponent {
           </div>
           <div className={`${styles.content} ant-layout-content`}>
             <Route path="/home/overview" component={Overview} />
+            <Route path="/home/transaction" component={Transaction} />
             <Route path="/home/batch" component={Batch} />
             <Route path="/home/manual" component={Manual} />
             <Route path="/home/accounts" component={Accounts} />
