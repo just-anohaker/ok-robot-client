@@ -8,7 +8,7 @@
   {
     "icon": "project",
     "key": "transaction",
-    "label": "查看记录",
+    "label": "对倒记录",
     "url": "/home/transaction"
   },
   {

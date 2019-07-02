@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, Radio ,notification } from 'antd';
+import { Select, Radio, notification } from 'antd';
 import { connect } from 'react-redux';
 
 import okrobot from "okrobot-js";
@@ -11,19 +11,19 @@ class InfoAccount extends React.Component {
     super(...args)
     this.state = {
       balance_usdt: {
-        available:'',
-        balance:'',
-        currency:''
+        available: '',
+        balance: '',
+        currency: ''
       },
       balance_usdk: {
-        available:'',
-        balance:'',
-        currency:''
+        available: '',
+        balance: '',
+        currency: ''
       },
       balance_etm: {
-        available:'',
-        balance:'',
-        currency:''
+        available: '',
+        balance: '',
+        currency: ''
       }
 
     }
@@ -38,7 +38,7 @@ class InfoAccount extends React.Component {
   //     addonAfter:props.addonAfter
   //   }
   // }
-  
+
   async balance(account) {
     try {
       const result = await okrobot.okex_utils.getWallet(account, ['ETM', 'USDT', 'USDK']);
@@ -46,6 +46,8 @@ class InfoAccount extends React.Component {
       if (result && result.length > 0) {
         this.setState({ balance_usdt: result[0], balance_usdk: result[1], balance_etm: result[2] })
       } else {
+        let balance_empty = {available: '',balance: '',currency: ''}
+        this.setState({ balance_usdt: balance_empty, balance_usdk:balance_empty, balance_etm:balance_empty })
         notification.error({
           message: '提示',
           description:
@@ -53,7 +55,10 @@ class InfoAccount extends React.Component {
         });
       }
     } catch (error) {
+      let balance_empty = {available: '',balance: '',currency: ''}
+      this.setState({ balance_usdt: balance_empty, balance_usdk:balance_empty, balance_etm:balance_empty })
       console.log(error)
+
     }
 
   }
@@ -89,7 +94,7 @@ class InfoAccount extends React.Component {
     try {
       await okrobot.okex_monitor.unmonitSpotWallet(account, 'USDT');
       await okrobot.okex_monitor.unmonitSpotWallet(account, 'USDK');
-      await okrobot.okex_monitor.unmonitSpotWallet(account, 'ETM');   
+      await okrobot.okex_monitor.unmonitSpotWallet(account, 'ETM');
     } catch (error) {
       console.log(error)
     }
@@ -103,7 +108,7 @@ class InfoAccount extends React.Component {
       await this.unmonitSpotWallet(this.props.account);
       await this.props.dispatch({ type: 'CHANGE_ACCOUNT', 'name': value });
       await this.balance(this.props.account);
-      await this.monitSpotWallet(this.props.account);   
+      await this.monitSpotWallet(this.props.account);
     } catch (error) {
       console.log(error)
     }
