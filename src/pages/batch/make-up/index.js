@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Form, Input, Button,  notification } from 'antd';
+import { Card, Form, Input, Button, notification, Radio } from 'antd';
 import { connect } from 'react-redux';
 import okrobot from "okrobot-js";
 import LoadData from '../../../util/LoadData'
@@ -27,8 +27,8 @@ class MakeUp extends React.Component {
     }
   }
   componentDidUpdate(prevProps) {
-    if(prevProps.tranType !== this.props.tranType){
-        this.statusMakeUp()
+    if (prevProps.tranType !== this.props.tranType) {
+      this.statusMakeUp()
     }
   }
   componentWillMount() {
@@ -67,7 +67,7 @@ class MakeUp extends React.Component {
     try {
       const result = await okrobot.auto_market.isRunning();
       if (result === true || result === false) {
-        console.log(result,'makeup')
+        console.log(result, 'makeup')
         this.setState({ status: result })
       }
     } catch (error) {
@@ -112,18 +112,29 @@ class MakeUp extends React.Component {
     const status2 = this.state.status ? '补单中' : '已停止'
     return (
       <div className='fall'>
-            <Card title="自动补单" style={{ marginBottom: 24 }} extra={(<div><span style={{fontWeight: 600}} >状态 : </span>{status2} <Button style={{ marginLeft: 20 }} loading={this.state.loading} onClick={this.refresh.bind(this)} type="primary">刷新</Button></div>)}>
-              <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-
-              <Form.Item label="盘口距离">
-                  {getFieldDecorator('distance', {
-                    initialValue: '1',
-                    rules: [{ required: true, message: '请输入盘口距离！' }],
-                  })(
-                    <Input  style={{ width: 230 }} />
-                  )}
-                </Form.Item>
-              <Form.Item className="require" label="单笔委托范围" style={{ marginBottom: 0 }}>
+        <Card title="自动补单" style={{ marginBottom: 24 }} extra={(<div><span style={{ fontWeight: 600 }} >状态 : </span>{status2} <Button style={{ marginLeft: 20 }} loading={this.state.loading} onClick={this.refresh.bind(this)} type="primary">刷新</Button></div>)}>
+          <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+            <Form.Item label="补单方向" >
+              {getFieldDecorator('type', {
+                initialValue: '1',
+                rules: [{ required: true, message: '请选择补单方向!' }],
+              })(
+                <Radio.Group buttonStyle="solid">
+                  <Radio.Button value="2">买方</Radio.Button>
+                  <Radio.Button value="3">卖方</Radio.Button>
+                  <Radio.Button value="1">双边</Radio.Button>
+                </Radio.Group>
+              )}
+            </Form.Item>
+            <Form.Item label="盘口距离">
+              {getFieldDecorator('distance', {
+                initialValue: '1',
+                rules: [{ required: true, message: '请输入盘口距离！' }],
+              })(
+                <Input style={{ width: 230 }} />
+              )}
+            </Form.Item>
+            <Form.Item className="require" label="单笔委托范围" style={{ marginBottom: 0 }}>
               <Form.Item style={{ display: 'inline-block' }}>
                 {getFieldDecorator('startSize', {
                   rules: [{ required: true, message: '请输入单笔起始值！' }],
@@ -143,21 +154,27 @@ class MakeUp extends React.Component {
             </Form.Item>
 
 
-                <Form.Item label="挂撤次数">
-                  {getFieldDecorator('countPerM', {
-                    initialValue: '1',
-                    rules: [{ required: true, message: '请选择交易方式！' }],
-                  })(
-                    <Input addonAfter="笔/分钟" style={{ width: 230 }} />
-                  )}
-                </Form.Item>
-
-                <Form.Item {...formTailLayout}>
-                  <Button type="primary" className={status1} htmlType="submit">开始补单</Button>
-                  <Button type="primary" className={status} onClick={this.stop.bind(this)}>停止补单</Button>
-                </Form.Item>
-              </Form>
-            </Card>
+            <Form.Item label="挂撤次数">
+              {getFieldDecorator('countPerM', {
+                initialValue: '1',
+                rules: [{ required: true, message: '请选择交易方式！' }],
+              })(
+                <Input addonAfter="笔/分钟" style={{ width: 230 }} />
+              )}
+            </Form.Item>
+            <Form.Item label="补单个数">
+              {getFieldDecorator('count', {
+                rules: [{ required: true, message: '请输入补单个数！' }],
+              })(
+                <Input style={{ width: 230 }} />
+              )}
+            </Form.Item>
+            <Form.Item {...formTailLayout}>
+              <Button type="primary" className={status1} htmlType="submit">开始补单</Button>
+              <Button type="primary" className={status} onClick={this.stop.bind(this)}>停止补单</Button>
+            </Form.Item>
+          </Form>
+        </Card>
       </div>
     )
   }
