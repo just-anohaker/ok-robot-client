@@ -1,18 +1,18 @@
 import okrobot from "okrobot-js";
-import Server from "./server";
+// import Server from "./server";
 
-let server = new Server();
+// let server = new Server();
 
-let OK = true;
+// let OK = true;
 
 class User {
 
     static async getAll() {
-        if (OK) {
+        // if (OK) {
             return await okrobot.user.getAll();
-        }
+        // }
 
-        return await server.get('user/all');
+        // return await server.get('user/all');
     }
 
     // static async get(userId) {
@@ -24,27 +24,27 @@ class User {
     // }
 
     static async add(groupName, name, httpKey, httpSecret, passphrase) {
-        if (OK) {
+        // if (OK) {
             return await okrobot.user.add(groupName, name, httpKey, httpSecret, passphrase);
-        }
+        // }
 
-        return await server.post('user/add');
+        // return await server.post('user/add');
     }
 
     static async update(userId, data) {
-        if (OK) {
+        // if (OK) {
             return await okrobot.user.update(userId, data);
-        }
+        // }
 
-        return await server.post('user/all');
+        // return await server.post('user/all');
     }
 
     static async remove(userId) {
-        if (OK) {
+        // if (OK) {
             return await okrobot.user.remove(userId);
-        }
+        // }
 
-        return await server.post('user/all');
+        // return await server.post('user/all');
     }
 }
 
