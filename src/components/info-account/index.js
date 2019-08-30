@@ -106,10 +106,10 @@ class InfoAccount extends React.Component {
   }
   async handleAccountChange(value) {
     try {
-      await this.unmonitSpotWallet(this.props.account);
+      // await this.unmonitSpotWallet(this.props.account);
       await this.props.dispatch({ type: 'CHANGE_ACCOUNT', 'name': value });
-      await this.balance(this.props.account);
-      await this.monitSpotWallet(this.props.account);
+      // await this.balance(this.props.account);
+      // await this.monitSpotWallet(this.props.account);
     } catch (error) {
       console.log(error)
     }
