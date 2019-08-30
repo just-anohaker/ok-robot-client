@@ -117,7 +117,8 @@ class TableForm extends PureComponent {
 
     const target = this.getRowByKey(key) || {};
     // console.log(target)
-    if (!target.name || !target.controller || !target.httpkey || !target.httpsecret || !target.passphrase) {
+    // if (!target.name || !target.controller || !target.httpkey || !target.httpsecret || !target.passphrase) {
+    if (!target.name || !target.controller || !target.httpkey || !target.httpsecret) {
       // message.error('请填写完整成员信息。');
       notification.error({
         message: "添加数据失败",
@@ -234,22 +235,22 @@ class TableForm extends PureComponent {
           return "******";
         },
       },
-      {
-        title: "Passphrase",
-        dataIndex: 'passphrase',
-        render: (text, record) => {
-          if (record.editable) {
-            return (
-              <Input
-                onChange={e => this.handleFieldChange(e, 'passphrase', record.key)}
-                onKeyPress={e => this.handleKeyPress(e, record.key)}
-                placeholder="Passphrase"
-              />
-            );
-          }
-          return "******";
-        },
-      },
+      // {
+      //   title: "Passphrase",
+      //   dataIndex: 'passphrase',
+      //   render: (text, record) => {
+      //     if (record.editable) {
+      //       return (
+      //         <Input
+      //           onChange={e => this.handleFieldChange(e, 'passphrase', record.key)}
+      //           onKeyPress={e => this.handleKeyPress(e, record.key)}
+      //           placeholder="Passphrase"
+      //         />
+      //       );
+      //     }
+      //     return "******";
+      //   },
+      // },
       {
         title: '操作',
         dataIndex: 'action',
