@@ -39,8 +39,8 @@ class EditableCell extends React.Component {
             })(this.getInput())}
           </Form.Item>
         ) : (
-          children
-        )}
+            children
+          )}
       </td>
     );
   };
@@ -53,21 +53,21 @@ class EditableCell extends React.Component {
 class EditableTable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { data:this.props.data, editingKey: '',sum:0 };
+    this.state = { data: this.props.data, editingKey: '', sum: 0 };
     this.columns = [
       {
         title: '序号',
         dataIndex: 'client_oid',
         width: '10%',
         editable: false,
-        render: (text) => <span>{text.replace(/.+X/g,'')}</span>
+        render: (text) => <span>{text}</span>
       },
       {
         title: '买卖',
         dataIndex: 'side',
         width: '20%',
         editable: false,
-        render:(text) => (<span>{text === 'buy' ? <span style={{ color: '#2fc25b' }}>买入</span> : <span style={{ color: '#f04864' }}>卖出</span>}</span>)
+        render: (text) => (<span>{text === 'buy' ? <span style={{ color: '#2fc25b' }}>买入</span> : <span style={{ color: '#f04864' }}>卖出</span>}</span>)
       },
       {
         title: '价格',
@@ -77,7 +77,7 @@ class EditableTable extends React.Component {
       },
       {
         title: '委托量',
-        dataIndex: 'size',
+        dataIndex: 'volume',
         width: '20%',
         editable: true,
       },
@@ -95,14 +95,14 @@ class EditableTable extends React.Component {
                 )}
               </EditableContext.Consumer>
               <Popconfirm title="确认取消?" onConfirm={() => this.cancel(record.client_oid)}>
-              <a > 取消</a>
+                <a > 取消</a>
               </Popconfirm>
             </span>
           ) : (
-            <a  disabled={editingKey !== ''} onClick={() => this.edit(record.client_oid)}>
-              编辑
+              <a disabled={editingKey !== ''} onClick={() => this.edit(record.client_oid)}>
+                编辑
             </a>
-          );
+            );
         },
       },
     ];
@@ -114,14 +114,14 @@ class EditableTable extends React.Component {
   cancel = () => {
     this.setState({ editingKey: '' });
   };
-  sum(){
+  sum() {
     let data = this.state.data;
-    return  data.reduce((pre,next) => {
-      return pre + next.price * next.size
-    },0)
+    return data.reduce((pre, next) => {
+      return pre + next.price * next.volume
+    }, 0)
 
   }
-   save(form, key) {
+  save(form, key) {
     form.validateFields((error, row) => {
       if (error) {
         return;
@@ -149,7 +149,7 @@ class EditableTable extends React.Component {
   edit(key) {
     this.setState({ editingKey: key });
   }
- 
+
   render() {
     const components = {
       body: {
@@ -174,24 +174,24 @@ class EditableTable extends React.Component {
     });
 
     return (
-      <EditableContext.Provider value={this.props.form}> 
+      <EditableContext.Provider value={this.props.form}>
         <Table
           components={components}
           bordered
           size="small"
-          footer={() => ('总计：'+ this.sum().toFixed(4) +' '+ this.props.addonAfter)}
-          rowKey={record => record.client_oid} 
+          footer={() => ('总计：' + this.sum().toFixed(4) + ' ' + this.props.addonAfter)}
+          rowKey={record => record.client_oid}
           dataSource={this.state.data}
           columns={columns}
           rowClassName="editable-row"
-          pagination= {false}
-          scroll={{y:300}}
+          pagination={false}
+          scroll={{ y: 300 }}
         />
       </EditableContext.Provider>
     );
   }
 }
 
-const EditableFormTable = Form.create({name:'aaa'})(EditableTable);
+const EditableFormTable = Form.create({ name: 'aaa' })(EditableTable);
 
 export default EditableFormTable

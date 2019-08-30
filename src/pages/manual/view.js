@@ -6,7 +6,7 @@ import './less/index.less';
 // import okrobot from "okrobot-js";
 import server from "../../server";
 import { connect } from 'react-redux';
-import {  KeepAlive } from "react-keep-alive";
+import { KeepAlive } from "react-keep-alive";
 
 const columns = [
   {
@@ -72,10 +72,10 @@ class ManualPage extends React.Component {
     super(...args)
     this.state = {
       dataAsks: [],
-      sellPrice:'',
+      sellPrice: '',
       sumSell: '',
       otherSell: '',
-      buyPrice:'',
+      buyPrice: '',
       otherBuy: '',
       sumBuy: '',
       dataBids: [],
@@ -85,15 +85,15 @@ class ManualPage extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.tranType !== nextProps.tranType) {
-      server.eventbus.remove("depth:"+this.props.tranType, this.getDepathData);
+      server.eventbus.remove("depth:" + this.props.tranType, this.getDepathData);
       this.linkSock(nextProps.tranType);
-      this.setState({sellPrice:'',sumSell:'',otherSell:'',buyPrice:'',sumBuy:'',otherBuy:''});
+      this.setState({ sellPrice: '', sumSell: '', otherSell: '', buyPrice: '', sumBuy: '', otherBuy: '' });
     }
   }
 
   componentDidMount() {
-    let tranType = this.props.tranType
-    this.linkSock(tranType)
+    // let tranType = this.props.tranType
+    // this.linkSock(tranType)
   }
   linkSock(tranType) {
     this.setState({ loading: true });
@@ -110,7 +110,7 @@ class ManualPage extends React.Component {
         console.log("startDepInfo-catch", err);
         this.setState({ loading: false });
       })
-      server.eventbus.on("depth:"+tranType, this.getDepathData);
+    server.eventbus.on("depth:" + tranType, this.getDepathData);
     // clearInterval(_interval);
 
     // _interval = setInterval(() => {
@@ -118,32 +118,32 @@ class ManualPage extends React.Component {
     // }, 1000);
   }
   componentWillUnmount() {
-    server.eventbus.remove("depth:"+this.props.tranType, this.getDepathData);
+    server.eventbus.remove("depth:" + this.props.tranType, this.getDepathData);
   }
 
-  filterData(data,record){
+  filterData(data, record) {
     let sumSell = data.filter(item => item.key <= record.key).reduce((pre, next) => {
       return { sum: pre.sum + next.sum * next.price, other: pre.other + next.other * next.price }
-    }, {sum:0,other:0});
+    }, { sum: 0, other: 0 });
     let sum = sumSell.sum.toFixed(2);
     let other = sumSell.other.toFixed(2);
-    return {sum,other}
+    return { sum, other }
   }
   rowSellClickHandle(record) {
     return {
       onClick: event => {
         let data = this.state.dataAsks.slice();
-        let {sum,other} = this.filterData(data,record);
-        this.setState({sellPrice:record.price,sumSell:sum,otherSell:other});
+        let { sum, other } = this.filterData(data, record);
+        this.setState({ sellPrice: record.price, sumSell: sum, otherSell: other });
       } // 点击行
     }
   }
-  rowBuyClickHandle(record){
+  rowBuyClickHandle(record) {
     return {
       onClick: event => {
         let data = this.state.dataBids.slice();
-        let {sum,other} = this.filterData(data,record);
-        this.setState({buyPrice:record.price,sumBuy:sum,otherBuy:other});
+        let { sum, other } = this.filterData(data, record);
+        this.setState({ buyPrice: record.price, sumBuy: sum, otherBuy: other });
       }, // 点击行
     }
   }
@@ -192,9 +192,9 @@ class ManualPage extends React.Component {
       <div className="manual">
         <Row gutter={24} >
           <Col xl={12} lg={24} md={24} sm={24} xs={24} style={{ marginBottom: 24 }}>
-          <KeepAlive name="Batch">
-            <Batch></Batch>
-          </KeepAlive>
+            <KeepAlive name="Batch">
+              <Batch></Batch>
+            </KeepAlive>
           </Col>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card title="卖单情况" style={{ marginBottom: 24 }} extra={`拉盘到：${this.state.sellPrice}  总成本：${this.state.sumSell}  ${this.props.addonAfter} 净成本 ：${this.state.otherSell} ${this.props.addonAfter}`}>
@@ -205,12 +205,12 @@ class ManualPage extends React.Component {
         <Row gutter={24}>
           <Col xl={12} lg={24} md={24} sm={24} xs={24} style={{ marginBottom: 24 }}>
             <KeepAlive name="Cancel">
-             <Cancel></Cancel>
+              <Cancel></Cancel>
             </KeepAlive>
           </Col>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card title="买单情况" style={{ marginBottom: 24 }} extra={`砸盘到：${this.state.buyPrice}  总成本：${this.state.sumBuy}  ${this.props.addonAfter} 净成本 ：${this.state.otherBuy} ${this.props.addonAfter}`}>
-              <Table dataSource={this.state.dataBids}  onRow={this.rowBuyClickHandle.bind(this)}  columns={columns1} loading={this.state.loading} {...tableAttr} />
+              <Table dataSource={this.state.dataBids} onRow={this.rowBuyClickHandle.bind(this)} columns={columns1} loading={this.state.loading} {...tableAttr} />
             </Card>
           </Col>
         </Row>
@@ -225,7 +225,7 @@ const mapStateToProps = (state) => {
   return {
     account: infoingData.account,
     tranType: infoingData.tranType.name,
-    addonAfter: infoingData.tranType.name.substring(4)
+    addonAfter: infoingData.tranType.unit
   };
 };
 

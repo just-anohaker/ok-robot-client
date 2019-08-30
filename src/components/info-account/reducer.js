@@ -3,7 +3,7 @@ import { get } from "../../util/localstorage.js";
 
 function getAllaccount() {
   const allAccouts = get("allAccouts") || [];
-  const initAccount = allAccouts[0] || {id: '', httpkey: '', groupName: '', httpsecret: '', name: '', passphrase: ''};
+  const initAccount = allAccouts[0] || { id: '', httpkey: '', groupName: '', httpsecret: '', name: '', passphrase: '' };
   return {
     allAccouts,
     initAccount
@@ -13,7 +13,7 @@ function getAllaccount() {
 let account = {
   accounts: getAllaccount().allAccouts,
   account: getAllaccount().initAccount,
-  tranType: { name: 'ETM-USDT' }
+  tranType: { name: 'trxusdt', unit: 'ETM' }
 }
 
 export default (state = account, action) => {

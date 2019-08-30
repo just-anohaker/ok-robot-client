@@ -47,8 +47,8 @@ const columns = [
     dataIndex: 'price',
   },
   {
-    title:'已成交数量',
-    dataIndex:'filled_size'
+    title: '已成交数量',
+    dataIndex: 'filled_size'
   },
   {
     title: '委托数量',
@@ -68,7 +68,7 @@ class Transaction extends React.Component {
       data: [],
       pagination: {
         pageSize: 10,
-        current:1
+        current: 1
       },
       loading: false
     }
@@ -76,18 +76,18 @@ class Transaction extends React.Component {
   componentDidMount() {
     this.getTransaction();
   }
-  componentDidUpdate(prevProps){
-    const {current,pageSize} = this.state.pagination
-    const {tranType,account} = this.props
-      if(this.props.account !== prevProps.account || this.props.tranType !== prevProps.tranType){
-          this.getTransaction({ state: '-1',instrument_id:tranType, limit: pageSize, offset: (current - 1) * pageSize },account)
-      }
+  componentDidUpdate(prevProps) {
+    const { current, pageSize } = this.state.pagination
+    const { tranType, account } = this.props
+    if (this.props.account !== prevProps.account || this.props.tranType !== prevProps.tranType) {
+      this.getTransaction({ state: '-1', instrument_id: tranType, limit: pageSize, offset: (current - 1) * pageSize }, account)
+    }
   }
-  async getTransaction(options = { instrument_id:this.props.tranType,state: '-1', limit: 10, offset: 0 }, account = this.props.account) {
+  async getTransaction(options = { instrument_id: this.props.tranType, state: '-1', limit: 10, offset: 0 }, account = this.props.account) {
     try {
       this.setState({ loading: true });
       const result = await server.auto_maker.getOrderInfo(options, account);
-      if (result && result.list.length >=0) {
+      if (result && result.list.length >= 0) {
         const pagination = { ...this.state.pagination };
         pagination.total = result.count
         this.setState({ data: result.list, loading: false, pagination })
@@ -100,18 +100,18 @@ class Transaction extends React.Component {
 
   }
   refrsh = () => {
-    const {current,pageSize} = this.state.pagination
-    const {tranType,account} = this.props
-    this.getTransaction({instrument_id:tranType, state: '-1', limit: pageSize, offset: (current - 1) * pageSize },account)
+    const { current, pageSize } = this.state.pagination
+    const { tranType, account } = this.props
+    this.getTransaction({ instrument_id: tranType, state: '-1', limit: pageSize, offset: (current - 1) * pageSize }, account)
   }
   handleTableChange = (pagination) => {
     const pager = { ...this.state.pagination };
-    const {tranType,account} = this.props
+    const { tranType, account } = this.props
     pager.current = pagination.current
     this.setState({
       pagination: pager
     })
-    this.getTransaction({instrument_id:tranType, state: '-1', limit: 10, offset: (pagination.current - 1) * 10 },account)
+    this.getTransaction({ instrument_id: tranType, state: '-1', limit: 10, offset: (pagination.current - 1) * 10 }, account)
   }
   render() {
     const data = this.state.data
@@ -138,7 +138,7 @@ const mapStateToProps = (state) => {
   return {
     account: infoingData.account,
     tranType: infoingData.tranType.name,
-    addonAfter: infoingData.tranType.name.substring(4)
+    addonAfter: infoingData.tranType.unit
   };
 };
 

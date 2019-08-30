@@ -32,7 +32,7 @@ class CancelFrom extends React.Component {
     this.setState({ accounts: account })
   }
   cancelAll = () => {
-    this.cancel({options:{ topPrice: 0,startPrice:0,instrument_id: this.props.tranType},account:this.props.account})
+    this.cancel({ options: { topPrice: 0, startPrice: 0, instrument_id: this.props.tranType }, account: this.props.account })
   }
   async cancel(params) {
     try {
@@ -44,7 +44,7 @@ class CancelFrom extends React.Component {
           description:
             '撤单成功',
         });
-      } else if(result && result.error_message) {
+      } else if (result && result.error_message) {
         notification.error({
           message: '提示',
           description:
@@ -137,7 +137,7 @@ const mapStateToProps = (state) => {
   return {
     account: infoingData.account,
     tranType: infoingData.tranType.name,
-    addonAfter: infoingData.tranType.name.substring(4)
+    addonAfter: infoingData.tranType.unit
 
   };
 };

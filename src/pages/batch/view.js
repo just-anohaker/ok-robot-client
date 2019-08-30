@@ -169,7 +169,7 @@ const mapStateToProps = (state) => {
   return {
     account: infoingData.account,
     tranType: infoingData.tranType.name,
-    addonAfter: infoingData.tranType.name.substring(4)
+    addonAfter: infoingData.tranType.unit
 
   };
 };

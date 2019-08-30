@@ -33,7 +33,7 @@ class MakeUp extends React.Component {
     }
   }
   componentWillMount() {
-    this.statusMakeUp()
+    // this.statusMakeUp()
   }
   async refresh() {
     this.setState({ loading: true })

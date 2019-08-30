@@ -30,8 +30,8 @@ class InfoAccount extends React.Component {
     }
   }
   componentDidMount() {
-    this.balance(this.props.account);
-    this.monitSpotWallet(this.props.account);
+    // this.balance(this.props.account);
+    // this.monitSpotWallet(this.props.account);
   }
   // static getDerivedStateFromProps(props, state) {
   //   return {
@@ -47,8 +47,8 @@ class InfoAccount extends React.Component {
       if (result && result.length > 0) {
         this.setState({ balance_usdt: result[0], balance_usdk: result[1], balance_etm: result[2] })
       } else {
-        let balance_empty = {available: '',balance: '',currency: ''}
-        this.setState({ balance_usdt: balance_empty, balance_usdk:balance_empty, balance_etm:balance_empty })
+        let balance_empty = { available: '', balance: '', currency: '' }
+        this.setState({ balance_usdt: balance_empty, balance_usdk: balance_empty, balance_etm: balance_empty })
         notification.error({
           message: '提示',
           description:
@@ -56,8 +56,8 @@ class InfoAccount extends React.Component {
         });
       }
     } catch (error) {
-      let balance_empty = {available: '',balance: '',currency: ''}
-      this.setState({ balance_usdt: balance_empty, balance_usdk:balance_empty, balance_etm:balance_empty })
+      let balance_empty = { available: '', balance: '', currency: '' }
+      this.setState({ balance_usdt: balance_empty, balance_usdk: balance_empty, balance_etm: balance_empty })
       console.log(error)
 
     }
@@ -156,8 +156,8 @@ class InfoAccount extends React.Component {
         <div className={styles['tran-item']}>
           <span className={styles['name']}>交易对 :</span>
           <Radio.Group onChange={this.handleTranTypeChange.bind(this)} value={this.props.tranType} buttonStyle="solid">
-            <Radio.Button value="ETM-USDT">ETM/USDT</Radio.Button>
-            <Radio.Button value="ETM-USDK">ETM/USDK</Radio.Button>
+            <Radio.Button value="trxusdt">TRX-USDT</Radio.Button>
+            {/* <Radio.Button value="ETM-USDK">ETM/USDK</Radio.Button> */}
           </Radio.Group>
         </div>
 

@@ -90,7 +90,6 @@ class BatchFrom extends React.Component {
     try {
       const result = await server.batch_order.toBatchOrder(options, acct);
       this.setState({ visible: false });
-
       if (result && result.result) {
         notification.success({
           message: '提示',
@@ -237,7 +236,7 @@ const mapStateToProps = (state) => {
   return {
     account: infoingData.account,
     tranType: infoingData.tranType.name,
-    addonAfter: infoingData.tranType.name.substring(4)
+    addonAfter: infoingData.tranType.unit
   };
 };
 
