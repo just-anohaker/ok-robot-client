@@ -8,7 +8,8 @@ import LoadData from '../../util/LoadData'
 
 import styles from './overview.module.css';
 import { parseTime } from '../../util/utils';
-import okrobot from "okrobot-js";
+// import okrobot from "okrobot-js";
+import server from "../../server";
 
 const { Option } = Select;
 
@@ -428,11 +429,11 @@ class OverviewPage extends PureComponent {
   monitorTicker(instrument_id) {
     this.unmonitorTicker();
 
-    okrobot.okex_monitor.monitSpotTicker(instrument_id)
+    server.okex_monitor.monitSpotTicker(instrument_id)
       .then(res => {
         this.tickerEvent = res;
         this.tickerInstrumentId = instrument_id;
-        okrobot.eventbus.on(this.tickerEvent, this._tickerDataHandler);
+        server.eventbus.on(this.tickerEvent, this._tickerDataHandler);
       })
       .catch(err => {
         setTimeout(() => {
@@ -444,8 +445,8 @@ class OverviewPage extends PureComponent {
   unmonitorTicker() {
     console.log("unmonitorTicker=>", this.tradeEvent);
     if (this.tickerEvent) {
-      okrobot.eventbus.remove(this.tickerEvent, this._tickerDataHandler);
-      okrobot.okex_monitor.unmonitSpotTicker(this.tickerInstrumentId);
+      server.eventbus.remove(this.tickerEvent, this._tickerDataHandler);
+      server.okex_monitor.unmonitSpotTicker(this.tickerInstrumentId);
       this.tickerEvent = undefined;
       this.tickerInstrumentId = undefined;
     }
@@ -454,12 +455,12 @@ class OverviewPage extends PureComponent {
   monitorCandle(instrument_id, granularity) {
     this.unmonitorCandle();
 
-    okrobot.okex_monitor.monitSpotChannel(`candle${granularity}s`, instrument_id)
+    server.okex_monitor.monitSpotChannel(`candle${granularity}s`, instrument_id)
       .then(res => {
         this.candleEvent = res;
         this.candleInstrumentId = instrument_id;
         this.candleGranularity = `candle${granularity}s`;
-        okrobot.eventbus.on(this.candleEvent, this._candelDataHandler);
+        server.eventbus.on(this.candleEvent, this._candelDataHandler);
       })
       .catch(err => {
         setTimeout(() => {
@@ -471,8 +472,8 @@ class OverviewPage extends PureComponent {
   unmonitorCandle() {
     console.log("unmonitorCandle=>", this.tradeEvent);
     if (this.candleEvent) {
-      okrobot.eventbus.remove(this.candleEvent, this._candelDataHandler);
-      okrobot.okex_monitor.unmonitSpotChannel(this.candleInstrumentId, this.candleGranularity);
+      server.eventbus.remove(this.candleEvent, this._candelDataHandler);
+      server.okex_monitor.unmonitSpotChannel(this.candleInstrumentId, this.candleGranularity);
       this.candleEvent = undefined;
       this.candleInstrumentId = undefined;
     }
@@ -481,11 +482,11 @@ class OverviewPage extends PureComponent {
   monitorTrades(instrument_id) {
     this.unmonitorTrades();
 
-    okrobot.okex_monitor.monitSpotTrade(instrument_id)
+    server.okex_monitor.monitSpotTrade(instrument_id)
       .then(res => {
         this.tradeEvent = res;
         this.tradeInstrumentId = instrument_id;
-        okrobot.eventbus.on(this.tradeEvent, this._tradeDataHander);
+        server.eventbus.on(this.tradeEvent, this._tradeDataHander);
       })
       .catch(err => {
         setTimeout(() => {
@@ -497,8 +498,8 @@ class OverviewPage extends PureComponent {
   unmonitorTrades() {
     console.log("unmonitorTrades=>", this.tradeEvent);
     if (this.tradeEvent) {
-      okrobot.eventbus.remove(this.tradeEvent, this._tradeDataHander);
-      okrobot.okex_monitor.unmonitSpotTrade(this.tradeInstrumentId);
+      server.eventbus.remove(this.tradeEvent, this._tradeDataHander);
+      server.okex_monitor.unmonitSpotTrade(this.tradeInstrumentId);
       this.tradeEvent = undefined;
       this.tradeInstrumentId = undefined;
     }
@@ -508,7 +509,7 @@ class OverviewPage extends PureComponent {
     // this.setState({ cardCandleLoading: true });
 
     console.log("queryCandleData start=>", instrument_id, granularity);
-    okrobot.okex_utils.getSpotCandles({ instrument_id, params: { granularity } })
+    server.okex_utils.getSpotCandles({ instrument_id, params: { granularity } })
       .then(res => {
         // console.log("queryCandleData ok=>", res);
         if (res && res instanceof Array) {
@@ -528,7 +529,7 @@ class OverviewPage extends PureComponent {
   queryTradesData = (instrument_id) => {
     this.setState({ cardTradesLoading: true });
 
-    okrobot.okex_utils.getSpotTrade({ instrument_id, params: { limit: 60 } })
+    server.okex_utils.getSpotTrade({ instrument_id, params: { limit: 60 } })
       .then(res => {
         // console.log("queryTradesData ok=>", res);
         if (res && res instanceof Array) {

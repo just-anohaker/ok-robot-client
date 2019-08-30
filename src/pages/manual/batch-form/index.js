@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Card, Radio, Form, Input, notification, Button, Modal } from 'antd';
-import okrobot from "okrobot-js";
+// import okrobot from "okrobot-js";
+import server from "../../../server";
 import EditableFormTable from '../../../components/editable'
 const formItemLayout = {
   labelCol: {
@@ -30,7 +31,7 @@ class BatchFrom extends React.Component {
 
   async generate({ options, account }) {
     try {
-      const result = await okrobot.batch_order.generate(options, account);
+      const result = await server.batch_order.generate(options, account);
       this.setState({ loading: false })
       if (result && result.result) {
         this.setState({ detailData: result.orders, visible: true })
@@ -87,7 +88,7 @@ class BatchFrom extends React.Component {
   }
   async sendBatch(options, acct) {
     try {
-      const result = await okrobot.batch_order.toBatchOrder(options, acct);
+      const result = await server.batch_order.toBatchOrder(options, acct);
       this.setState({ visible: false });
 
       if (result && result.result) {

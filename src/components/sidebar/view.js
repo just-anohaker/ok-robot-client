@@ -14,7 +14,7 @@ const Sidebar = ({ collapsed,params }) => {
       <div className={styles.logo}>
         <a >
           <img src={logo} alt="logo" />
-          <h1>ETM & OKEx Robot</h1>
+          <h1>ETM & BIKI Robot</h1>
         </a>
       </div>
       <Menu

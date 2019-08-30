@@ -2,7 +2,8 @@ import React from 'react';
 import { Select, Radio, notification } from 'antd';
 import { connect } from 'react-redux';
 
-import okrobot from "okrobot-js";
+// import okrobot from "okrobot-js";
+import server from "../../server";
 import styles from './info.module.css'
 const Option = Select.Option;
 
@@ -41,7 +42,7 @@ class InfoAccount extends React.Component {
 
   async balance(account) {
     try {
-      const result = await okrobot.okex_utils.getWallet(account, ['ETM', 'USDT', 'USDK']);
+      const result = await server.okex_utils.getWallet(account, ['ETM', 'USDT', 'USDK']);
 
       if (result && result.length > 0) {
         this.setState({ balance_usdt: result[0], balance_usdk: result[1], balance_etm: result[2] })
@@ -64,17 +65,17 @@ class InfoAccount extends React.Component {
   }
   async monitSpotWallet(account) {
     try {
-      const usdt = await okrobot.okex_monitor.monitSpotWallet(account, 'USDT');
-      const usdk = await okrobot.okex_monitor.monitSpotWallet(account, 'USDK');
-      const etm = await okrobot.okex_monitor.monitSpotWallet(account, 'ETM');
+      const usdt = await server.okex_monitor.monitSpotWallet(account, 'USDT');
+      const usdk = await server.okex_monitor.monitSpotWallet(account, 'USDK');
+      const etm = await server.okex_monitor.monitSpotWallet(account, 'ETM');
       if (usdt && usdk && etm) {
-        okrobot.eventbus.on(usdt, (name, data) => {
+        server.eventbus.on(usdt, (name, data) => {
           this.setState({ balance_usdt: data[0] });
         });
-        okrobot.eventbus.on(usdk, (name, data) => {
+        server.eventbus.on(usdk, (name, data) => {
           this.setState({ balance_usdk: data[0] });
         });
-        okrobot.eventbus.on(etm, (name, data) => {
+        server.eventbus.on(etm, (name, data) => {
           this.setState({ balance_etm: data[0] });
         });
       } else {
@@ -92,9 +93,9 @@ class InfoAccount extends React.Component {
   }
   async unmonitSpotWallet(account) {
     try {
-      await okrobot.okex_monitor.unmonitSpotWallet(account, 'USDT');
-      await okrobot.okex_monitor.unmonitSpotWallet(account, 'USDK');
-      await okrobot.okex_monitor.unmonitSpotWallet(account, 'ETM');
+      await server.okex_monitor.unmonitSpotWallet(account, 'USDT');
+      await server.okex_monitor.unmonitSpotWallet(account, 'USDK');
+      await server.okex_monitor.unmonitSpotWallet(account, 'ETM');
     } catch (error) {
       console.log(error)
     }
@@ -116,10 +117,10 @@ class InfoAccount extends React.Component {
   }
   render() {
     let accounts = this.props.accounts
-    let { balance_etm, balance_usdt, balance_usdk } = this.state
+    // let { balance_etm, balance_usdt, balance_usdk } = this.state
     return (
       <div className={styles['header-account']}>
-        <div className={styles['header-balance']}>
+        {/* <div className={styles['header-balance']}>
           <span className={styles['name']}>账号余额 :</span>
           <div className={styles['count']}>
             <div className={styles['count-item']}>
@@ -133,7 +134,7 @@ class InfoAccount extends React.Component {
             </div>
 
           </div>
-        </div>
+        </div> */}
 
         <div className="header-item">
           <span className={styles['name']}>执行账户 :</span>

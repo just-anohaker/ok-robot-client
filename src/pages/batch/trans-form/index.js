@@ -3,7 +3,8 @@ import React, { PureComponent, Fragment } from 'react';
 import { actions as loading } from '../../../components/loading';
 import { connect } from 'react-redux';
 import store from "../../../Store";
-import okrobot from "okrobot-js";
+// import okrobot from "okrobot-js";
+import server from "../../../server";
 
 const { Option } = Select;
 const formItemLayout = {
@@ -46,7 +47,7 @@ class Trans extends PureComponent {
         if (values.delegate === "limit") {
           store.dispatch(loading.showLoading());
 
-          okrobot.batch_order.limitOrder(values, account)
+          server.batch_order.limitOrder(values, account)
             .then((res) => {
               if (res && res.result) {
                 notification.success({
@@ -74,7 +75,7 @@ class Trans extends PureComponent {
         else if (values.delegate === "market") {
           store.dispatch(loading.showLoading());
 
-          okrobot.batch_order.marketOrder(values, account)
+          server.batch_order.marketOrder(values, account)
             .then((res) => {
               if (res && res.result) {
                 notification.success({

@@ -1,11 +1,5 @@
 [
   {
-    "icon": "home",
-    "key": "overview",
-    "label": "监控总览",
-    "url": "/home/overview"
-  },
-  {
     "icon": "project",
     "key": "transaction",
     "label": "对倒记录",

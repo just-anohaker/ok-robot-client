@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card, Form, Input, Button, notification, Radio } from 'antd';
 import { connect } from 'react-redux';
-import okrobot from "okrobot-js";
+// import okrobot from "okrobot-js";
+import server from "../../../server";
 import LoadData from '../../../util/LoadData'
 import './index.less'
 const formItemLayout = {
@@ -45,7 +46,7 @@ class Fall extends React.Component {
   }
   async stop() {
     try {
-      const result = await okrobot.auto_maker.stop();
+      const result = await server.auto_maker.stop();
       if (result) {
         notification.success({
           message: '提示',
@@ -66,7 +67,7 @@ class Fall extends React.Component {
   }
   async statusFall() {
     try {
-      const result = await okrobot.auto_maker.isRunning();
+      const result = await server.auto_maker.isRunning();
       if (result === true || result === false) {
         this.setState({ status: result })
       }
@@ -76,7 +77,7 @@ class Fall extends React.Component {
   }
   async fallHandle(options, account) {
     try {
-      const result = await okrobot.auto_maker.init(options, account);
+      const result = await server.auto_maker.init(options, account);
       if (result && result.result) {
         notification.success({
           message: '提示',

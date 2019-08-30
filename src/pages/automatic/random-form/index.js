@@ -2,7 +2,8 @@ import React from 'react';
 import { Row, Col, Card, Radio, Form, Input, Select, notification } from 'antd';
 import EditBtn from '../../../components/editbtn'
 import SwitchConfirm from '../../../components/switch-confirm'
-import okrobot from "okrobot-js";
+// import okrobot from "okrobot-js";
+import server from "../../server";
 
 const Option = Select.Option;
 const formItemLayout = {
@@ -57,7 +58,7 @@ class RandomSale extends React.Component {
 
   async init(params) {
     console.log(params)
-    const result = await okrobot.auto_maker.init(params)
+    const result = await server.auto_maker.init(params)
     console.log(result)
     notification.open({
       message: 'Notification Title',
@@ -68,20 +69,20 @@ class RandomSale extends React.Component {
 
   async start() {
     console.log('start')
-    const result = await okrobot.auto_maker.start()
+    const result = await server.auto_maker.start()
     console.log(result)
   }
   async stop() {
     console.log('stop')
-    const result = await okrobot.auto_maker.stop()
+    const result = await server.auto_maker.stop()
     console.log(result)
   }
   async isRunning() {
-    const result = await okrobot.auto_maker.isRunning()
+    const result = await server.auto_maker.isRunning()
     console.log(result)
   }
   async getOptionsAndAccount() {
-    const result = await okrobot.auto_maker.getOptionsAndAccount()
+    const result = await server.auto_maker.getOptionsAndAccount()
     console.log(result)
     this.props.form.setFieldsValue({
       tradeMethod: '1',

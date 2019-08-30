@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { Row, Card, Form, Input, notification, Button } from 'antd';
 import { get } from "../../../util/localstorage.js";
 
-import okrobot from "okrobot-js";
+// import okrobot from "okrobot-js";
+import server from "../../../server";
 
 const formItemLayout = {
   labelCol: {
@@ -35,7 +36,7 @@ class CancelFrom extends React.Component {
   }
   async cancel(params) {
     try {
-      const result = await okrobot.batch_order.cancel(params.options, params.account);
+      const result = await server.batch_order.cancel(params.options, params.account);
       this.setState({ loading: false });
       if (result && result.result) {
         notification.success({

@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { PureComponent, } from 'react';
 import { connect } from 'react-redux';
-import okrobot from "okrobot-js";
+// import okrobot from "okrobot-js";
+import server from "../../server";
 import { Card, Form, Button, Row, Col, Table } from 'antd';
 import { parseTime } from '../../util/utils';
 import { KeepAlive } from "react-keep-alive";
@@ -45,7 +46,7 @@ class BatchCard extends PureComponent {
   async getOrderData({ options = {}, account }) {
     try {
       this.setState({ loading: true });
-      const res = await okrobot.batch_order.getOrderData(options, account);
+      const res = await server.batch_order.getOrderData(options, account);
       if (res && res.list.length > 0) {
         const pagination = { ...this.state.pagination };
         const data = res.list;

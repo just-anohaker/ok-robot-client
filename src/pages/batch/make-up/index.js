@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card, Form, Input, Button, notification, Radio } from 'antd';
 import { connect } from 'react-redux';
-import okrobot from "okrobot-js";
+// import okrobot from "okrobot-js";
+import server from "../../../server";
 import LoadData from '../../../util/LoadData'
 const formItemLayout = {
   labelCol: {
@@ -44,7 +45,7 @@ class MakeUp extends React.Component {
   }
   async stop() {
     try {
-      const result = await okrobot.auto_market.stop();
+      const result = await server.auto_market.stop();
       if (result) {
         notification.success({
           message: '提示',
@@ -65,7 +66,7 @@ class MakeUp extends React.Component {
   }
   async statusMakeUp() {
     try {
-      const result = await okrobot.auto_market.isRunning();
+      const result = await server.auto_market.isRunning();
       if (result === true || result === false) {
         console.log(result, 'makeup')
         this.setState({ status: result })
@@ -76,7 +77,7 @@ class MakeUp extends React.Component {
   }
   async makeUpHandle(options, account) {
     try {
-      const result = await okrobot.auto_market.init(options, account);
+      const result = await server.auto_market.init(options, account);
       if (result && result.result) {
         notification.success({
           message: '提示',

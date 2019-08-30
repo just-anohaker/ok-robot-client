@@ -3,7 +3,8 @@ import React from 'react';
 import { Table, Col, Card, Button } from 'antd';
 import { connect } from 'react-redux';
 import { parseTime } from '../../util/utils';
-import okrobot from 'okrobot-js'
+// import okrobot from 'okrobot-js'
+import server from "../../server";
 
 function statusType(type) {
   // eslint-disable-next-line default-case
@@ -85,7 +86,7 @@ class Transaction extends React.Component {
   async getTransaction(options = { instrument_id:this.props.tranType,state: '-1', limit: 10, offset: 0 }, account = this.props.account) {
     try {
       this.setState({ loading: true });
-      const result = await okrobot.auto_maker.getOrderInfo(options, account);
+      const result = await server.auto_maker.getOrderInfo(options, account);
       if (result && result.list.length >=0) {
         const pagination = { ...this.state.pagination };
         pagination.total = result.count

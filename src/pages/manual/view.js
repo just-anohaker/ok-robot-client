@@ -3,7 +3,8 @@ import Batch from './batch-form';
 import Cancel from './cancel-form';
 import { Row, Col, Card, Table } from 'antd';
 import './less/index.less';
-import okrobot from "okrobot-js";
+// import okrobot from "okrobot-js";
+import server from "../../server";
 import { connect } from 'react-redux';
 import {  KeepAlive } from "react-keep-alive";
 
@@ -84,7 +85,7 @@ class ManualPage extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.tranType !== nextProps.tranType) {
-      okrobot.eventbus.remove("depth:"+this.props.tranType, this.getDepathData);
+      server.eventbus.remove("depth:"+this.props.tranType, this.getDepathData);
       this.linkSock(nextProps.tranType);
       this.setState({sellPrice:'',sumSell:'',otherSell:'',buyPrice:'',sumBuy:'',otherBuy:''});
     }
@@ -100,7 +101,7 @@ class ManualPage extends React.Component {
     let option = Object.assign({}, account);
     option.instrument_id = tranType;
 
-    okrobot.batch_order.startDepInfo(option)
+    server.batch_order.startDepInfo(option)
       .then((res) => {
         console.log("startDepInfo-then", res);
         this.setState({ loading: false });
@@ -109,7 +110,7 @@ class ManualPage extends React.Component {
         console.log("startDepInfo-catch", err);
         this.setState({ loading: false });
       })
-    okrobot.eventbus.on("depth:"+tranType, this.getDepathData);
+      server.eventbus.on("depth:"+tranType, this.getDepathData);
     // clearInterval(_interval);
 
     // _interval = setInterval(() => {
@@ -117,7 +118,7 @@ class ManualPage extends React.Component {
     // }, 1000);
   }
   componentWillUnmount() {
-    okrobot.eventbus.remove("depth:"+this.props.tranType, this.getDepathData);
+    server.eventbus.remove("depth:"+this.props.tranType, this.getDepathData);
   }
 
   filterData(data,record){

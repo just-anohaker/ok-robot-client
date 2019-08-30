@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Route } from 'react-router-dom';
 import { view as Header } from '../../components/header';
 import { view as Sidebar } from '../../components/sidebar';
-import { view as Overview } from '../overview';
+// import { view as Overview } from '../overview';
 import { view as Batch } from '../batch';
 import { view as Transaction } from '../transaction';
 import { view as Manual } from '../manual';
@@ -11,7 +11,8 @@ import styles from './home.module.css';
 import { notification } from 'antd';
 import { actions as loading } from '../../components/loading';
 import store from "../../Store";
-import okrobot from "okrobot-js";
+// import okrobot from "okrobot-js";
+import server from "../../server";
 import { put } from "../../util/localstorage.js";
 import LoadData from '../../util/LoadData'
 
@@ -26,7 +27,7 @@ class HomePage extends PureComponent {
 
     //请求所有账户，并放入缓存
     store.dispatch(loading.showLoading());
-    okrobot.user.getAll()
+    server.user.getAll()
       .then((res) => {
         if (res.length > 0) {
           put("allAccouts", res);
@@ -71,7 +72,7 @@ class HomePage extends PureComponent {
             <Header collapsed={collapsed} setCollapsed={this.setCollapsed} />
           </div>
           <div className={`${styles.content} ant-layout-content`}>
-            <Route path="/home/overview" component={Overview} />
+            {/* <Route path="/home/overview" component={Overview} /> */}
             <Route path="/home/transaction" component={Transaction} />
             <Route path="/home/batch" component={Batch} />
             <Route path="/home/manual" component={Manual} />

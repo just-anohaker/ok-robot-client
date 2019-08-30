@@ -3,7 +3,8 @@ import { Card } from 'antd';
 import { view as TableForm } from '../../components/tableform';
 import { actions as loading } from '../../components/loading';
 import store from "../../Store";
-import okrobot from "okrobot-js";
+// import okrobot from "okrobot-js";
+import server from "../../server";
 import { put, get } from "../../util/localstorage.js";
 import LoadData from '../../util/LoadData'
 
@@ -45,7 +46,7 @@ class AccountsPage extends PureComponent {
 
   addTableData(row, cb) {
     store.dispatch(loading.showLoading());
-    okrobot.user.add(row.controller, row.name, row.httpkey, row.httpsecret, row.passphrase)
+    server.user.add(row.controller, row.name, row.httpkey, row.httpsecret, row.passphrase)
       .then((res) => {
         let newRow = this.transferData([res]);
 
@@ -70,7 +71,7 @@ class AccountsPage extends PureComponent {
 
   editTableData(row, cb) {
     store.dispatch(loading.showLoading());
-    okrobot.user.update(row.id, {
+    server.user.update(row.id, {
       groupName: row.controller, name: row.name, httpkey: row.httpkey, httpsecret: row.httpsecret, passphrase: row.passphrase
     })
       .then((res) => {
@@ -97,7 +98,7 @@ class AccountsPage extends PureComponent {
 
   removeTableData(row, cb) {
     store.dispatch(loading.showLoading());
-    okrobot.user.remove(row.id)
+    server.user.remove(row.id)
       .then((res) => {
         let newAccounts = get("allAccouts");
         newAccounts = newAccounts.filter((item) => {
