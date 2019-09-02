@@ -47,10 +47,10 @@ class BatchCard extends PureComponent {
     try {
       this.setState({ loading: true });
       const res = await server.batch_order.getOrderData(options, account);
-      if (res && res.list.length > 0) {
+      if (res && res.result.list.length > 0) {
         const pagination = { ...this.state.pagination };
-        const data = res.list;
-        pagination.total = res.length;
+        const data = res.result.list;
+        pagination.total = res.result.length;
         this.setState({ loading: false, data: data });
       } else {
         this.setState({ loading: false });
@@ -94,11 +94,11 @@ class BatchCard extends PureComponent {
       {
         title: '类型',
         dataIndex: 'side',
-        render: (text) => (<span>{text === 'buy' ? <span style={{ color: '#2fc25b' }}>买入</span> : <span style={{ color: '#f04864' }}>卖出</span>}</span>)
+        render: (text) => (<span>{text === 'BUY' ? <span style={{ color: '#2fc25b' }}>买入</span> : <span style={{ color: '#f04864' }}>卖出</span>}</span>)
       },
       {
         title: '时间',
-        dataIndex: 'created_at',
+        dataIndex: 'ctime',
         render: (text) => (
           <span>{parseTime(text)}</span>
         )
@@ -109,17 +109,17 @@ class BatchCard extends PureComponent {
       },
       {
         title: '数量',
-        dataIndex: 'size',
+        dataIndex: 'volume',
       },
-      {
-        title: '成本',
-        dataIndex: 'price_avg',
-      },
-      {
-        title: '状态',
-        dataIndex: 'state',
-        render: (text) => <span>{this.statusType(text)}</span>
-      }
+      // {
+      //   title: '成本',
+      //   dataIndex: 'price_avg',
+      // },
+      // {
+      //   title: '状态',
+      //   dataIndex: 'state',
+      //   render: (text) => <span>{this.statusType(text)}</span>
+      // }
     ];
 
     const tableAttr = {
@@ -137,7 +137,7 @@ class BatchCard extends PureComponent {
           </Col>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>
             <Card title="交易情况" style={{ marginBottom: 24 }} extra={<Button onClick={this.refresh.bind(this)} type="primary">刷新</Button>} >
-              <Table rowKey={record => record.order_id} loading={this.state.loading} dataSource={this.state.data} {...tableAttr} />
+              <Table rowKey={record => record.id} loading={this.state.loading} dataSource={this.state.data} {...tableAttr} />
             </Card>
           </Col>
         </Row>

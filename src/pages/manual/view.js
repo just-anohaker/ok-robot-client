@@ -3,7 +3,6 @@ import Batch from './batch-form';
 import Cancel from './cancel-form';
 import { Row, Col, Card, Table } from 'antd';
 import './less/index.less';
-// import okrobot from "okrobot-js";
 import server from "../../server";
 import { connect } from 'react-redux';
 import { KeepAlive } from "react-keep-alive";
@@ -92,8 +91,8 @@ class ManualPage extends React.Component {
   }
 
   componentDidMount() {
-    // let tranType = this.props.tranType
-    // this.linkSock(tranType)
+    let tranType = this.props.tranType
+    this.linkSock(tranType)
   }
   linkSock(tranType) {
     this.setState({ loading: true });
@@ -110,7 +109,9 @@ class ManualPage extends React.Component {
         console.log("startDepInfo-catch", err);
         this.setState({ loading: false });
       })
-    server.eventbus.on("depth:" + tranType, this.getDepathData);
+    console.log("depth:" + this.props.tranType);
+
+    server.eventbus.on("depth:" + this.props.tranType, this.getDepathData);
     // clearInterval(_interval);
 
     // _interval = setInterval(() => {
@@ -162,8 +163,8 @@ class ManualPage extends React.Component {
   generateData = (arr) => {
     let newArr = arr.map((v, i) => {
       let mine = 0, price = v[0], sum = v[1], other = 0;
-      if (v.length === 4) {
-        mine = v[3];
+      if (v.length === 3) {
+        mine = v[2];
       }
       other = sum - mine <= 0 ? 0 : (sum - mine).toFixed(4);
       return {

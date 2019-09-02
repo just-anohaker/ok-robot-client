@@ -22,7 +22,9 @@ function statusType(type) {
     case '3':
       return '下单中'
     case '4':
-      return '撤单中'
+      return '已撤销'
+    case '5':
+      return '已撤销'
     case '6':
       return '未完成'
     case '7':
@@ -33,7 +35,7 @@ const columns = [
   {
     title: '类型',
     dataIndex: 'side',
-    render: (text) => (<span>{text === 'buy' ? <span style={{ color: '#2fc25b' }}>买入</span> : <span style={{ color: '#f04864' }}>卖出</span>}</span>)
+    render: (text) => (<span>{text === 'BUY' ? <span style={{ color: '#2fc25b' }}>买入</span> : <span style={{ color: '#f04864' }}>卖出</span>}</span>)
   },
   {
     title: '时间',
@@ -87,7 +89,6 @@ class Transaction extends React.Component {
     try {
       this.setState({ loading: true });
       const result = await server.auto_maker.getOrderInfo(options, account);
-      console.log(result)
       if (result && result.list.length >= 0) {
         const pagination = { ...this.state.pagination };
         pagination.total = result.count
