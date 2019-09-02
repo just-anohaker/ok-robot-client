@@ -56,7 +56,7 @@ const columns = [
   },
   {
     title: '状态',
-    dataIndex: 'state',
+    dataIndex: 'status',
     render: (text) => <span>{statusType(text)}</span>
   }
 ];
@@ -87,6 +87,7 @@ class Transaction extends React.Component {
     try {
       this.setState({ loading: true });
       const result = await server.auto_maker.getOrderInfo(options, account);
+      console.log(result)
       if (result && result.list.length >= 0) {
         const pagination = { ...this.state.pagination };
         pagination.total = result.count

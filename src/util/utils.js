@@ -8,6 +8,7 @@ export function parseTime(time, cFormat) {
     date = time
   } else {
     if (('' + time).length === 10) time = parseInt(time) * 1000
+    time = parseInt('' + time)
     date = new Date(time)
   }
   const formatObj = {
