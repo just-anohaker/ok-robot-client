@@ -13,7 +13,7 @@ function getAllaccount() {
 let account = {
   accounts: getAllaccount().allAccouts,
   account: getAllaccount().initAccount,
-  tranType: { name: 'trxusdt', unit: 'ETM' }
+  tranType: { name: 'etmusdt', unit: 'ETM' }
 }
 
 export default (state = account, action) => {

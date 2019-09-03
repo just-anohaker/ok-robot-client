@@ -156,7 +156,7 @@ class InfoAccount extends React.Component {
         <div className={styles['tran-item']}>
           <span className={styles['name']}>交易对 :</span>
           <Radio.Group onChange={this.handleTranTypeChange.bind(this)} value={this.props.tranType} buttonStyle="solid">
-            <Radio.Button value="trxusdt">TRX-USDT</Radio.Button>
+            <Radio.Button value="etmusdt">ETM-USDT</Radio.Button>
             {/* <Radio.Button value="ETM-USDK">ETM/USDK</Radio.Button> */}
           </Radio.Group>
         </div>
