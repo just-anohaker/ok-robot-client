@@ -120,7 +120,7 @@ class ManualPage extends React.Component {
     okrobot.eventbus.remove("depth:"+this.props.tranType, this.getDepathData);
   }
 
-  filterData(data,record){
+  filterData(data=[],record){
     let sumSell = data.filter(item => item.key <= record.key).reduce((pre, next) => {
       return { sum: pre.sum + next.sum * next.price, other: pre.other + next.other * next.price }
     }, {sum:0,other:0});

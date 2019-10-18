@@ -4,11 +4,13 @@ import { routerReducer } from 'react-router-redux';
 import resetEnhancer from './enhancer/reset.js';
 import { reducer as loadingReducer } from './components/loading';
 import infoReducer from './components/info-account/reducer';
+import warnReducer from './pages/priceWarning/reducer';
 
 const originalReducers = {
   loading: loadingReducer,
   routing: routerReducer,
-  infoing: infoReducer
+  infoing: infoReducer,
+  warning: warnReducer
 };
 const reducer = combineReducers(originalReducers);
 const win = window;

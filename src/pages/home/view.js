@@ -7,6 +7,7 @@ import { view as Batch } from '../batch';
 import { view as Transaction } from '../transaction';
 import { view as Manual } from '../manual';
 import { view as Accounts } from '../accounts';
+import { view as PriceWarning } from '../priceWarning';
 import styles from './home.module.css';
 import { notification } from 'antd';
 import { actions as loading } from '../../components/loading';
@@ -76,6 +77,7 @@ class HomePage extends PureComponent {
             <Route path="/home/batch" component={Batch} />
             <Route path="/home/manual" component={Manual} />
             <Route path="/home/accounts" component={Accounts} />
+            <Route path="/home/priceWarning" component={PriceWarning} />
           </div>
         </div>
       </div>

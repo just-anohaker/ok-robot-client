@@ -24,6 +24,12 @@
     "url": "/home/manual"
   },
   {
+    "icon": "warning",
+    "key": "priceWarning",
+    "label": "价格预警",
+    "url": "/home/priceWarning"
+  },
+  {
     "icon": "team",
     "key": "accounts",
     "label": "账户管理",

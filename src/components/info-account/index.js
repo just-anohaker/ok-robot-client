@@ -24,13 +24,32 @@ class InfoAccount extends React.Component {
         available: '',
         balance: '',
         currency: ''
-      }
+      },
+      radioMap: new Map()
 
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.deleteWarn !== nextProps.deleteWarn || this.props.stopAll !== nextProps.stopAll) {
+      if (nextProps.stopAll === 'all') {
+        this.setState((prevState) =>({
+          radioMap : new Map()
+        }))
+      } else if(this.state.radioMap.has(nextProps.deleteWarn)) {
+        this.setState((prevState) =>{
+          prevState.radioMap.delete(nextProps.deleteWarn);
+          return {
+            radioMap : prevState.radioMap
+          }
+        })
+      }
     }
   }
   componentDidMount() {
     this.balance(this.props.account);
     this.monitSpotWallet(this.props.account);
+    this.wraning()
   }
   // static getDerivedStateFromProps(props, state) {
   //   return {
@@ -38,7 +57,45 @@ class InfoAccount extends React.Component {
   //     addonAfter:props.addonAfter
   //   }
   // }
+  isElectronPlatform() {
+    return window !== undefined && window.ipcNative !== undefined;
+  }
+  async getWarning(data) {
+    console.log(!this.state.radioMap.has(data.wid));
+    
+    if (!this.state.radioMap.has(data.wid)) {
+      console.log(data, data.filepath);
+      // this.setState((prevState) =>({
+      //   radioMap: prevState.radioMap.set(data.wid, data.filepath)
+      // }))
+      if(this.isElectronPlatform()){
+        const result = await okrobot.utils.retrieveFileData(data.filepath);
+        const music = URL.createObjectURL(
+          new Blob([result.data.buffer],{
+            type:'application/octet-stream'
+          })
+          );
+        this.setState((prevState) =>({
+          radioMap: prevState.radioMap.set(data.wid, music)
+        }))
+      }
+    }
+  }
+  async wraning() {
 
+    okrobot.eventbus.on('warning:ETM-USDT', async (name, data) => {
+      await this.getWarning(data);
+    });
+    okrobot.eventbus.on('warning:ETM-USDK',async (name, data) => {
+      await this.getWarning(data);
+    });
+    okrobot.eventbus.on('warning:BTC-USDT',async (name, data) => {
+      await this.getWarning(data);
+    });
+    okrobot.eventbus.on('warning:BTC-USDK',async (name, data) => {
+      await this.getWarning(data);
+    });
+  }
   async balance(account) {
     try {
       const result = await okrobot.okex_utils.getWallet(account, ['ETM', 'USDT', 'USDK']);
@@ -46,8 +103,8 @@ class InfoAccount extends React.Component {
       if (result && result.length > 0) {
         this.setState({ balance_usdt: result[0], balance_usdk: result[1], balance_etm: result[2] })
       } else {
-        let balance_empty = {available: '',balance: '',currency: ''}
-        this.setState({ balance_usdt: balance_empty, balance_usdk:balance_empty, balance_etm:balance_empty })
+        let balance_empty = { available: '', balance: '', currency: '' }
+        this.setState({ balance_usdt: balance_empty, balance_usdk: balance_empty, balance_etm: balance_empty })
         notification.error({
           message: '提示',
           description:
@@ -55,10 +112,9 @@ class InfoAccount extends React.Component {
         });
       }
     } catch (error) {
-      let balance_empty = {available: '',balance: '',currency: ''}
-      this.setState({ balance_usdt: balance_empty, balance_usdk:balance_empty, balance_etm:balance_empty })
+      let balance_empty = { available: '', balance: '', currency: '' }
+      this.setState({ balance_usdt: balance_empty, balance_usdk: balance_empty, balance_etm: balance_empty })
       console.log(error)
-
     }
 
   }
@@ -101,7 +157,12 @@ class InfoAccount extends React.Component {
 
   }
   async handleTranTypeChange(value) {
-    await this.props.dispatch({ type: 'CHANGE_TRANTYPE', 'tranTran': value.target.value })
+    try {
+      await this.props.dispatch({ type: 'CHANGE_TRANTYPE', 'tranTran': value.target.value })
+    } catch (error) {
+      console.log(error);
+    }
+
   }
   async handleAccountChange(value) {
     try {
@@ -112,13 +173,16 @@ class InfoAccount extends React.Component {
     } catch (error) {
       console.log(error)
     }
-
   }
+
   render() {
+    let radioMap = this.state.radioMap
+    console.log([...radioMap],'数据');
     let accounts = this.props.accounts
     let { balance_etm, balance_usdt, balance_usdk } = this.state
     return (
       <div className={styles['header-account']}>
+        {[...radioMap].map(item => <audio key={item[0]} ref={item[0]} src={item[1]} preload="auto" style={{ display: 'none' }} autoPlay controls ></audio>)}
         <div className={styles['header-balance']}>
           <span className={styles['name']}>账号余额 :</span>
           <div className={styles['count']}>
@@ -167,12 +231,16 @@ class InfoAccount extends React.Component {
 
 const mapStateToProps = (state) => {
   const infoingData = state.infoing;
+  const deleteWarn = state.warning
+
   return {
     name: infoingData.account.name,
     groupName: infoingData.account.groupName,
     tranType: infoingData.tranType.name,
     accounts: infoingData.accounts,
-    account: infoingData.account
+    account: infoingData.account,
+    deleteWarn: deleteWarn.deletewarning,
+    stopAll: deleteWarn.all
 
   };
 };

@@ -120,7 +120,7 @@ class RandomSale extends React.Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     const tranSwitch = this.state.tranSwitch
-    let accounts = this.state.accounts
+    let accounts = this.state.accounts || []
     return (
       <div className="random-sale">
         {/*随机买卖*/}
