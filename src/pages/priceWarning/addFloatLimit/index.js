@@ -99,8 +99,7 @@ class Add extends React.Component {
         let options = {
           type: '4',
           filepath: this.state.filepath,
-          maxprice: values.maxprice,
-          minprice: values.minprice,
+          utime: values.utime,
           pecent: ''+values.pecent / 100,
           instrument_id: values.instrument_id
         };
@@ -130,18 +129,11 @@ class Add extends React.Component {
                 </Radio.Group>
               )}
             </Form.Item>
-          <Form.Item label="上限价格">
-          {getFieldDecorator('maxprice', {
-              rules: [{ required: true,message: '请输入上限价格！' }],
+          <Form.Item label="时间">
+          {getFieldDecorator('utime', {
+              rules: [{ required: true,message: '请输入时间！' }],
             })(
-              <Input   style={{ width: 230 }} />
-            )}
-          </Form.Item>
-          <Form.Item label="下限价格">
-          {getFieldDecorator('minprice', {
-              rules: [{ required: true,message: '请输入下限价格！' }],
-            })(
-              <Input   style={{ width: 230 }} />
+              <Input addonAfter='分钟'  style={{ width: 230 }} />
             )}
           </Form.Item>
           <Form.Item label="浮动百分比">

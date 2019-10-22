@@ -116,8 +116,8 @@ class Add extends React.Component {
     
     return (
       <div className="add-warning">
-        {/*无差阶预警*/}
-        <Card title="无差阶预警"  >
+        {/*无差价预警*/}
+        <Card title="无差价预警"  >
           <Form {...formItemLayout} onSubmit={this.handleSubmit}>
           <Form.Item label="交易对">
               {getFieldDecorator('instrument_id', {

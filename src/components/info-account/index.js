@@ -182,7 +182,7 @@ class InfoAccount extends React.Component {
     let { balance_etm, balance_usdt, balance_usdk } = this.state
     return (
       <div className={styles['header-account']}>
-        {[...radioMap].map(item => <audio key={item[0]} ref={item[0]} src={item[1]} preload="auto" style={{ display: 'none' }} autoPlay controls ></audio>)}
+        {[...radioMap].map(item => <audio key={item[0]} ref={item[0]} src={item[1]} preload="auto" style={{ display: 'none' }} autoPlay controls loop ></audio>)}
         <div className={styles['header-balance']}>
           <span className={styles['name']}>账号余额 :</span>
           <div className={styles['count']}>

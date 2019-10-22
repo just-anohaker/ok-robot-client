@@ -195,6 +195,7 @@ class PriceWarning extends PureComponent {
       {
         title: '浮动百分比',
         dataIndex: 'pecent',
+        render:(text) =>(<span>{text ? text*100+'%' : ''}</span>)
       },
       {
         title: '交易对',
