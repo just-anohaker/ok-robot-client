@@ -13,7 +13,7 @@ class TableForm extends PureComponent {
     super(props);
 
     this.state = {
-      data: props.data.slice(),
+      data: props.data.slice() || [],
       loading: false,
       value: props.data.slice(),
     };
@@ -32,7 +32,11 @@ class TableForm extends PureComponent {
 
   handleFieldChange(e, fieldName, key) {
     const { data } = this.state;
+    console.log(data, 'data');
+
     const newData = data.map(item => ({ ...item }));
+    console.log(newData, '3224234234234234');
+
     const target = this.getRowByKey(key, newData);
     if (target) {
       target[fieldName] = e.target.value;

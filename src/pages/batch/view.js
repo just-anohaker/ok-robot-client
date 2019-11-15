@@ -30,7 +30,7 @@ class BatchCard extends PureComponent {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     let tranType = this.props.tranType;
     let account = this.props.account;
     this.getOrderData({ options: { instrument_id: tranType }, account: account })
@@ -46,7 +46,8 @@ class BatchCard extends PureComponent {
     try {
       this.setState({ loading: true });
       const res = await okrobot.batch_order.getOrderData(options, account);
-      if (res && res.list.length > 0) {
+      console.log(res, 'result');
+      if (res && res.result && res.list.length > 0) {
         const pagination = { ...this.state.pagination };
         const data = res.list;
         pagination.total = res.length;

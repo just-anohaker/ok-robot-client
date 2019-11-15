@@ -99,7 +99,7 @@ class AccountsPage extends PureComponent {
     store.dispatch(loading.showLoading());
     okrobot.user.remove(row.id)
       .then((res) => {
-        let newAccounts = get("allAccouts");
+        let newAccounts = get("allAccouts") || [];
         newAccounts = newAccounts.filter((item) => {
           return item.id !== res.id;
         });
@@ -117,7 +117,7 @@ class AccountsPage extends PureComponent {
       });
   }
 
-  onChange = (type, data, key, cb) => {// 表格更新
+  onChange = (type, data = [], key, cb) => {// 表格更新
     let row = data.filter(item => item.key === key)[0];//被操作数据行
     if (type === "del") {//删除
       if (typeof key === "string" && key.indexOf("NEW_TEMP_ID_") === 0) {//取消新建
